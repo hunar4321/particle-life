@@ -1,0 +1,17 @@
+﻿  ofApp.cpp
+D:\C++\myProjects\of_v20200427_vs2017_release\libs\openFrameworks\math\ofMatrix4x4.h(326,1): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\C++\myProjects\of_v20200427_vs2017_release\libs\openFrameworks\math\ofMatrix4x4.h(331,1): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\C++\myProjects\of_v20200427_vs2017_release\libs\openFrameworks\math\ofMatrix4x4.h(912,12): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\C++\myProjects\of_v20200427_vs2017_release\libs\openFrameworks\math\ofMatrix4x4.h(913,12): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\C++\myProjects\of_v20200427_vs2017_release\libs\openFrameworks\math\ofMatrix4x4.h(914,12): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+D:\C++\myProjects\of_v20200427_vs2017_release\libs\openFrameworks\math\ofMatrix4x4.h(915,12): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+     Creating library bin\particle_life.lib and object bin\particle_life.exp
+  LINK : /LTCG specified but no code generation required; remove /LTCG from the link command line to improve linker performance
+  particle_life.vcxproj -> D:\C++\myProjects\of_v20200427_vs2017_release\apps\myApps\particle_life\bin\particle_life.exe
+  
+  	                   2	D:\C++\myProjects\of_v20200427_vs2017_release\libs\fmodex\lib\vs\x64\
+  	  *EXTRA File 		 6942208	D:\C++\myProjects\of_v20200427_vs2017_release\apps\myApps\particle_life\bin\FreeImage.dll
+  
+  	                   1	D:\C++\myProjects\of_v20200427_vs2017_release\libs\FreeImage\lib\vs\x64\
+  	  *EXTRA File 		 1503232	D:\C++\myProjects\of_v20200427_vs2017_release\apps\myApps\particle_life\bin\fmodex64.dll
+  	  *EXTRA File 		 1552384	D:\C++\myProjects\of_v20200427_vs2017_release\apps\myApps\particle_life\bin\fmodexL64.dll
