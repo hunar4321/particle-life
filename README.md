@@ -27,10 +27,12 @@ The javascript code is as simple as this:
   atoms=[]
   atom=(x,y,c)=>{return{"x":x, "y":y, "vx":0, "vy":0, "color":c}}
   random=()=>{return Math.random()*400+50}
-  create=(number, color)=>{ group=[]
-  for(let i=0; i < number; i++){
-    group.push(atom(random(), random(), color))
-    atoms.push(group[i]) }
+  create=(number, color)=>{ 
+  	group=[]
+    for(let i=0; i < number; i++){
+	    group.push(atom(random(), random(), color))
+	    atoms.push(group[i]) 
+	}
     return group 
   }
   rule=(atoms1, atoms2, g)=>{
