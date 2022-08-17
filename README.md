@@ -44,8 +44,9 @@ The javascript code is as simple as this:
       dy = a.y-b.y
       d = Math.sqrt(dx*dx + dy*dy)
       if(d > 0 && d < 80){
-        fx += (g * dx/d)
-        fy += (g * dy/d)
+      	F = g * 1/d
+        fx += (F * dx)
+        fy += (F * dy)
       }
     } 
     a.vx = (a.vx + fx)*0.5
@@ -76,6 +77,7 @@ The javascript code is as simple as this:
   }
   update();
   </script>
+
 ```
 
 </br>
