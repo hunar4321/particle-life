@@ -1,9 +1,10 @@
 # Particle Life Simulation
 A simple program to simulate attraction/reuplsion forces between many particles
 
-Learn More Here (video tutorial):
+Learn More Here (YouTube video tutorial):
 -----------------------------------------------
-video tutorial comming soon
+https://youtu.be/0Kx4Y9TVMGg
+
 
 Interface
 --------------------------------------------------------
