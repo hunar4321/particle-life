@@ -14,6 +14,11 @@ Example Results
 --------------------------------------------------------
 ![](images/big_pic.jpg)
 
+Some Interesting Patterns to Reproduce:
+-------------------------------------
+You don't need to be exact with the parameters to reproduce these patterns. The best way to get intersting patterns is first try random changes, once you find an intersting pattern then try to slowly fine-tune it. To avoid being stuck at a local maximum you can make some big point jumps in the paramters and interesting different patterns keep poping up
+![](images/some_patterns.jpg)
+
 Code
 ----------------
 Source code available in both C++ (using openframeworks liberary) and javascript
