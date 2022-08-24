@@ -102,4 +102,4 @@ Cellular automata
 JavaScript programming
 
 This project was inspired by: Jeffery Ventrella's Clusters http://www.ventrella.com/Clusters/
-I don't have access to Ventrella's code but I guess the main difference of this project with the other particle life projects is that I didn't implement collision detection as this allows simulating thousands of particles easily. Also, I added GUI controls to change the parameters in realtime this allows easy fine tuning & explorations.
+I don't have access to Ventrella's code but I guess the main difference of this project with the other particle life projects is that I didn't implement collision detection as this allows simulating thousands of particles easily. Also, I added GUI controls to change the parameters in realtime this allows easy fine-tuning & exploration. Also, the code here is probably an order of magnitue simpler than any other Artificial Life codes out there because I started this code solely as an eductaional material for non-programers and general audience to prove the point that complexity can arise from simplicity.
