@@ -16,13 +16,13 @@ Example Results
 
 Some Interesting Patterns to Reproduce:
 -------------------------------------
-You don't need to be exact with the parameters to reproduce these patterns. The best way to get interesting patterns: First try random paramter explorations, once you find an intersting pattern then try to slowly fine-tune it. To avoid being stuck at a local maximum, you can make some occasional big paramter jumps. This way interesting & different patterns keep poping up.
+You don't need to be exact with the parameters to reproduce these patterns. The best way to get interesting patterns: First try random paramter explorations, once you find an intersting pattern then try to slowly fine-tune it. To avoid being stuck at a local maximum, you can make some occasional big parameter jumps. This way interesting & different patterns keep poping up.
 
 ![](images/some_patterns.jpg)
 
 Code
 ----------------
-Source code available in both C++ (you need OpenFrameworks library to compile it) and javascript
+Source code available in both C++ and javascript
 
 The javascript code is as simple as this ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
 ```
