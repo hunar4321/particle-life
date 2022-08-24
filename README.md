@@ -1,5 +1,5 @@
 # Particle Life Simulation
-A simple program to simulate attraction/reuplsion forces between many particles, produceing life like patterns as a result. The code is less than a page (excluding GUI elements). Video tutorial and Walkthrough is availble below. License: MIT
+A simple program to simulate attraction/reuplsion forces between many particles, producing life like patterns as a result. The code is less than a page (excluding GUI elements). Video tutorial and Walkthrough is availble below. License: MIT
 
 Learn More Here (YouTube video tutorial):
 -----------------------------------------------
