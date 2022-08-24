@@ -1,5 +1,8 @@
+![GitHub repo size](https://img.shields.io/github/repo-size/hunar4321/life_code)
+![GitHub](https://img.shields.io/github/license/hunar4321/life_code)
+
 # Particle Life Simulation
-A simple program to simulate attraction/reuplsion forces between many particles, producing life like patterns as a result. The code is less than a page (excluding GUI elements). Video tutorial and Walkthrough is availble below. License: MIT
+A simple program to simulate attraction/reuplsion forces between many particles, producing life like patterns as a result. The code is less than a page (excluding GUI elements). Video tutorial and Walkthrough is availble below.
 
 Learn More Here (YouTube video tutorial):
 -----------------------------------------------
