@@ -22,9 +22,9 @@ You don't need to be exact with the parameters to reproduce these patterns. The 
 
 Code
 ----------------
-Source code available in both C++ (using openframeworks liberary) and javascript
+Source code available in both C++ (using openframeworks library) and javascript
 
-The javascript code is as simple as this:
+The javascript code is as simple as this ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
 ```
   <canvas id="life" width="500" height="500"></canvas>
   <script>
