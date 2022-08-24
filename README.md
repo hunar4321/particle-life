@@ -22,7 +22,7 @@ You don't need to be exact with the parameters to reproduce these patterns. The 
 
 Code
 ----------------
-Source code available in both C++ (using openframeworks library) and javascript
+Source code available in both C++ (you need OpenFrameworks library to compile it) and javascript
 
 The javascript code is as simple as this ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
 ```
@@ -90,3 +90,15 @@ The javascript code is as simple as this ( watch this YouTube video for a walkth
 ```
 
 </br>
+
+
+Related topics:
+#artificial 
+Particle Life Simulation
+Primordial Soup - Evolution
+Conway's game of life
+Cellular automata
+JavaScript programming
+
+This project was inspired by: Jeffery Ventrella's Clusters http://www.ventrella.com/Clusters/
+I don't have access to Ventrella's code but I guess the main difference of this project with the other particle life projects is that I didn't implement collision detection as this allows simulating thousands of particles easily. Also, I added GUI controls to change the parameters in realtime this allows easy fine tuning & explorations.
