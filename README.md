@@ -1,5 +1,5 @@
 # Particle Life Simulation
-A simple program to simulate attraction/reuplsion forces between many particles
+A simple program to simulate attraction/reuplsion forces between many particles, produceing life like patterns as a result. The code is less than a page (excluding GUI elements). Video tutorial and Walkthrough is availble below. License: MIT
 
 Learn More Here (YouTube video tutorial):
 -----------------------------------------------
@@ -16,7 +16,7 @@ Example Results
 
 Some Interesting Patterns to Reproduce:
 -------------------------------------
-You don't need to be exact with the parameters to reproduce these patterns. The best way to get interesting patterns: First try random paramter explorations, once you find an intersting pattern then try to slowly fine-tune it. To avoid being stuck at a local maximum, you can make some occasional big paramters jumps. This way interesting & different patterns keep poping up.
+You don't need to be exact with the parameters to reproduce these patterns. The best way to get interesting patterns: First try random paramter explorations, once you find an intersting pattern then try to slowly fine-tune it. To avoid being stuck at a local maximum, you can make some occasional big paramter jumps. This way interesting & different patterns keep poping up.
 
 ![](images/some_patterns.jpg)
 
