@@ -152,9 +152,7 @@ void ofApp::setup(){
     gui.add(vSliderBR.setup("radius b x r:", pvSliderBR, 10, 500));
     gui.add(vSliderBW.setup("radius b x w:", pvSliderBW, 10, 500));
     gui.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
-    gui.add(aboutL1.setup("Info", "*******"));
-    gui.add(aboutL2.setup("Program by", "Hunar Ahmad"));
-    gui.add(aboutL3.setup("(c) 2022", "www.brainxyz.com "));
+    gui.add(aboutL3.setup("Info:", "www.brainxyz.com "));
 
     restart();
 }
