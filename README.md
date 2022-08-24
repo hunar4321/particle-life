@@ -91,6 +91,7 @@ The javascript code is as simple as this ( watch this YouTube video for a walkth
 
 </br>
 
+If you like to contribute to the C++ program. The core algorthim is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". Everything else are GUI components & rendering controls which are provided by the openFrameworks library.  openFrameworks is an opensource, nice, and easy to use image rendering library https://openframeworks.cc/
 
 Related topics:
 #artificial 
