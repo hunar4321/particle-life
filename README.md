@@ -25,7 +25,7 @@ You don't need to be exact with the parameters to reproduce these patterns. The 
 
 Code
 ----------------
-Source code available in both C++ and javascript
+Source code available in both C++ and JavaScript ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
 
 
 If you like to contribute to the C++ program. The core algorthim is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". Everything else are GUI components & rendering controls which are provided by the openFrameworks library.  openFrameworks is an opensource, nice, and easy to use image rendering library https://openframeworks.cc/
@@ -42,7 +42,7 @@ Todos (If I have time):
 
 
 
-The javascript code is as simple as this ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
+The javascript code is as simple as this 
 ```
   <canvas id="life" width="500" height="500"></canvas>
   <script>
