@@ -27,6 +27,21 @@ Code
 ----------------
 Source code available in both C++ and javascript
 
+
+If you like to contribute to the C++ program. The core algorthim is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". Everything else are GUI components & rendering controls which are provided by the openFrameworks library.  openFrameworks is an opensource, nice, and easy to use image rendering library https://openframeworks.cc/
+
+Todos (If I have time):
+--------------------
+1. Adding the ability to save and load parameters (so that people can easily share the intersting models they find)
+2. Ability to add more particle types (currently it's fixed to four particle types)
+3. Currently, the biggest bottle neck is the nested for-loops (which calculates the pairwise distance among all particles) making the computional complexity quadratic. It will be amazing if we could find a way around this bottle neck.
+4. Alternative to point 4, computing the pairwise distances are embarsingly parallel so it can be computed on GPU.
+5. Adding a more intutive UI so that it gives the ability for a finer control over the paramters + adding a randomize button.
+6. A better way to fine-tune is to use an evolutionary algorthim to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corrsponds to in the realm of this program.
+
+
+
+
 The javascript code is as simple as this ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
 ```
   <canvas id="life" width="500" height="500"></canvas>
@@ -94,7 +109,6 @@ The javascript code is as simple as this ( watch this YouTube video for a walkth
 
 </br>
 
-If you like to contribute to the C++ program. The core algorthim is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". Everything else are GUI components & rendering controls which are provided by the openFrameworks library.  openFrameworks is an opensource, nice, and easy to use image rendering library https://openframeworks.cc/
 
 Related topics:
 #artificial 
