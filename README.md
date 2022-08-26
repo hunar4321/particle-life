@@ -2,7 +2,7 @@
 ![GitHub](https://img.shields.io/github/license/hunar4321/life_code)
 
 # Particle Life Simulation
-A simple program to simulate attraction/repulsion forces between many particles, producing life like patterns as a result. The code is less than a page (excluding GUI elements). Video tutorial and Walkthrough is available below.
+A simple program to simulate primitive Artificial Life using simple rules of attraction/repulsion among atom like particles, producing complex self-organzing life like patterns as a result. The code is less than a page (excluding GUI elements). Video tutorial and Walkthrough is available below.
 
 Learn More Here (YouTube video tutorial):
 -----------------------------------------------
