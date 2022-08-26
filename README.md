@@ -40,7 +40,7 @@ Todos (If I have time):
 2. Ability to add more particle types (currently it's fixed to four particle types)
 3. Currently, the biggest bottle neck is the nested for-loops (which calculates the pairwise distance among all particles) making the computational complexity quadratic. It will be amazing if we could find a way around this bottle neck.
 4. Alternative to point 3, computing the pairwise distances are embarrassingly parallel so it can be computed on GPU.
-5. Adding the ability to resize the screen.
+5. Adding the ability to resize the screen & improving the bound checking as many fast moving particles can escape the screen bounds.
 6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters.
 7. Adding a randomize button or even better having a simple meta rule to mutate the initial rule continously & recursively, this way the patterns will never stuck on a local maximum and will keep changing!
 8. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition & survival of the fittest. However, here we fine-tune and select the parameters that produces interesting patterns for us, however, the word "interesting" here is easier to say than to define!
