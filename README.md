@@ -42,7 +42,7 @@ Todos (If I have time):
 4. Alternative to point 3, computing the pairwise distances are embarrassingly parallel so it can be computed on GPU.
 5. Adding the ability to resize the screen.
 6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters + adding a randomize button.
-7. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program.
+7. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition & survival of the fittest. However, here we fine-tune and select the parameters that produces interesting patterns for us, however, the word "interesting" here this is easier to say than to define!
 
 The JavaScript code is as simple as this: 
 ```
