@@ -25,7 +25,7 @@ You don't need to be exact with the parameters to reproduce these patterns. The 
 
 To use:
 -------------
-Download this repo. unzip the file then go to /life_code/particle_life/bin/ click on particle_life.exe
+Download this repo. unzip the file then go to /particle_life/bin/ folder and click on particle_life.exe
 
 Code:
 ----------------
