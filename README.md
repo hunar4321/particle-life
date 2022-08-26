@@ -19,30 +19,32 @@ Example Results
 
 Some Interesting Patterns to Reproduce:
 -------------------------------------
-You don't need to be exact with the parameters to reproduce these patterns. The best way to get interesting patterns: First try random paramter explorations, once you find an intersting pattern then try to slowly fine-tune it. To avoid being stuck at a local maximum, you can make some occasional big parameter jumps. This way interesting & different patterns keep poping up.
+You don't need to be exact with the parameters to reproduce these patterns. The best way to get interesting patterns: First try random parameter explorations, once you find an intersting pattern, try fine-tuning it gradually. To avoid being stuck at a local maximum, you can make some occasional big parameter jumps. This way interesting & different patterns keep poping up.
 
 ![](images/some_patterns.jpg)
 
-Code
+To use:
+-------------
+Download this repo. unzip the file then go to /life_code/particle_life/bin/ click on particle_life.exe
+
+Code:
 ----------------
 Source code available in both C++ and JavaScript ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
 
-
-If you like to contribute to the C++ program. The core algorithm is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". Everything else are GUI components & rendering controls which are provided by the openFrameworks library.  openFrameworks is an opensource, nice, and easy to use image rendering library https://openframeworks.cc/
+If you like to contribute to the C++ program. The core algorithm is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". Everything else are GUI components & rendering controls which are provided by the openFrameworks library.  openFrameworks is a nice, opensource, and easy to use image rendering library. 
+To start, download this repository first, then download openFrameworks library here (https://openframeworks.cc/). Use openFramework's project generator and import this project. You can now compile the C++ code on your machine.
 
 Todos (If I have time):
 --------------------
 1. Adding the ability to save and load parameters (so that people can easily share the interesting models they find)
 2. Ability to add more particle types (currently it's fixed to four particle types)
 3. Currently, the biggest bottle neck is the nested for-loops (which calculates the pairwise distance among all particles) making the computational complexity quadratic. It will be amazing if we could find a way around this bottle neck.
-4. Alternative to point 4, computing the pairwise distances are embarrassingly parallel so it can be computed on GPU.
-5. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters + adding a randomize button.
-6. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program.
+4. Alternative to point 3, computing the pairwise distances are embarrassingly parallel so it can be computed on GPU.
+5. Adding the ability to resize the screen.
+6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters + adding a randomize button.
+7. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program.
 
-
-
-
-The javascript code is as simple as this 
+The JavaScript code is as simple as this: 
 ```
   <canvas id="life" width="500" height="500"></canvas>
   <script>
