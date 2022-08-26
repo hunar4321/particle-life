@@ -42,9 +42,10 @@ Todos (If I have time):
 4. Alternative to point 3, computing the pairwise distances are embarrassingly parallel so it can be computed on GPU.
 5. Adding the ability to resize the screen.
 6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters + adding a randomize button.
-7. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition & survival of the fittest. However, here we fine-tune and select the parameters that produces interesting patterns for us, however, the word "interesting" here this is easier to say than to define!
+7. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition & survival of the fittest. However, here we fine-tune and select the parameters that produces interesting patterns for us, however, the word "interesting" here is easier to say than to define!
 
 The JavaScript code is as simple as this: 
+-------------------------------------
 ```
   <canvas id="life" width="500" height="500"></canvas>
   <script>
@@ -113,12 +114,11 @@ The JavaScript code is as simple as this:
 
 
 Related topics:
-#artificial 
-Particle Life Simulation
-Primordial Soup - Evolution
-Conway's game of life
-Cellular automata
-JavaScript programming
+Particle Life Simulation,
+Primordial Soup - Evolution,
+Conway's game of life,
+Cellular automata,
+Self organzing patterns,
 
 This project was inspired by: Jeffery Ventrella's Clusters http://www.ventrella.com/Clusters/
-I don't have access to Ventrella's code but I guess the main difference of this project with the other particle life projects is that I didn't implement collision detection as this allows simulating thousands of particles easily. Also, I added GUI controls to change the parameters in realtime this allows easy fine-tuning & exploration. Also, the code here is probably an order of magnitude simpler than any other Artificial Life codes out there because I started this code solely as an eductaional material for non-programers and general audience to prove the point that complexity can arise from simplicity.
+I don't have access to Ventrella's code but I guess the main difference of this project with the other particle life projects is that I didn't implement collision detection and this made simulating thousands of particles possible in realtime. Also, I added GUI controls to change the parameters in realtime this allows easy fine-tuning & exploration, hence, I was able to find some never-seen-before patterns emege form some extremely simple models of relations. The code here is probably an order of magnitude simpler than any other Artificial Life codes out there because I started this code solely as an eductaional material for non-programers and general audience to prove the point that complexity can arise from simplicity.
