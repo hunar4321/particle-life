@@ -32,7 +32,7 @@ Code:
 Source code available in both C++ and JavaScript ( watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg )
 
 If you like to contribute to the C++ program. The core algorithm is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". Everything else are GUI components & rendering controls which are provided by the openFrameworks library. openFrameworks is a nice, opensource, and easy to use image rendering library. 
-To start, download this repository first, then download openFrameworks library here (https://openframeworks.cc/). Use openFramework's projectGenerator and import particle_life folder to the project. Alternatively, generate a new openFramework project and replace the /src/ folder with the one provided here. You can now compile the C++ code on your machine.
+To start, download this repository first, then download openFrameworks library here (https://openframeworks.cc/). Use openFramework's projectGenerator and import /particle_life/ folder to the project. Alternatively, generate a new openFramework project and add ofxGui. Once the project files are generated replace the /src/ folder with the one provided here. You can now compile the C++ code on your machine.
 
 Todos (If I have time):
 --------------------
