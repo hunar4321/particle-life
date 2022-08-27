@@ -20,11 +20,10 @@ struct Point {
 	}
 
 	void Draw() {
-		ofSetColor(r, g, b);  // Set the drawing color to white
-		ofDrawCircle((int)x, (int)y, 3); // Centered at (250, 100), radius of 50
+		ofSetColor(r, g, b);  // rgb color
+		ofDrawCircle((int)x, (int)y, 3); // x, y position and size of the point
 	}
 };
-
 
 
 class ofApp : public ofBaseApp{
