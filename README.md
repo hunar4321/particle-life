@@ -43,10 +43,12 @@ Todos (If I have time):
 5. Adding the ability to resize the screen & improving the bound checking as many fast moving particles can escape the screen bounds.
 6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters.
 7. Adding a randomize button or even better having a simple meta rule to mutate the initial rule continously & recursively, this way the patterns will never stuck on a local maximum and will keep changing!
-8. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition & survival of the fittest. However, here we fine-tune and select the parameters that produces interesting patterns for us, however, the word "interesting" here is easier to say than to define!
+8. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition & survival of the fittest. However, here we fine-tune and select the parameters that produces interesting patterns for us, however, the word "interesting" is easier to say than to define!
 
 The JavaScript code is as simple as this: 
 -------------------------------------
+Also, look at the particle_life.html file for a more optimized version - thanks to those who have contributed. 
+
 ```html
 <canvas id="life" width="500" height="500"></canvas>
 <script>
@@ -91,12 +93,8 @@ The JavaScript code is as simple as this:
       a.vy = (a.vy + fy) * 0.5;
       a.x += a.vx;
       a.y += a.vy;
-      if (a.x <= 0 || a.x >= 500) {
-        a.vx *= -1;
-      }
-      if (a.y <= 0 || a.y >= 500) {
-        a.vy *= -1;
-      }
+      if (a.x <= 0 || a.x >= 500) { a.vx *= -1; }
+      if (a.y <= 0 || a.y >= 500) { a.vy *= -1; }
     }
   };
   yellow = create(200, "yellow");
