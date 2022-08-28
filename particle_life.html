@@ -101,11 +101,21 @@
       a.vy = (a.vy + fy) * 0.5;
       a.x += a.vx;
       a.y += a.vy;
-      if (a.x <= 0 || a.x >= canvas.width) {
+      if (a.x <= 0) {
         a.vx *= -1;
+        a.x = 0;
       }
-      if (a.y <= 0 || a.y >= canvas.height) {
+      if (a.x >= canvas.width) {
+        a.vx *= -1;
+        a.x = canvas.width;
+      }
+      if (a.y <= 0) {
         a.vy *= -1;
+        a.y = 0;
+      }
+      if (a.y >= canvas.height) {
+        a.vy *= -1;
+        a.y = canvas.height;
       }
     }
   };
