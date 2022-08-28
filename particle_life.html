@@ -1,60 +1,126 @@
-  <canvas id="life" width="500" height="500"></canvas>
-  <script>
-    //Hunar Ahmad @ brainxyz
-  m=document.getElementById("life").getContext('2d')
-  draw=(x,y,c,s)=>{m.fillStyle=c; m.fillRect(x, y, s, s)}
-  atoms=[]
-  atom=(x,y,c)=>{return{"x":x, "y":y, "vx":0, "vy":0, "color":c}}
-  random=()=>{return Math.random()*400+50}
-  create=(number, color)=>{ 
-  	group=[]
-    for(let i=0; i < number; i++){
-	    group.push(atom(random(), random(), color))
-	    atoms.push(group[i]) 
-	}
-    return group 
-  }
-  rule=(atoms1, atoms2, g)=>{
-  for(let i=0; i < atoms1.length; i++){
-    fx = 0
-    fy = 0
-    for(let j=0; j < atoms2.length; j++){
-      a = atoms1[i]
-      b = atoms2[j]
-      dx = a.x-b.x
-      dy = a.y-b.y
-      d = Math.sqrt(dx*dx + dy*dy)
-      if(d > 0 && d < 80){
-      	F = g * 1/d
-        fx += (F * dx)
-        fy += (F * dy)
+<canvas id="life" width="700" height="700"></canvas>
+<script>
+  //Hunar Ahmad @ brainxyz
+
+  const RULES = {
+    green: {
+      green: 0.878214014158254,
+      red: 0.383942932294564,
+      yellow: 0.3632328353781209,
+      blue: 0.4357079645785089,
+    },
+    red: {
+      green: -0.8131279812066854,
+      red: 0.8761564046567396,
+      yellow: -0.686246916739194,
+      blue: -0.42403398294928163,
+    },
+    yellow: {
+      green: 0.8283611643992606,
+      red: -0.8050409003234531,
+      yellow: 0.8422661062679588,
+      blue: -0.6206303204367405,
+    },
+    blue: {
+      green: -0.6276679142294777,
+      red: -0.48726835984229977,
+      yellow: -0.8155039608681607,
+      blue: 0.49503848830455155,
+    },
+  };
+
+  // const RULES = {
+  //   green: {
+  //     green: Math.random() * 2 - 1,
+  //     red: Math.random() * 2 - 1,
+  //     yellow: Math.random() * 2 - 1,
+  //     blue: Math.random() * 2 - 1,
+  //   },
+  //   red: {
+  //     green: Math.random() * 2 - 1,
+  //     red: Math.random() * 2 - 1,
+  //     yellow: Math.random() * 2 - 1,
+  //     blue: Math.random() * 2 - 1,
+  //   },
+  //   yellow: {
+  //     green: Math.random() * 2 - 1,
+  //     red: Math.random() * 2 - 1,
+  //     yellow: Math.random() * 2 - 1,
+  //     blue: Math.random() * 2 - 1,
+  //   },
+  //   blue: {
+  //     green: Math.random() * 2 - 1,
+  //     red: Math.random() * 2 - 1,
+  //     yellow: Math.random() * 2 - 1,
+  //     blue: Math.random() * 2 - 1,
+  //   },
+  // };
+
+  console.log(JSON.stringify(RULES));
+
+  const canvas = document.getElementById("life");
+  const m = canvas.getContext("2d");
+  const draw = (x, y, c, s) => {
+    m.fillStyle = c;
+    m.fillRect(x, y, s, s);
+  };
+  const atoms = [];
+  const atom = (x, y, c) => {
+    return { x: x, y: y, vx: 0, vy: 0, color: c };
+  };
+  const random = () => {
+    return Math.random() * (canvas.height - 100) + 50;
+  };
+  const create = (number, color) => {
+    for (let i = 0; i < number; i++) {
+      atoms.push(atom(random(), random(), color));
+    }
+  };
+  const applyRules = () => {
+    for (let i = 0; i < atoms.length; i++) {
+      let fx = 0;
+      let fy = 0;
+      const a = atoms[i];
+      for (let j = 0; j < atoms.length; j++) {
+        const b = atoms[j];
+        const g = RULES[a.color][b.color];
+        if (g !== undefined) {
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          if (dx !== 0 || dy !== 0) {
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d < 80) {
+              const F = g / d;
+              fx += F * dx;
+              fy += F * dy;
+            }
+          }
+        }
       }
-    } 
-    a.vx = (a.vx + fx)*0.5
-    a.vy = (a.vy + fy)*0.5
-    a.x += a.vx
-    a.y += a.vy
-    if(a.x <= 0 || a.x >= 500){ a.vx *=-1 }
-    if(a.y <= 0 || a.y >= 500){ a.vy *=-1 }
+      a.vx = (a.vx + fx) * 0.5;
+      a.vy = (a.vy + fy) * 0.5;
+      a.x += a.vx;
+      a.y += a.vy;
+      if (a.x <= 0 || a.x >= canvas.width) {
+        a.vx *= -1;
+      }
+      if (a.y <= 0 || a.y >= canvas.height) {
+        a.vy *= -1;
+      }
     }
-  }
-  yellow = create(200, "yellow")
-  red = create(200, "red")
-  green = create(200, "green")
-  update=()=>{
-    rule(green, green, -0.32)
-    rule(green, red, -0.17)
-    rule(green, yellow, 0.34)
-    rule(red, red, -0.10)
-    rule(red, green, -0.34)
-    rule(yellow, yellow, 0.15)
-    rule(yellow, green, -0.20)
-    m.clearRect(0, 0, 500, 500)
-    draw(0, 0, "black", 500)
-    for(i=0; i<atoms.length; i++){ 
-    draw(atoms[i].x, atoms[i].y, atoms[i].color, 5) 
+  };
+  create(500, "yellow");
+  create(500, "red");
+  create(500, "green");
+  create(500, "blue");
+  update = () => {
+    applyRules();
+    m.clearRect(0, 0, canvas.width, canvas.height);
+    draw(0, 0, "black", canvas.width);
+    for (i = 0; i < atoms.length; i += 1) {
+      draw(atoms[i].x, atoms[i].y, atoms[i].color, 3);
     }
-    requestAnimationFrame(update)
-  }
+    requestAnimationFrame(update);
+  };
   update();
-  </script>
+</script>
