@@ -80,17 +80,19 @@
       let fy = 0;
       const a = atoms[i];
       for (let j = 0; j < atoms.length; j++) {
-        const b = atoms[j];
-        const g = RULES[a.color][b.color];
-        if (g !== undefined) {
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          if (dx !== 0 || dy !== 0) {
-            const d = dx * dx + dy * dy;
-            if (d < 6400) {
-              const F = g / Math.sqrt(d);
-              fx += F * dx;
-              fy += F * dy;
+        if (j !== i) {
+          const b = atoms[j];
+          const g = RULES[a.color][b.color];
+          if (g !== undefined) {
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            if (dx !== 0 || dy !== 0) {
+              const d = dx * dx + dy * dy;
+              if (d < 6400) {
+                const F = g / Math.sqrt(d);
+                fx += F * dx;
+                fy += F * dy;
+              }
             }
           }
         }
