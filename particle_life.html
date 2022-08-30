@@ -25,17 +25,7 @@
     
     <canvas id="canvas"></canvas>
 
-
     <script>
-      // Canvas Dimetions
-      const canvas = document.getElementById('canvas');
-      updateCanvasDimensions()
-      function updateCanvasDimensions() {
-        canvas.width = window.innerWidth * 0.9;
-        canvas.height = window.innerHeight * 0.9;
-        // canvas.width = canvas.height = 500;
-      }
-
       const factor = 2;
       const RULES = {
         green: {
@@ -92,6 +82,17 @@
       // };
 
       console.log(JSON.stringify(RULES));
+    </script>
+
+    <script>
+      // Canvas Dimetions
+      const canvas = document.getElementById('canvas');
+      updateCanvasDimensions()
+      function updateCanvasDimensions() {
+        canvas.width = window.innerWidth * 0.9;
+        canvas.height = window.innerHeight * 0.9;
+        // canvas.width = canvas.height = 500;
+      }
 
       // const canvas = document.getElementById("canvas");
       const m = canvas.getContext("2d");
@@ -103,17 +104,22 @@
       const atom = (x, y, c) => {
         return { x: x, y: y, vx: 0, vy: 0, color: c };
       };
+
+      // Initiate Random locations for Atoms ( used when atoms created )
       const randomX = () => {
         return Math.random() * (canvas.width - 100) + 50;
       };
       const randomY = () => {
         return Math.random() * (canvas.height - 100) + 50;
       };
+
+      // Create an Atoms
       const create = (number, color) => {
         for (let i = 0; i < number; i++) {
           atoms.push(atom(randomX(), randomY(), color));
         }
       };
+
       const applyRules = () => {
         for (let i = 0; i < atoms.length; i++) {
           let fx = 0;
@@ -141,6 +147,9 @@
           a.vy = (a.vy + fy) * 0.5;
           a.x += a.vx;
           a.y += a.vy;
+          
+          // When Atoms touch or bypass canvas borders
+          // X - axis
           if (a.x <= 0) {
             a.vx *= -1;
             a.x = 0;
@@ -149,6 +158,7 @@
             a.vx *= -1;
             a.x = canvas.width;
           }
+          // Y - axis
           if (a.y <= 0) {
             a.vy *= -1;
             a.y = 0;
@@ -159,12 +169,16 @@
           }
         }
       };
+
+      // Create Atoms
       create(500, "yellow");
       create(500, "red");
       create(500, "green");
       create(500, "blue");
+
       // Update Frames
-      update = () => {
+      update();
+      function update() {
         // Update Canvas Dimensions - if screen size changed
         updateCanvasDimensions()
 
@@ -176,8 +190,8 @@
         }
         requestAnimationFrame(update);
       };
-      update();
     </script>
+
   </body>
 
 </html>
