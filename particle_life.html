@@ -1,136 +1,185 @@
-<canvas id="life" width="700" height="700"></canvas>
-<script>
-  const RULES = {
-    green: {
-      green: 0.878214014158254,
-      red: 0.383942932294564,
-      yellow: 0.3632328353781209,
-      blue: 0.4357079645785089,
-    },
-    red: {
-      green: -0.8131279812066854,
-      red: 0.8761564046567396,
-      yellow: -0.686246916739194,
-      blue: -0.42403398294928163,
-    },
-    yellow: {
-      green: 0.8283611643992606,
-      red: -0.8050409003234531,
-      yellow: 0.8422661062679588,
-      blue: -0.6206303204367405,
-    },
-    blue: {
-      green: -0.6276679142294777,
-      red: -0.48726835984229977,
-      yellow: -0.8155039608681607,
-      blue: 0.49503848830455155,
-    },
-  };
+<html>
 
-  // const RULES = {
-  //   green: {
-  //     green: Math.random() * 2 - 1,
-  //     red: Math.random() * 2 - 1,
-  //     yellow: Math.random() * 2 - 1,
-  //     blue: Math.random() * 2 - 1,
-  //   },
-  //   red: {
-  //     green: Math.random() * 2 - 1,
-  //     red: Math.random() * 2 - 1,
-  //     yellow: Math.random() * 2 - 1,
-  //     blue: Math.random() * 2 - 1,
-  //   },
-  //   yellow: {
-  //     green: Math.random() * 2 - 1,
-  //     red: Math.random() * 2 - 1,
-  //     yellow: Math.random() * 2 - 1,
-  //     blue: Math.random() * 2 - 1,
-  //   },
-  //   blue: {
-  //     green: Math.random() * 2 - 1,
-  //     red: Math.random() * 2 - 1,
-  //     yellow: Math.random() * 2 - 1,
-  //     blue: Math.random() * 2 - 1,
-  //   },
-  // };
+  <head>
+    <style>
+      :root {
+        /* background-color: black; */
+        color-scheme: dark;
+      }
+    
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-  console.log(JSON.stringify(RULES));
+      #canvas {
+        border: #504e52;
+        border-style: dashed;
+        border-width: 5;
+      }
+    </style>
+  </head>
 
-  const canvas = document.getElementById("life");
-  const m = canvas.getContext("2d");
-  const draw = (x, y, c, s) => {
-    m.fillStyle = c;
-    m.fillRect(x, y, s, s);
-  };
-  const atoms = [];
-  const atom = (x, y, c) => {
-    return { x: x, y: y, vx: 0, vy: 0, color: c };
-  };
-  const random = () => {
-    return Math.random() * (canvas.height - 100) + 50;
-  };
-  const create = (number, color) => {
-    for (let i = 0; i < number; i++) {
-      atoms.push(atom(random(), random(), color));
-    }
-  };
-  const applyRules = () => {
-    for (let i = 0; i < atoms.length; i++) {
-      let fx = 0;
-      let fy = 0;
-      const a = atoms[i];
-      for (let j = 0; j < atoms.length; j++) {
-        if (j !== i) {
-          const b = atoms[j];
-          const g = RULES[a.color][b.color];
-          if (g !== undefined) {
-            const dx = a.x - b.x;
-            const dy = a.y - b.y;
-            if (dx !== 0 || dy !== 0) {
-              const d = dx * dx + dy * dy;
-              if (d < 6400) {
-                const F = g / Math.sqrt(d);
-                fx += F * dx;
-                fy += F * dy;
+  <body>
+    
+    <center>
+      <canvas id="canvas"></canvas>
+    </center>
+
+
+    <script>
+      // Canvas Dimetions
+      const canvas = document.getElementById('canvas');
+      updateCanvasDimensions()
+      function updateCanvasDimensions() {
+        canvas.width = window.innerWidth * 0.9;
+        canvas.height = window.innerHeight * 0.9;
+        // canvas.width = canvas.height = 500;
+      }
+
+      const factor = 2;
+      const RULES = {
+        green: {
+          green: 0.878214014158254 * factor,
+          red: 0.383942932294564 * factor,
+          yellow: 0.3632328353781209 * factor,
+          blue: 0.4357079645785089 * factor,
+        },
+        red: {
+          green: -0.8131279812066854 * factor,
+          red: 0.8761564046567396 * factor,
+          yellow: -0.686246916739194 * factor,
+          blue: -0.42403398294928163 * factor,
+        },
+        yellow: {
+          green: 0.8283611643992606 * factor,
+          red: -0.8050409003234531 * factor,
+          yellow: 0.8422661062679588 * factor,
+          blue: -0.6206303204367405 * factor,
+        },
+        blue: {
+          green: -0.6276679142294777 * factor,
+          red: -0.48726835984229977 * factor,
+          yellow: -0.8155039608681607 * factor,
+          blue: 0.49503848830455155 * factor,
+        },
+      };
+
+      // const RULES = {
+      //   green: {
+      //     green: Math.random() * 2 - 1,
+      //     red: Math.random() * 2 - 1,
+      //     yellow: Math.random() * 2 - 1,
+      //     blue: Math.random() * 2 - 1,
+      //   },
+      //   red: {
+      //     green: Math.random() * 2 - 1,
+      //     red: Math.random() * 2 - 1,
+      //     yellow: Math.random() * 2 - 1,
+      //     blue: Math.random() * 2 - 1,
+      //   },
+      //   yellow: {
+      //     green: Math.random() * 2 - 1,
+      //     red: Math.random() * 2 - 1,
+      //     yellow: Math.random() * 2 - 1,
+      //     blue: Math.random() * 2 - 1,
+      //   },
+      //   blue: {
+      //     green: Math.random() * 2 - 1,
+      //     red: Math.random() * 2 - 1,
+      //     yellow: Math.random() * 2 - 1,
+      //     blue: Math.random() * 2 - 1,
+      //   },
+      // };
+
+      console.log(JSON.stringify(RULES));
+
+      // const canvas = document.getElementById("canvas");
+      const m = canvas.getContext("2d");
+      const draw = (x, y, c, s) => {
+        m.fillStyle = c;
+        m.fillRect(x, y, s, s);
+      };
+      const atoms = [];
+      const atom = (x, y, c) => {
+        return { x: x, y: y, vx: 0, vy: 0, color: c };
+      };
+      const randomX = () => {
+        return Math.random() * (canvas.width - 100) + 50;
+      };
+      const randomY = () => {
+        return Math.random() * (canvas.height - 100) + 50;
+      };
+      const create = (number, color) => {
+        for (let i = 0; i < number; i++) {
+          atoms.push(atom(randomX(), randomY(), color));
+        }
+      };
+      const applyRules = () => {
+        for (let i = 0; i < atoms.length; i++) {
+          let fx = 0;
+          let fy = 0;
+          const a = atoms[i];
+          for (let j = 0; j < atoms.length; j++) {
+            if (j !== i) {
+              const b = atoms[j];
+              const g = RULES[a.color][b.color];
+              if (g !== undefined) {
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                if (dx !== 0 || dy !== 0) {
+                  const d = dx * dx + dy * dy;
+                  if (d < 6400) {
+                    const F = g / Math.sqrt(d);
+                    fx += F * dx;
+                    fy += F * dy;
+                  }
+                }
               }
             }
           }
+          a.vx = (a.vx + fx) * 0.5;
+          a.vy = (a.vy + fy) * 0.5;
+          a.x += a.vx;
+          a.y += a.vy;
+          if (a.x <= 0) {
+            a.vx *= -1;
+            a.x = 0;
+          }
+          if (a.x >= canvas.width) {
+            a.vx *= -1;
+            a.x = canvas.width;
+          }
+          if (a.y <= 0) {
+            a.vy *= -1;
+            a.y = 0;
+          }
+          if (a.y >= canvas.height) {
+            a.vy *= -1;
+            a.y = canvas.height;
+          }
         }
-      }
-      a.vx = (a.vx + fx) * 0.5;
-      a.vy = (a.vy + fy) * 0.5;
-      a.x += a.vx;
-      a.y += a.vy;
-      if (a.x <= 0) {
-        a.vx *= -1;
-        a.x = 0;
-      }
-      if (a.x >= canvas.width) {
-        a.vx *= -1;
-        a.x = canvas.width;
-      }
-      if (a.y <= 0) {
-        a.vy *= -1;
-        a.y = 0;
-      }
-      if (a.y >= canvas.height) {
-        a.vy *= -1;
-        a.y = canvas.height;
-      }
-    }
-  };
-  create(500, "yellow");
-  create(500, "red");
-  create(500, "green");
-  create(500, "blue");
-  update = () => {
-    applyRules();
-    m.clearRect(0, 0, canvas.width, canvas.height);
-    draw(0, 0, "black", canvas.width);
-    for (i = 0; i < atoms.length; i += 1) {
-      draw(atoms[i].x, atoms[i].y, atoms[i].color, 3);
-    }
-    requestAnimationFrame(update);
-  };
-  update();
-</script>
+      };
+      create(500, "yellow");
+      create(500, "red");
+      create(500, "green");
+      create(500, "blue");
+      // Update Frames
+      update = () => {
+        // Update Canvas Dimensions - if screen size changed
+        updateCanvasDimensions()
+
+        applyRules();
+        m.clearRect(0, 0, canvas.width, canvas.height);
+        draw(0, 0, "black", canvas.width);
+        for (i = 0; i < atoms.length; i += 1) {
+          draw(atoms[i].x, atoms[i].y, atoms[i].color, 3);
+        }
+        requestAnimationFrame(update);
+      };
+      update();
+    </script>
+  </body>
+
+</html>
