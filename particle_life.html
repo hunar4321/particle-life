@@ -90,8 +90,10 @@
 
 
     <script>
-      // Canvas Dimetions
+      // Canvas
       const canvas = document.getElementById('canvas');
+      
+      // Canvas Dimetions
       updateCanvasDimensions()
       function updateCanvasDimensions() {
         canvas.width = window.innerWidth * 0.9;
@@ -99,12 +101,13 @@
         // canvas.width = canvas.height = 500;
       }
 
-      // const canvas = document.getElementById("canvas");
       const m = canvas.getContext("2d");
       const draw = (x, y, c, s) => {
         m.fillStyle = c;
         m.fillRect(x, y, s, s);
       };
+
+      // Atoms array
       const atoms = [];
       const atom = (x, y, c) => {
         return { x: x, y: y, vx: 0, vy: 0, color: c };
@@ -134,7 +137,7 @@
           for (let j = 0; j < atoms.length; j++) {
             if (j !== i) {
               const b = atoms[j];
-              const g = RULES[a.color][b.color];
+              const g = RULES[a.color][b.color]; // * factor;
               if (g !== undefined) {
                 const dx = a.x - b.x;
                 const dy = a.y - b.y;
