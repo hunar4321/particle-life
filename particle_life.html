@@ -190,7 +190,7 @@
 
         applyRules();
         m.clearRect(0, 0, canvas.width, canvas.height);
-        draw(0, 0, "black", canvas.width);
+        draw(0, 0, "black", Math.max(canvas.height, canvas.width));
         for (i = 0; i < atoms.length; i += 1) {
           draw(atoms[i].x, atoms[i].y, atoms[i].color, 3);
         }
