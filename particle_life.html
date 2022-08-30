@@ -26,6 +26,7 @@
     <canvas id="canvas"></canvas>
 
     <script>
+      // Rules values
       const factor = 2;
       const RULES = {
         green: {
@@ -84,6 +85,10 @@
       console.log(JSON.stringify(RULES));
     </script>
 
+
+
+
+
     <script>
       // Canvas Dimetions
       const canvas = document.getElementById('canvas');
@@ -120,6 +125,7 @@
         }
       };
 
+      // Apply Rules ( How atoms interact with each other )
       const applyRules = () => {
         for (let i = 0; i < atoms.length; i++) {
           let fx = 0;
