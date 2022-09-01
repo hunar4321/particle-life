@@ -244,7 +244,7 @@ void ofApp::draw(){
 	ofBackground(0);  // Clear the screen with a black color
 
     if (resetButton) { restart(); }
-    if (randomChoice) { random(); }
+    if (randomChoice) { random(); restart(); }
     if (numberSliderW > 0) { Draw(&white); }
     if (numberSliderR > 0) { Draw(&red); }
     if (numberSliderG > 0) { Draw(&green); }
