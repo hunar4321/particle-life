@@ -101,7 +101,7 @@
         return _rules
       };
 
-      const RULES = RandomRules();
+      const RULES = RandomRules(5);
 
       console.log(JSON.stringify(RULES, null, 4));
     </script>
@@ -173,8 +173,9 @@
               }
             }
           }
-          a.vx = (a.vx + fx) * 0.5;
-          a.vy = (a.vy + fy) * 0.5;
+          const velocityFactor = 0.1;
+          a.vx = (a.vx + fx) * velocityFactor;
+          a.vy = (a.vy + fy) * velocityFactor;
           a.x += a.vx;
           a.y += a.vy;
 
@@ -205,7 +206,7 @@
       // create(500, "red");
       // create(500, "green");
       // create(500, "blue");
-      Object.keys(RULES).forEach(color => create(50, color))
+      Object.keys(RULES).forEach(color => create(300, color))
 
       // Update Frames
       update();
