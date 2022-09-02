@@ -23,6 +23,10 @@ You do not need to be exact with the parameters to reproduce these patterns. The
 
 ![](images/some_patterns.jpg)
 
+Online Demo:
+-------------
+Click here for a live demo (JavaScript): https://hunar4321.github.io/particle-life/particle_life.html#91651088029
+
 To use:
 -------------
 Download this repo. unzip the file then go to /particle_life/bin/ folder and click on particle_life.exe
