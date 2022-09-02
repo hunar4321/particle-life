@@ -218,9 +218,10 @@
         m.clearRect(0, 0, canvas.width, canvas.height);
         draw(0, 0, "black", canvas.width, canvas.height);
         // Draw
-        atoms.forEach(atom => {
+        atoms.forEach((atom, i) => {
           // Draw Atoms
-          draw(atom.x, atom.y, atom.color, 3);
+          const _diameter = 3;
+          draw(atom.x - _diameter / 2, atom.y - _diameter / 2, atom.color, _diameter);
         });
 
         requestAnimationFrame(update);
