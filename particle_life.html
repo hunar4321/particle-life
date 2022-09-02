@@ -168,6 +168,9 @@
                     const F = g / Math.sqrt(d);
                     fx += F * dx;
                     fy += F * dy;
+
+                    // Draw lines between atoms that are attracted to each other.
+                    // DrawLineBetweenAtoms(a, b);
                   }
                 }
               }
@@ -226,6 +229,17 @@
         });
 
         requestAnimationFrame(update);
+      };
+
+      // Draw lines between atoms that are attracted to each other.
+      function DrawLineBetweenAtoms(atomA, atomB) {
+        const ctx = canvas.getContext("2d");
+        ctx.beginPath();
+        ctx.moveTo(atomA.x, atomA.y);
+        ctx.lineTo(atomB.x, atomB.y);
+        ctx.closePath();
+        ctx.strokeStyle = atomB.color;
+        ctx.stroke();
       };
     </script>
 
