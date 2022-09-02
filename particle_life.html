@@ -213,11 +213,11 @@
       function update() {
         // Update Canvas Dimensions - if screen size changed
         updateCanvasDimensions()
-        // Apply Rules
-        applyRules();
         // Clean the Canvas
         m.clearRect(0, 0, canvas.width, canvas.height);
         draw(0, 0, "black", canvas.width, canvas.height);
+        // Apply Rules
+        applyRules();
         // Draw
         atoms.forEach((atom, i) => {
           // Draw Atoms
