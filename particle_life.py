@@ -1,4 +1,4 @@
-## simple python port - You need to pip install pygame 
+## Simple python port - You need to pip install pygame (the code here is not efficient but it's made to be educational and easy)
 import pygame
 import random
 
