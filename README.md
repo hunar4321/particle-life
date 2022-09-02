@@ -29,7 +29,7 @@ Download this repo. unzip the file then go to /particle_life/bin/ folder and cli
 
 Code:
 ----------------
-The source code is available in both C++ and JavaScript.
+The source code is available in C++, JavaScript, and Python.
 Watch this YouTube video for a walkthrough tutorial: https://youtu.be/0Kx4Y9TVMGg
 
 If you would like to contribute to the C++ program, the core algorithm is the first 100 lines of code at:  "/particle_life/src/ofApp.cpp". The rest are GUI components and rendering controls which are provided by the openFrameworks library an opensource and easy-to-use image rendering library.
@@ -40,7 +40,7 @@ Alternatively, generate a new openFramework project and add ofxGui. Once the pro
 
 You can now compile the C++ code on your machine.
 
-Todos (If I have time):
+Todos:
 --------------------
 1. Adding the ability to save and load parameters (so that people can easily share the interesting models they find)
 2. Ability to add more particle types (currently it is fixed to four particle types)
@@ -49,7 +49,7 @@ Todos (If I have time):
 5. Adding the ability to resize the screen and improving boundary-checking as many fast moving particles can escape the screen bounds.
 6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters.
 7. Adding a randomize button or, even better, having a simple meta rule to mutate the initial rule continously and recursively. This way the patterns will never get stuck on a local maximum and will keep changing!
-8. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition and survival of the fittest. However, here we fine-tune and select the parameters that produce interesting patterns for us, however, the word "interesting" is easier to say than to define!
+8. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition and survival of the fittest. However, here we fine-tune and select the parameters that produce interesting patterns for us but the word "interesting" is easier to say than to define!
 
 The JavaScript code is as simple as this: 
 -------------------------------------
