@@ -209,16 +209,24 @@
                 a[1] += a[3]
 
                 // When Atoms touch or bypass canvas borders
-                // X - axis
-                if (a[0] < 0 || a[0] >= canvas.width) {
-                    a[2] *= -1
-                    a[0] = (a[0] < 0) ? 0 : canvas.width - 1
+                if (a[0] < 0) {
+                    a[0] = -a[0];
+                    a[2] *= -1;
                 }
-                // Y - axis
-                if (a[1] < 0 || a[1] >= canvas.height) {
-                    a[3] *= -1
-                    a[1] *= (a[1] < 0) ? 0 : canvas.height - 1
+                if (a[0] >= canvas.width) {
+                    a[0] = 2 * canvas.width - a[0];
+                    a[2] *= -1;
                 }
+                if (a[1] < 0) {
+                    a[1] = -a[1];
+                    a[3] *= -1;
+                }
+                if (a[1] >= canvas.height) {
+                    a[1] = 2 * canvas.height - a[1];
+                    a[3] *= -1;
+                }
+
+
                 total_v += Math.abs(a[2]);
                 total_v += Math.abs(a[3]);
             }
@@ -313,6 +321,10 @@
             if (total_v > 30. && time_scale > 5.) time_scale /= 1.1;
             if (time_scale < 0.9) time_scale *= 1.01;
             if (time_scale > 1.1) time_scale /= 1.01;
+
+            // const inRange = (a) => 0 <= a[0] && a[0] < canvas.width && 0 <= a[1] && a[1] < canvas.height
+            // console.log('inRange', atoms.filter(inRange).length)
+
             requestAnimationFrame(update);
         };
     </script>
