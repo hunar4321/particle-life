@@ -97,6 +97,56 @@ void ofApp::restart() {
     if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, 100, 100, 250); }
 }
 
+void ofApp::random() {
+    // GREEN
+    numberSliderG = RandomFloat(0, 3000);
+    powerSliderGG = RandomFloat(-100, 100);
+    powerSliderGR = RandomFloat(-100, 100);
+    powerSliderGW = RandomFloat(-100, 100);
+    powerSliderGB = RandomFloat(-100, 100);
+
+    vSliderGG = RandomFloat(10, 500);
+    vSliderGR = RandomFloat(10, 500);
+    vSliderGW = RandomFloat(10, 500);
+    vSliderGB = RandomFloat(10, 500);
+
+    // RED
+    numberSliderR = RandomFloat(0, 3000);
+    powerSliderRR = RandomFloat(-100, 100);
+    powerSliderRG = RandomFloat(-100, 100);
+    powerSliderRW = RandomFloat(-100, 100);
+    powerSliderRB = RandomFloat(-100, 100);
+
+    vSliderRG = RandomFloat(10, 500);
+    vSliderRR = RandomFloat(10, 500);
+    vSliderRW = RandomFloat(10, 500);
+    vSliderRB = RandomFloat(10, 500);
+
+    // WHITE
+    numberSliderW = RandomFloat(0, 3000);
+    powerSliderWW = RandomFloat(-100, 100);
+    powerSliderWR = RandomFloat(-100, 100);
+    powerSliderWG = RandomFloat(-100, 100);
+    powerSliderWB = RandomFloat(-100, 100);
+
+    vSliderWG = RandomFloat(10, 500);
+    vSliderWR = RandomFloat(10, 500);
+    vSliderWW = RandomFloat(10, 500);
+    vSliderWB = RandomFloat(10, 500);
+
+    // BLUE
+    numberSliderB = RandomFloat(0, 3000);
+    powerSliderBB = RandomFloat(-100, 100);
+    powerSliderBW = RandomFloat(-100, 100);
+    powerSliderBR = RandomFloat(-100, 100);
+    powerSliderBG = RandomFloat(-100, 100);
+
+    vSliderBG = RandomFloat(10, 500);
+    vSliderBR = RandomFloat(10, 500);
+    vSliderBW = RandomFloat(10, 500);
+    vSliderBB = RandomFloat(10, 500);
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
     lastTime = clock();
@@ -107,6 +157,7 @@ void ofApp::setup(){
     gui.setWidthElements(400.0f);
 
     gui.add(resetButton.setup("START/RESET"));
+    gui.add(randomChoice.setup("RANDOM"));
     gui.add(boundsToggle.setup("Bounded", true));
     gui.add(modelToggle.setup("Show Model", true));
     gui.add(labelG.setup("GREEN:", "-"));
@@ -212,6 +263,7 @@ void ofApp::draw(){
     }
 
     if (resetButton) { restart(); }
+    if (randomChoice) { random(); restart(); }
     if (numberSliderW > 0) { Draw(&white); }
     if (numberSliderR > 0) { Draw(&red); }
     if (numberSliderG > 0) { Draw(&green); }
