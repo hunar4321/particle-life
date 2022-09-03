@@ -144,4 +144,6 @@ class ofApp : public ofBaseApp{
 		ofxLabel aboutL1;
 		ofxLabel aboutL2;
 		ofxLabel aboutL3;
+		
+		ofxLabel fps;
 };

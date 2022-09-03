@@ -22,6 +22,9 @@ float p4y = anchor + length + yshift;
 float rr = 15;
 int countThresh = 0;
 
+int cntFps = 0;
+clock_t now, lastTime, delta;
+
 std::vector<Point> green;
 std::vector<Point> red;
 std::vector<Point> white;
@@ -96,6 +99,7 @@ void ofApp::restart() {
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    lastTime = clock();
     ofSetWindowTitle("Particle Life - www.brainxyz.com");
     // Interface
     gui.setup("Settings");
@@ -154,6 +158,8 @@ void ofApp::setup(){
     gui.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
     gui.add(aboutL3.setup("Info:", "www.brainxyz.com "));
 
+    gui.add(fps.setup("FPS", "0"));
+
     restart();
 }
 
@@ -191,6 +197,19 @@ void ofApp::update(){
 void ofApp::draw(){
 
 	ofBackground(0);  // Clear the screen with a black color
+
+    //fps counter
+    cntFps++;
+    now = clock();
+    delta = now - lastTime;
+
+    if (delta >= 1000)
+    {
+        lastTime = now;
+
+        fps.setup("FPS", to_string((int)((1000 / (double)delta) * cntFps)));
+        cntFps = 0;
+    }
 
     if (resetButton) { restart(); }
     if (numberSliderW > 0) { Draw(&white); }
