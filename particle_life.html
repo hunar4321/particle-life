@@ -6,14 +6,14 @@
 
     <style>
       :root {
-        /* background-color: black; */
         color-scheme: dark;
       }
 
       body {
         display: flex;
-        justify-content: center;
-        align-items: center;
+        /*justify-content: center;*/
+        /*align-items: center;*/
+        position: relative;
       }
 
       #canvas {
@@ -21,22 +21,137 @@
         border-style: dashed;
         border-width: 5;
       }
+
+      .tablink {
+        background-color: #555;
+        color: white;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        font-size: 17px;
+        width: 20%;
+      }
+      .tablink:hover { background-color: #777; }
+
+      #controls {
+        color: black;
+        padding: 10px;
+        /*text-align: center;*/
+        background-color: #eaeaea;
+        position:absolute;
+        bottom:0;
+        right:0;
+        width:50%;
+      }
+      #tab_box {
+        position: absolute;
+        bottom:0;
+        width:40%;
+      }
+      .slider {
+        width: 50%;
+      }
+      .cbox {
+        text-align:center;
+        color: black;
+        border: 2px solid black;
+      }
     </style>
   </head>
 
   <body>
-    
-    <canvas id="canvas"></canvas>
+    <div id='tab_box'></div>
+    <div id='controls'>
+      Interaction strength:</br>
+      <div id='sliders1'></div><br/>
+      <div id='sliders2'>Radius:
+        <input class='slider' type="range" value="80" id="cR" min="1" max="100" oninput="changeSlider(this)">
+        <output></output><br>
+      </div>
+    </div>
+
+    <p><div><canvas id="canvas"></canvas></div></p>
 
     <script>   // governing parameters
       var seed = 91651088029;
-      const Colors = ['green', 'red', 'yellow', 'blue'];   // four particle types
+      const Colors = ['green', 'red', 'orange', 'blue'];   // four particle types
       // const Colors = ['green', 'red', 'yellow'];
       // const Colors = ['green', 'red'];
       let time_scale = 1.0;
-      var cutOff = 6400;       // interaction distance cut-off
       const viscosity = 0.7;   // speed-dampening
       const pulseDuration = 10;
+      const RULES = {};
+      const RADIUS = {};
+    </script>
+
+    <script>
+      var reload_rules = false;
+      let changeSlider = (elmnt) => {
+        var v = elmnt.valueAsNumber;
+        elmnt.nextElementSibling.value = TwoDigits(v);
+        reload_rules = true;
+      };
+      var sl = document.getElementById("sliders1");
+      var tb = document.getElementById("tab_box");
+      var sl_html = "";
+      var tb_html = "";
+      sl_html += "<table class='cbox'>";
+      for (var c in Colors) {
+        sl_html += "<tr><td style='width:20%;background-color:" + Colors[c] + ";'>" + Colors[c] + "</td>";
+        sl_html += "<td style='width:80%;'><input type='range' value='0' id='slider" + c + "' ";
+        sl_html += "min='-1' max='1' step='any' oninput='changeSlider(this)'>";
+        sl_html += "<output></output></td></tr>";
+
+        tb_html += "<button id='button" + c + "' ";
+        tb_html += "class='tablink' onclick='openControl(" + c + ")'>" + Colors[c] + "</button>";
+      }
+      sl_html += "</table>";
+
+      sl.innerHTML = sl_html;
+      tb.innerHTML = tb_html;
+
+      var last_group_id = 0;
+      function openControl(group_id) {
+        if (group_id < 0) group_id = last_group_id;
+        last_group_id = group_id;
+        var elmnt = document.getElementById("button" + group_id);
+        var color = Colors[group_id];
+        var t = document.getElementById("controls");
+        t.style.display = "block";
+
+        // Remove the background color of all tablinks/buttons
+        for (var t of document.getElementsByClassName("tablink")) {
+          t.style.backgroundColor = "";
+          t.style.border = "";
+        }
+
+        // Add the specific color to the button used to open the tab content
+        elmnt.style.backgroundColor = color;
+        elmnt.style.border = '1px solid gray';
+
+        if (RULES[color] != undefined) {
+          for (var c in Colors) {
+            let s = document.getElementById("slider" + c);
+            s.valueAsNumber = RULES[color][Colors[c]];
+            s.oninput.apply(s);  // triggers refresh
+          }
+        }
+        if (RADIUS[color] != undefined) {
+          let s = document.getElementById("cR");
+          s.valueAsNumber = RADIUS[color];
+          s.oninput.apply(s);
+        }
+      }
+      function reloadRules() {
+        const color = Colors[last_group_id];
+        for (var c in Colors) {
+          let s = document.getElementById("slider" + c);
+          RULES[color][Colors[c]] = s.valueAsNumber;
+        }
+        RADIUS[color] = document.getElementById("cR").valueAsNumber;
+      }
     </script>
 
     <script>
@@ -60,7 +175,6 @@
 
     <script>
       // Rules values
-      const RULES = {};
       function randomRules() {
         if (!isFinite(seed)) seed = 0xcafecafe;
         console.log("Seed=" + seed);
@@ -70,9 +184,12 @@
           for (var j of Colors) {
             RULES[i][j] = mulberry32() * 2 - 1;
           }
+          RADIUS[i] = 80;       // interaction distance cut-off
         }
         console.log(JSON.stringify(RULES));
+        console.log(JSON.stringify(RADIUS));
         time_scale = 1.;
+        openControl(-1);
       }
       function symmetricRules() {
         for (var i of Colors) {
@@ -84,11 +201,14 @@
           }
         }
         console.log(JSON.stringify(RULES));
+        console.log(JSON.stringify(RADIUS));
+        openControl(-1);
       }
       function printRules() {
         for (var i of Colors) {
           let str = "";
           for (var j of Colors) str += TwoDigits(RULES[i][j]) + " ";
+          str += " RADIUS: " + RADIUS[i];
           console.log(str);
         }
       }
@@ -99,11 +219,10 @@
       // Canvas
       const canvas = document.getElementById('canvas');
       
-      // Canvas Dimensions
       updateCanvasDimensions()
       function updateCanvasDimensions() {
-        canvas.width = window.innerWidth * 0.9;
-        canvas.height = window.innerHeight * 0.9;
+        canvas.width = window.innerWidth * 0.95;
+        canvas.height = window.innerHeight * 0.8;
       }
 
       const m = canvas.getContext("2d");
@@ -138,33 +257,26 @@
         for (var c of Colors) create(number_of_atoms_per_color, c);
       }
 
-
       // Apply Rules ( How atoms interact with each other )
       var pulse = 0;
       var pulse_x = 0, pulse_y = 0;
-      var total_v;
+      var total_v;  // average speed, so that we can scale the time_scale value
       const applyRules = () => {
         total_v = 0.;
-        for (let i = 0; i < atoms.length; i++) {
+        // Update speed vx/vy first
+        for (let a of atoms) {
           let fx = 0;
           let fy = 0;
-          const a = atoms[i];
-          for (let j = 0; j < atoms.length; j++) {
-            if (j !== i) {
-              const b = atoms[j];
-              const g = RULES[a.color][b.color];
-              if (g !== undefined) {
-                const dx = a.x - b.x;
-                const dy = a.y - b.y;
-                if (dx !== 0 || dy !== 0) {
-                  const d = dx * dx + dy * dy;
-                  if (d < cutOff) {
-                    const F = g / Math.sqrt(d);
-                    fx += F * dx;
-                    fy += F * dy;
-                  }
-                }
-              }
+          const r2 = RADIUS[a.color] * RADIUS[a.color];
+          for (let b of atoms) {
+            const g = RULES[a.color][b.color];
+            const dx = a.x - b.x;
+            const dy = a.y - b.y;
+            const d = dx * dx + dy * dy;
+            if (d > 0 && d < r2) {
+              const F = g / Math.sqrt(d);
+              fx += F * dx;
+              fy += F * dy;
             }
           }
           if (pulse != 0) {
@@ -172,7 +284,7 @@
             const dy = a.y - pulse_y;
             const d = dx * dx + dy * dy;
             if (d > 0) {
-              const F = 100. * pulse / d / time_scale;
+              const F = 100. * pulse / (d * time_scale);
               fx += F * dx;
               fy += F * dy;
             }
@@ -180,10 +292,13 @@
           const vmix = (1. - viscosity);
           a.vx = a.vx * vmix + fx * time_scale;
           a.vy = a.vy * vmix + fy * time_scale;
-          a.x += a.vx;
-          a.y += a.vy;
           total_v += Math.abs(a.vx);
           total_v += Math.abs(a.vy);
+        }
+        // update positions
+        for (let a of atoms) {
+          a.x += a.vx;
+          a.y += a.vy;
           
           // When Atoms touch or bypass canvas borders
           // X - axis
@@ -217,13 +332,11 @@
                    case 'KeyO': randomAtoms(500, true); break;
                    case 'BracketRight': time_scale *= 1.1; break;
                    case 'BracketLeft': time_scale /= 1.1; break;
-                   case 'Digit1': cutOff /= 1.1; break;
-                   case 'Digit2': cutOff *= 1.1; break;
                    case 'KeyM': printRules(); break;
                    default: console.log(e.code);
                  }
                });
-      window.addEventListener('click',
+      canvas.addEventListener('click',
         (e) => { pulse = pulseDuration;
                  pulse_x = e.clientX;
                  pulse_y = e.clientY; }
@@ -236,10 +349,14 @@
         // Update Canvas Dimensions - if screen size changed
         updateCanvasDimensions()
 
+        if (reload_rules) {  // slider changed
+          reloadRules();
+          reload_rules = false;
+        }
         applyRules();
         m.clearRect(0, 0, canvas.width, canvas.height);
         for (i = 0; i < atoms.length; ++i) {
-          draw(atoms[i].x, atoms[i].y, atoms[i].color, 2);
+          draw(atoms[i].x, atoms[i].y, atoms[i].color, 3);
         }
         if (show_fps) {
           var curT = Date.now();
@@ -251,9 +368,8 @@
           m.fillStyle ="white";
           m.font = '32px serif';
           m.fillText(TwoDigits(fps) + " FPS", 10, 36);
-          m.fillText("dt: " + TwoDigits(time_scale) + "  Cutoff:" + cutOff, 10, 96);
-          m.fillText("Atoms: " + atoms.length, 10, 130);
-          m.fillText("total_v: " + TwoDigits(total_v), 10, 200);
+          m.fillText("dt: " + TwoDigits(time_scale) + " Atoms: " + atoms.length, 10, 96);
+          m.fillText("total_v: " + TwoDigits(total_v), 10, 130);
         }
         seed = seed + 1;;
         if (pulse > 0) pulse -= 1;
@@ -262,6 +378,7 @@
         if (time_scale > 1.1) time_scale /= 1.01;
         requestAnimationFrame(update);
       };
+
     </script>
 
   </body>
