@@ -1,5 +1,3 @@
-// Author:  Hunar Ahmad Abdulrahman @ brainxyz.com 2022
-
 #include "ofApp.h"
 
 #include <iostream>
@@ -21,6 +19,9 @@ float p4x = anchor + xshift;
 float p4y = anchor + length + yshift;
 float rr = 15;
 int countThresh = 0;
+
+int cntFps = 0;
+clock_t now, lastTime, delta;
 
 std::vector<Point> green;
 std::vector<Point> red;
@@ -78,6 +79,7 @@ void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, 
         p1.y += p1.vy;
 
         if (boundsToggle) {
+	//not good enough! Need fixing
             if ((p1.x >= 1920 - 10) || (p1.x <= 550 + 10)) {p1.vx *= -1;}
             if ((p1.y >= 1024 - 10) || (p1.y <= 0 + 10)) {p1.vy *= -1;}
         }
@@ -94,15 +96,67 @@ void ofApp::restart() {
     if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, 100, 100, 250); }
 }
 
+void ofApp::random() {
+    // GREEN
+    //numberSliderG = RandomFloat(0, 3000);
+    powerSliderGG = RandomFloat(-100, 100);
+    powerSliderGR = RandomFloat(-100, 100);
+    powerSliderGW = RandomFloat(-100, 100);
+    powerSliderGB = RandomFloat(-100, 100);
+
+    vSliderGG = RandomFloat(10, 500);
+    vSliderGR = RandomFloat(10, 500);
+    vSliderGW = RandomFloat(10, 500);
+    vSliderGB = RandomFloat(10, 500);
+
+    // RED
+    //numberSliderR = RandomFloat(0, 3000);
+    powerSliderRR = RandomFloat(-100, 100);
+    powerSliderRG = RandomFloat(-100, 100);
+    powerSliderRW = RandomFloat(-100, 100);
+    powerSliderRB = RandomFloat(-100, 100);
+
+    vSliderRG = RandomFloat(10, 500);
+    vSliderRR = RandomFloat(10, 500);
+    vSliderRW = RandomFloat(10, 500);
+    vSliderRB = RandomFloat(10, 500);
+
+    // WHITE
+   // numberSliderW = RandomFloat(0, 3000);
+    powerSliderWW = RandomFloat(-100, 100);
+    powerSliderWR = RandomFloat(-100, 100);
+    powerSliderWG = RandomFloat(-100, 100);
+    powerSliderWB = RandomFloat(-100, 100);
+
+    vSliderWG = RandomFloat(10, 500);
+    vSliderWR = RandomFloat(10, 500);
+    vSliderWW = RandomFloat(10, 500);
+    vSliderWB = RandomFloat(10, 500);
+
+    // BLUE
+    //numberSliderB = RandomFloat(0, 3000);
+    powerSliderBB = RandomFloat(-100, 100);
+    powerSliderBW = RandomFloat(-100, 100);
+    powerSliderBR = RandomFloat(-100, 100);
+    powerSliderBG = RandomFloat(-100, 100);
+
+    vSliderBG = RandomFloat(10, 500);
+    vSliderBR = RandomFloat(10, 500);
+    vSliderBW = RandomFloat(10, 500);
+    vSliderBB = RandomFloat(10, 500);
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
+    lastTime = clock();
     ofSetWindowTitle("Particle Life - www.brainxyz.com");
     // Interface
     gui.setup("Settings");
     gui.loadFont("Arial", 16);
     gui.setWidthElements(400.0f);
 
-    gui.add(resetButton.setup("START/RESET"));
+    gui.add(resetButton.setup("START/RESTART"));
+    gui.add(randomChoice.setup("Randomize"));
     gui.add(boundsToggle.setup("Bounded", true));
     gui.add(modelToggle.setup("Show Model", true));
     gui.add(labelG.setup("GREEN:", "-"));
@@ -154,6 +208,8 @@ void ofApp::setup(){
     gui.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
     gui.add(aboutL3.setup("Info:", "www.brainxyz.com "));
 
+    gui.add(fps.setup("FPS", "0"));
+
     restart();
 }
 
@@ -192,7 +248,21 @@ void ofApp::draw(){
 
 	ofBackground(0);  // Clear the screen with a black color
 
+    //fps counter
+    cntFps++;
+    now = clock();
+    delta = now - lastTime;
+
+    if (delta >= 1000)
+    {
+        lastTime = now;
+
+        fps.setup("FPS", to_string((int)((1000 / (double)delta) * cntFps)));
+        cntFps = 0;
+    }
+
     if (resetButton) { restart(); }
+    if (randomChoice) { random(); restart(); }
     if (numberSliderW > 0) { Draw(&white); }
     if (numberSliderR > 0) { Draw(&red); }
     if (numberSliderG > 0) { Draw(&green); }

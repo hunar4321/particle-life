@@ -33,6 +33,7 @@ class ofApp : public ofBaseApp{
 		void update();
 		void draw();
 		void restart();
+		void random();
 		void Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float m, float radius);
 
 		ofxPanel gui;
@@ -144,4 +145,6 @@ class ofApp : public ofBaseApp{
 		ofxLabel aboutL1;
 		ofxLabel aboutL2;
 		ofxLabel aboutL3;
+		
+		ofxLabel fps;
 };
