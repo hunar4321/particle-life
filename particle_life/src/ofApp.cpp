@@ -1,5 +1,3 @@
-// Author:  Hunar Ahmad Abdulrahman @ brainxyz.com 2022
-
 #include "ofApp.h"
 
 #include <iostream>
@@ -81,6 +79,7 @@ void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, 
         p1.y += p1.vy;
 
         if (boundsToggle) {
+	//not good enough! Need fixing
             if ((p1.x >= 1920 - 10) || (p1.x <= 550 + 10)) {p1.vx *= -1;}
             if ((p1.y >= 1024 - 10) || (p1.y <= 0 + 10)) {p1.vy *= -1;}
         }
@@ -99,7 +98,7 @@ void ofApp::restart() {
 
 void ofApp::random() {
     // GREEN
-    numberSliderG = RandomFloat(0, 3000);
+    //numberSliderG = RandomFloat(0, 3000);
     powerSliderGG = RandomFloat(-100, 100);
     powerSliderGR = RandomFloat(-100, 100);
     powerSliderGW = RandomFloat(-100, 100);
@@ -111,7 +110,7 @@ void ofApp::random() {
     vSliderGB = RandomFloat(10, 500);
 
     // RED
-    numberSliderR = RandomFloat(0, 3000);
+    //numberSliderR = RandomFloat(0, 3000);
     powerSliderRR = RandomFloat(-100, 100);
     powerSliderRG = RandomFloat(-100, 100);
     powerSliderRW = RandomFloat(-100, 100);
@@ -123,7 +122,7 @@ void ofApp::random() {
     vSliderRB = RandomFloat(10, 500);
 
     // WHITE
-    numberSliderW = RandomFloat(0, 3000);
+   // numberSliderW = RandomFloat(0, 3000);
     powerSliderWW = RandomFloat(-100, 100);
     powerSliderWR = RandomFloat(-100, 100);
     powerSliderWG = RandomFloat(-100, 100);
@@ -135,7 +134,7 @@ void ofApp::random() {
     vSliderWB = RandomFloat(10, 500);
 
     // BLUE
-    numberSliderB = RandomFloat(0, 3000);
+    //numberSliderB = RandomFloat(0, 3000);
     powerSliderBB = RandomFloat(-100, 100);
     powerSliderBW = RandomFloat(-100, 100);
     powerSliderBR = RandomFloat(-100, 100);
@@ -156,8 +155,8 @@ void ofApp::setup(){
     gui.loadFont("Arial", 16);
     gui.setWidthElements(400.0f);
 
-    gui.add(resetButton.setup("START/RESET"));
-    gui.add(randomChoice.setup("RANDOM"));
+    gui.add(resetButton.setup("START/RESTART"));
+    gui.add(randomChoice.setup("Randomize"));
     gui.add(boundsToggle.setup("Bounded", true));
     gui.add(modelToggle.setup("Show Model", true));
     gui.add(labelG.setup("GREEN:", "-"));
