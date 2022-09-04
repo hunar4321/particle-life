@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include <fstream>
 
 struct Point {
     //Position
@@ -41,6 +42,8 @@ class ofApp : public ofBaseApp{
 		void draw();
 		void restart();
 		void random();
+		void saveSettings();
+		void loadSettings();
 		void Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float m, float radius);
 
 		ofxPanel gui;
@@ -61,6 +64,7 @@ class ofApp : public ofBaseApp{
 		int pnumberSliderW = 1000;
 		int pnumberSliderB = 1000;
 
+		ofxFloatSlider viscoSlider;
 		ofxFloatSlider effectVariance;
 		ofxFloatSlider radiusVariance;
 
@@ -153,5 +157,13 @@ class ofApp : public ofBaseApp{
 		ofxLabel aboutL2;
 		ofxLabel aboutL3;
 
+		// simulation bounds
+		float boundWidth = 1600;
+		float boundHeight = 900;
+	
+		float viscosity = 0.5;
+		float forceVariance = 0.8;
+		float radiusVariance = 0.6;
+	
 		ofxLabel fps;
 };
