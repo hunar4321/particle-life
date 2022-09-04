@@ -52,15 +52,15 @@
             cutOff: 6400, // interaction distance cut-off
             viscosity: 0.7, // speed-dampening
             pulseDuration: 10,
-            'Reset': () => {
+            reset: () => {
                 randomAtoms(settings.atoms.count, true)
             },
-            'Random Rules': () => {
+            randomRules: () => {
                 randomRules()
                 randomAtoms(settings.atoms.count, true)
                 updateGUIDisplay()
             },
-            'Symmetric Rules': () => {
+            symmetricRules: () => {
                 symmetricRules()
                 randomAtoms(settings.atoms.count, true)
                 updateGUIDisplay()
@@ -82,14 +82,21 @@
             settings.gui.destroy()
             setupGUI()
         }
+        Object.defineProperty(String.prototype, 'capitalise', {
+            value: function() {
+                return this.charAt(0).toUpperCase() + this.slice(1);
+            },
+            enumerable: false
+        })
+
         // Build GUI
         const setupGUI = () => {
             settings.gui = new lil.GUI()
             // Configs
             const configFolder = settings.gui.addFolder('Config')
-            configFolder.add(settings, 'Reset')
-            configFolder.add(settings, 'Random Rules')
-            configFolder.add(settings, 'Symmetric Rules')
+            configFolder.add(settings, 'reset').name('Reset')
+            configFolder.add(settings, 'randomRules').name('Random Rules')
+            configFolder.add(settings, 'symmetricRules').name('Symmetric Rules')
             configFolder.add(settings, 'seed').name('Seed').listen()
             configFolder.add(settings, 'fps').name('FPS - (Live)').listen().disable()
             configFolder.add(settings.atoms, 'count', 1, 1000, 1).name('Atoms per-color').listen().onFinishChange(v => {
@@ -102,15 +109,15 @@
             // Drawings
             const drawingsFolder = settings.gui.addFolder('Drawings')
             drawingsFolder.add(settings.atoms, 'radius', 1, 10, 0.5).name('Radius').listen()
-            drawingsFolder.add(settings.drawings, 'circle').name('Circle shape').listen()
+            drawingsFolder.add(settings.drawings, 'circle').name('Circle Shape').listen()
             drawingsFolder.add(settings.drawings, 'lines').name('Draw Lines').listen()
             drawingsFolder.add(settings.drawings.background, 'active').name('Background Color').listen()
             drawingsFolder.addColor(settings.drawings.background, 'color').name('Background Color').listen()
             // Colors
             for (const atomColor of settings.colors) {
-                const colorFolder = settings.gui.addFolder(`Rules: ${atomColor}`)
+                const colorFolder = settings.gui.addFolder(`Rules: ${atomColor.capitalise()}`)
                 for (const ruleColor of settings.colors) {
-                    colorFolder.add(settings.rules[atomColor], ruleColor, -1, 1, 0.001).listen().onFinishChange(v => {
+                    colorFolder.add(settings.rules[atomColor], ruleColor, -1, 1, 0.001).name(`${atomColor.capitalise()} x ${ruleColor.capitalise()}`).listen().onFinishChange(v => {
                         flattenRules()
                     })
                 }
@@ -234,7 +241,7 @@
             m.strokeStyle = m.fillStyle = color;
             fill ? m.fill() : m.stroke()
         };
-    
+
         // Draw a line between two atoms
         function DrawLineBetweenAtoms(ax, ay, bx, by, color) {
             m.beginPath();
@@ -255,7 +262,7 @@
             pulse_y = 0;
 
 
-        var total_v;  // global velocity as a estimate of on-screen activity
+        var total_v; // global velocity as a estimate of on-screen activity
 
         // Apply Rules ( How atoms interact with each other )
         const applyRules = () => {
