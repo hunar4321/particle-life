@@ -217,8 +217,7 @@
             m.beginPath();
             m.arc(x, y, radius, 0 * Math.PI, 2 * Math.PI); // x, y, radius, ArcStart, ArcEnd
             m.closePath();
-            m.strokeStyle = color;
-            m.fillStyle = color;
+            m.strokeStyle = m.fillStyle = color;
             fill ? m.fill() : m.stroke()
         };
     
