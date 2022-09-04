@@ -51,6 +51,8 @@ class ofApp : public ofBaseApp{
 		ofxButton resetButton;
 		ofxButton selectButton;
 		ofxButton randomChoice;
+		ofxButton save;
+		ofxButton load;
 		ofxToggle boundsToggle;
 		ofxToggle modelToggle;
 
@@ -65,8 +67,6 @@ class ofApp : public ofBaseApp{
 		int pnumberSliderB = 1000;
 
 		ofxFloatSlider viscoSlider;
-		ofxFloatSlider effectVariance;
-		ofxFloatSlider radiusVariance;
 
 		ofxFloatSlider powerSliderRR;
 		ofxFloatSlider powerSliderRG;
