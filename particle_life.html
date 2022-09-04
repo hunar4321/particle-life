@@ -33,7 +33,11 @@
         const settings = {
             seed: 91651088029,
             fps: 0,
-            atomsPerColor: 500,
+            atoms: {
+                count: 500, // Per Color
+                radius: 1
+            },
+            drawLines: false,
             rules: {},
             rulesArray: [],
             colors: ['green', 'red', 'yellow', 'blue'],
@@ -42,16 +46,16 @@
             viscosity: 0.7, // speed-dampening
             pulseDuration: 10,
             'Reset': () => {
-                randomAtoms(settings.atomsPerColor, true)
+                randomAtoms(settings.atoms.count, true)
             },
             'Random Rules': () => {
                 randomRules()
-                randomAtoms(settings.atomsPerColor, true)
+                randomAtoms(settings.atoms.count, true)
                 updateGUIDisplay()
             },
             'Symmetric Rules': () => {
                 symmetricRules()
-                randomAtoms(settings.atomsPerColor, true)
+                randomAtoms(settings.atoms.count, true)
                 updateGUIDisplay()
             },
             gui: null,
@@ -79,18 +83,20 @@
             configFolder.add(settings, 'Symmetric Rules')
             configFolder.add(settings, 'seed').listen()
             configFolder.add(settings, 'fps').listen().disable()
-            configFolder.add(settings, 'atomsPerColor', 1, 1000, 1).listen().onFinishChange(v => {
+            configFolder.add(settings.atoms, 'count', 1, 1000, 1).listen().onFinishChange(v => {
                 randomAtoms(v, true)
             })
+            configFolder.add(settings.atoms, 'radius', 1, 10, 0.5).listen()
             configFolder.add(settings, 'time_scale', 0.1, 5, 0.01).listen()
             configFolder.add(settings, 'cutOff', 1, 10000, 50).listen()
             configFolder.add(settings, 'viscosity', 0.1, 2, 0.1).listen()
             configFolder.add(settings, 'pulseDuration', 1, 100, 1).listen()
+            configFolder.add(settings, 'drawLines').listen()
 
-            for (const c of settings.colors) {
-                const colorFolder = settings.gui.addFolder(`Rules: ${c}`)
-                for (const c2 of settings.colors) {
-                    colorFolder.add(settings.rules[c], c2, -1, 1, 0.001).listen().onFinishChange(v => {
+            for (const atomColor of settings.colors) {
+                const colorFolder = settings.gui.addFolder(`Rules: ${atomColor}`)
+                for (const ruleColor of settings.colors) {
+                    colorFolder.add(settings.rules[atomColor], ruleColor, -1, 1, 0.001).listen().onFinishChange(v => {
                         flattenRules()
                     })
                 }
@@ -200,10 +206,32 @@
         // Canvas
         const canvas = document.getElementById('canvas');
         const m = canvas.getContext("2d");
-        const draw = (x, y, c, s) => {
-            m.fillStyle = c;
-            m.fillRect(x, y, s, s);
+        // Draw a square
+        const drawSquare = (x, y, color, width, height) => {
+            m.fillStyle = color;
+            m.fillRect(x, y, width, (height || width));
         }
+
+        // Draw a circl
+        function drawCircle(x, y, color, radius = 1, fill = 1) {
+            m.beginPath();
+            m.arc(x, y, radius, 0 * Math.PI, 2 * Math.PI); // x, y, radius, ArcStart, ArcEnd
+            m.closePath();
+            m.strokeStyle = color;
+            m.fillStyle = color;
+            fill ? m.fill() : m.stroke()
+        };
+    
+        // Draw a line between two atoms
+        function DrawLineBetweenAtoms(ax, ay, bx, by, color) {
+            m.beginPath();
+            m.moveTo(ax, ay);
+            m.lineTo(bx, by);
+            m.closePath();
+            m.strokeStyle = color;
+            m.stroke();
+        };
+
         // Canvas Dimensions
         updateCanvasDimensions()
 
@@ -234,6 +262,9 @@
                             const F = g / Math.sqrt(d);
                             fx += F * dx;
                             fy += F * dy;
+
+                            // Draw lines between atoms that are effecting each other.
+                            if (settings.drawLines) DrawLineBetweenAtoms(a[0], a[1], b[0], b[1], settings.colors[b[4]]);
                         }
                     }
                 }
@@ -288,7 +319,7 @@
 
         // Generate Atoms
         const atoms = []
-        randomAtoms(settings.atomsPerColor, true)
+        randomAtoms(settings.atoms.count, true)
 
 
         setupClicks()
@@ -303,12 +334,17 @@
         function update() {
             // Update Canvas Dimensions - if screen size changed
             updateCanvasDimensions()
-
-            applyRules();
+            // Clear canvas
             m.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw a black background
+            drawSquare(0, 0, "black", canvas.width, canvas.height);
+            // Appy Rules
+            applyRules();
+            // Draw Atoms
             for (let a of atoms) {
-                draw(a[0], a[1], settings.colors[a[4]], 2);
+                drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius);
             }
+
             updateParams();
 
             // const inRange = (a) => 0 <= a[0] && a[0] < canvas.width && 0 <= a[1] && a[1] < canvas.height
