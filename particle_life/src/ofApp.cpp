@@ -20,27 +20,35 @@ float p4y = anchor + length + yshift;
 float rr = 15;
 int countThresh = 0;
 
+//Simulation parameters
 int cntFps = 0;
 clock_t now, lastTime, delta;
 
+//Particle groups by color
 std::vector<Point> green;
 std::vector<Point> red;
 std::vector<Point> white;
 std::vector<Point> blue;
 
+//Get random float in range <a,b>
 float RandomFloat(float a, float b) {
     float random = ((float)rand()) / (float)RAND_MAX;
     float diff = b - a;
     float r = random * diff;
     return a + r;
 }
+
+//Draw all points from given group
 void Draw(std::vector<Point>* points) {
     for (int i = 0; i < points->size(); i++) {
         (* points)[i].Draw();
     }
 }
+
+//Get random int in range <mn,mx>
 int Random(int mn, int mx) { return rand() % (mx - mn) + mn; }
 
+//Generate a number of single colored points randomly distributed on canvas
 std::vector<Point> CreatePoints(int num, int r, int g, int b) {
     std::vector<Point> points;
     for (int i = 0; i < num; i++) {
@@ -51,33 +59,44 @@ std::vector<Point> CreatePoints(int num, int r, int g, int b) {
     return points;
 }
 
-// Interaction between 2 particle groups
+//Interaction between 2 particle groups
 void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float G, float radius) {
-    
+
+    //Gravity coefficient
     float g = G / -100;
 
     omp_set_num_threads(4);
-    #pragma omp parallel for 
+    #pragma omp parallel for
+    //Loop through first group of points
     for (int i = 0; i < Group1->size(); i++) {
         auto p1 = (*Group1)[i];
+		//Force acting on particle
         float fx = 0;
         float fy = 0;
+		//Loop through second group of points
         for (int j = 0; j < Group2->size(); j++) {
             auto p2 = (*Group2)[j];
+			//Calculate the ddistance between points using Pythagorean theorem
             auto dx = p1.x - p2.x;
             auto dy = p1.y - p2.y;
             auto r = std::sqrt(dx * dx + dy * dy);
+			
+			//Calculate the force in given bounds. 
             if (r < radius && r > 0) {
                 fx += (dx / r);
                 fy += (dy / r);
             }
         }
 
+		//Calculate new velocity
         p1.vx = (p1.vx + (fx * g)) * 0.5;
         p1.vy = (p1.vy + (fy * g)) * 0.5;
+		//Update position based on velocity
         p1.x += p1.vx;
         p1.y += p1.vy;
 
+
+		//Checking for canvas bounds
         if (boundsToggle) {
 	//not good enough! Need fixing
             if ((p1.x >= 1920 - 10) || (p1.x <= 550 + 10)) {p1.vx *= -1;}
@@ -86,9 +105,10 @@ void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, 
 
         (*Group1)[i] = p1;
     }
-   
+
 }
 
+//Generate new sets of points
 void ofApp::restart() {
     if (numberSliderG > 0) { green = CreatePoints(numberSliderR, 100, 250, 10); }
     if (numberSliderR > 0) { red = CreatePoints(numberSliderG, 250, 10, 100); }
@@ -96,6 +116,8 @@ void ofApp::restart() {
     if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, 100, 100, 250); }
 }
 
+
+//Generate initial simulation parameters
 void ofApp::random() {
     // GREEN
     //numberSliderG = RandomFloat(0, 3000);
@@ -146,7 +168,7 @@ void ofApp::random() {
     vSliderBB = RandomFloat(10, 500);
 }
 
-//--------------------------------------------------------------
+//------------------------------GUI initialization------------------------------
 void ofApp::setup(){
     lastTime = clock();
     ofSetWindowTitle("Particle Life - www.brainxyz.com");
@@ -213,7 +235,7 @@ void ofApp::setup(){
     restart();
 }
 
-//--------------------------------------------------------------
+//------------------------------Update simulation with sliders values------------------------------
 void ofApp::update(){
 
     if (numberSliderG > 0) {
@@ -253,6 +275,7 @@ void ofApp::draw(){
     now = clock();
     delta = now - lastTime;
 
+	//Time step
     if (delta >= 1000)
     {
         lastTime = now;
@@ -261,6 +284,7 @@ void ofApp::draw(){
         cntFps = 0;
     }
 
+	//Check for GUI interaction
     if (resetButton) { restart(); }
     if (randomChoice) { random(); restart(); }
     if (numberSliderW > 0) { Draw(&white); }
@@ -268,6 +292,8 @@ void ofApp::draw(){
     if (numberSliderG > 0) { Draw(&green); }
     if (numberSliderB > 0) { Draw(&blue); }
 
+
+	//Draw GUI
     if (modelToggle == true) {
 
         ofSetColor(0, 0, 0);
