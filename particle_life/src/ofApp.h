@@ -4,13 +4,19 @@
 #include "ofxGui.h"
 
 struct Point {
+    //Position
 	float x = 0;
 	float y = 0;
+
+	//Velocity
 	float vx = 0;
 	float vy = 0;
+
+	//Color
 	int r = 0;
 	int g = 0;
 	int b = 0;
+
 	Point(int _x, int _y, int _r, int _g, int _b) {
 		x = _x;
 		y = _y;
@@ -20,12 +26,13 @@ struct Point {
 	}
 
 	void Draw() {
-		ofSetColor(r, g, b);  // rgb color
-		ofDrawCircle((int)x, (int)y, 3); // x, y position and size of the point
+		ofSetColor(r, g, b);  //set particle color
+		ofDrawCircle((int)x, (int)y, 3); //draw a point at x,y coordinates, the size of a 3 pixels
 	}
 };
 
 
+//---------------------------------------------CONFIGURE GUI---------------------------------------------//
 class ofApp : public ofBaseApp{
 
 	public:
@@ -145,6 +152,6 @@ class ofApp : public ofBaseApp{
 		ofxLabel aboutL1;
 		ofxLabel aboutL2;
 		ofxLabel aboutL3;
-		
+
 		ofxLabel fps;
 };
