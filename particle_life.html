@@ -54,11 +54,11 @@
                 randomAtoms(settings.atomsPerColor, true)
                 updateGUIDisplay()
             },
-            gui: null
+            gui: null,
         }
 
         const setupClicks = () => {
-            window.addEventListener('click',
+            canvas.addEventListener('click',
                 (e) => {
                     pulse = settings.pulseDuration;
                     pulse_x = e.clientX;
@@ -82,8 +82,8 @@
             configFolder.add(settings, 'atomsPerColor', 1, 1000, 1).listen().onFinishChange(v => {
                 randomAtoms(v, true)
             })
-            configFolder.add(settings, 'time_scale', 1, 10, 0.1).listen()
-            configFolder.add(settings, 'cutOff', 5000, 200000, 1000).listen()
+            configFolder.add(settings, 'time_scale', 0.1, 5, 0.01).listen()
+            configFolder.add(settings, 'cutOff', 1, 10000, 50).listen()
             configFolder.add(settings, 'viscosity', 0.1, 2, 0.1).listen()
             configFolder.add(settings, 'pulseDuration', 1, 100, 1).listen()
 
@@ -130,7 +130,6 @@
                 }
             }
             console.log(JSON.stringify(settings.rules));
-            // settings.time_scale = 1.;
             flattenRules()
         }
 
@@ -209,15 +208,15 @@
         updateCanvasDimensions()
 
 
-
-
-
-        // Apply Rules ( How atoms interact with each other )
+        // Params for click-based pulse event
         var pulse = 0;
         var pulse_x = 0,
             pulse_y = 0;
-        var total_v;
 
+
+        var total_v;  // global velocity as a estimate of on-screen activity
+
+        // Apply Rules ( How atoms interact with each other )
         const applyRules = () => {
             total_v = 0.;
             for (let i = 0; i < atoms.length; i++) {
@@ -307,9 +306,20 @@
 
             applyRules();
             m.clearRect(0, 0, canvas.width, canvas.height);
-            for (i = 0; i < atoms.length; ++i) {
-                draw(atoms[i][0], atoms[i][1], settings.colors[atoms[i][4]], 2);
+            for (let a of atoms) {
+                draw(a[0], a[1], settings.colors[a[4]], 2);
             }
+            updateParams();
+
+            // const inRange = (a) => 0 <= a[0] && a[0] < canvas.width && 0 <= a[1] && a[1] < canvas.height
+            // console.log('inRange', atoms.filter(inRange).length)
+
+            requestAnimationFrame(update);
+        };
+
+        // post-frame stats and updates
+        function updateParams() {
+            // record FPS
             var curT = Date.now();
             if (curT > lastT) {
                 const new_fps = 1000. / (curT - lastT);
@@ -317,12 +327,13 @@
                 lastT = curT;
             }
 
-            if (pulse > 0) pulse -= 1;
-            // const inRange = (a) => 0 <= a[0] && a[0] < canvas.width && 0 <= a[1] && a[1] < canvas.height
-            // console.log('inRange', atoms.filter(inRange).length)
+            // adapt time_scale based on activity
+            if (total_v > 30. && settings.time_scale > 5.) settings.time_scale /= 1.1;
+            if (settings.time_scale < 0.9) settings.time_scale *= 1.01;
+            if (settings.time_scale > 1.1) settings.time_scale /= 1.01;
 
-            requestAnimationFrame(update);
-        };
+            if (pulse > 0) pulse -= 1;
+        }
     </script>
 
 </body>
