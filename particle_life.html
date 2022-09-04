@@ -220,25 +220,21 @@
 
         const applyRules = () => {
             total_v = 0.;
-            for (let i = 0; i < atoms.length; i++) {
+            // update velocity first
+            for (var a of atoms) {
                 let fx = 0;
                 let fy = 0;
-                const a = atoms[i];
-                for (let j = 0; j < atoms.length; j++) {
-                    if (j !== i) {
-                        const b = atoms[j];
-                        const g = settings.rulesArray[a[4]][b[4]];
-                        if (g !== undefined) {
-                            const dx = a[0] - b[0];
-                            const dy = a[1] - b[1];
-                            if (dx !== 0 || dy !== 0) {
-                                const d = dx * dx + dy * dy;
-                                if (d < settings.cutOff) {
-                                    const F = g / Math.sqrt(d);
-                                    fx += F * dx;
-                                    fy += F * dy;
-                                }
-                            }
+                const r2 = settings.cutOff;
+                for (var b of atoms) {
+                    const g = settings.rulesArray[a[4]][b[4]];
+                    const dx = a[0] - b[0];
+                    const dy = a[1] - b[1];
+                    if (dx !== 0 || dy !== 0) {
+                        const d = dx * dx + dy * dy;
+                        if (d < r2) {
+                            const F = g / Math.sqrt(d);
+                            fx += F * dx;
+                            fy += F * dy;
                         }
                     }
                 }
@@ -247,7 +243,7 @@
                     const dy = a[1] - pulse_y;
                     const d = dx * dx + dy * dy;
                     if (d > 0) {
-                        const F = 100. * pulse / d / settings.time_scale;
+                        const F = 100. * pulse / (d * settings.time_scale);
                         fx += F * dx;
                         fy += F * dy;
                     }
@@ -255,6 +251,13 @@
                 const vmix = (1. - settings.viscosity);
                 a[2] = a[2] * vmix + fx * settings.time_scale;
                 a[3] = a[3] * vmix + fy * settings.time_scale;
+                // record typical activity, so that we can scale the
+                // time_scale later accordingly
+                total_v += Math.abs(a[2]);
+                total_v += Math.abs(a[3]);
+            }
+            // update positions now
+            for (var a of atoms) {
                 a[0] += a[2]
                 a[1] += a[3]
 
@@ -276,9 +279,6 @@
                     a[3] *= -1;
                 }
 
-
-                total_v += Math.abs(a[2]);
-                total_v += Math.abs(a[3]);
             }
             total_v /= atoms.length;
         };
