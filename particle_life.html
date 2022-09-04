@@ -37,7 +37,10 @@
                 count: 500, // Per Color
                 radius: 1
             },
-            drawLines: false,
+            drawings: { // Drawing options can be expensive on performance
+                lines: false, // draw lines between atoms that arr effecting each other
+                circle: false // draw atoms as circles
+            },
             rules: {},
             rulesArray: [],
             colors: ['green', 'red', 'yellow', 'blue'],
@@ -75,8 +78,10 @@
             settings.gui.destroy()
             setupGUI()
         }
+        // Build GUI
         const setupGUI = () => {
             settings.gui = new lil.GUI()
+            // Configs
             const configFolder = settings.gui.addFolder('Config')
             configFolder.add(settings, 'Reset')
             configFolder.add(settings, 'Random Rules')
@@ -86,13 +91,16 @@
             configFolder.add(settings.atoms, 'count', 1, 1000, 1).listen().onFinishChange(v => {
                 randomAtoms(v, true)
             })
-            configFolder.add(settings.atoms, 'radius', 1, 10, 0.5).listen()
             configFolder.add(settings, 'time_scale', 0.1, 5, 0.01).listen()
             configFolder.add(settings, 'cutOff', 1, 10000, 50).listen()
             configFolder.add(settings, 'viscosity', 0.1, 2, 0.1).listen()
             configFolder.add(settings, 'pulseDuration', 1, 100, 1).listen()
-            configFolder.add(settings, 'drawLines').listen()
-
+            // Drawings
+            const drawingsFolder = settings.gui.addFolder('Drawings')
+            drawingsFolder.add(settings.atoms, 'radius', 1, 10, 0.5).listen()
+            drawingsFolder.add(settings.drawings, 'circle').listen()
+            drawingsFolder.add(settings.drawings, 'lines').listen()
+            // Colors
             for (const atomColor of settings.colors) {
                 const colorFolder = settings.gui.addFolder(`Rules: ${atomColor}`)
                 for (const ruleColor of settings.colors) {
@@ -263,7 +271,7 @@
                             fy += F * dy;
 
                             // Draw lines between atoms that are effecting each other.
-                            if (settings.drawLines) DrawLineBetweenAtoms(a[0], a[1], b[0], b[1], settings.colors[b[4]]);
+                            if (settings.drawings.lines) DrawLineBetweenAtoms(a[0], a[1], b[0], b[1], settings.colors[b[4]]);
                         }
                     }
                 }
@@ -341,7 +349,8 @@
             applyRules();
             // Draw Atoms
             for (let a of atoms) {
-                drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius);
+                if (settings.drawings.circle) drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius)
+                else drawSquare(a[0] - settings.atoms.radius, a[1] - settings.atoms.radius, settings.colors[a[4]], settings.atoms.radius * 2)
             }
 
             updateParams();
