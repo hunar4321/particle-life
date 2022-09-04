@@ -39,7 +39,11 @@
             },
             drawings: { // Drawing options can be expensive on performance
                 lines: false, // draw lines between atoms that arr effecting each other
-                circle: false // draw atoms as circles
+                circle: false, // draw atoms as circles
+                background: {
+                    active: false,
+                    color: 'black'
+                },
             },
             rules: {},
             rulesArray: [],
@@ -100,6 +104,8 @@
             drawingsFolder.add(settings.atoms, 'radius', 1, 10, 0.5).listen()
             drawingsFolder.add(settings.drawings, 'circle').listen()
             drawingsFolder.add(settings.drawings, 'lines').listen()
+            drawingsFolder.add(settings.drawings.background, 'active').name('Background Color').listen()
+            drawingsFolder.addColor(settings.drawings.background, 'color').name('Background Color').listen()
             // Colors
             for (const atomColor of settings.colors) {
                 const colorFolder = settings.gui.addFolder(`Rules: ${atomColor}`)
@@ -344,7 +350,7 @@
             // Clear canvas
             m.clearRect(0, 0, canvas.width, canvas.height);
             // Draw a black background
-            drawSquare(0, 0, "black", canvas.width, canvas.height);
+            if (settings.drawings.background.active) drawSquare(0, 0, settings.drawings.background.color, canvas.width, canvas.height);
             // Appy Rules
             applyRules();
             // Draw Atoms
