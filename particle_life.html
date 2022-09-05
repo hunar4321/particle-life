@@ -52,8 +52,8 @@
             rulesArray: [],
             radii: {},
             radiiArray: [],
-            colors: ['green', 'red', 'orange', 'cyan'],
-            num_colors: 4,
+            colors: [],
+            numColors: 4,
             time_scale: 1.0,
             viscosity: 0.7, // speed-dampening (can be >1 !)
             pulseDuration: 10,
@@ -121,12 +121,9 @@
             configFolder.add(settings, 'reset').name('Reset')
             configFolder.add(settings, 'randomRules').name('Random Rules')
             configFolder.add(settings, 'symmetricRules').name('Symmetric Rules')
-            configFolder.add(settings, 'num_colors', 1, 7, 1).name('Number of Colors')
+            configFolder.add(settings, 'numColors', 1, 7, 1).name('Number of Colors')
                 .listen().onFinishChange(v => {
-                    settings.colors = [];
-                    for (var i = 0; i < settings.num_colors; ++i) {
-                        settings.colors.push(predefinedColors[i]);
-                    }
+                    setNumberOfColors();
                     startRandom();
                 })
             configFolder.add(settings, 'seed').name('Seed').listen().onFinishChange(v => {
@@ -268,6 +265,13 @@
             randomAtoms(settings.atoms.count, true)
             updateGUIDisplay()
         }
+        
+        function setNumberOfColors() {
+            settings.colors = [];
+            for (var i = 0; i < settings.numColors; ++i) {
+                settings.colors.push(predefinedColors[i]);
+            }
+        }
 
         // Run Application
         loadSeedFromUrl()
@@ -281,7 +285,7 @@
             m.fillRect(x, y, width, (height || width));
         }
 
-        // Draw a circl
+        // Draw a circle
         function drawCircle(x, y, color, radius = 1, fill = 1) {
             m.beginPath();
             m.arc(x, y, radius, 0 * Math.PI, 2 * Math.PI); // x, y, radius, ArcStart, ArcEnd
@@ -392,6 +396,7 @@
 
 
         // Generate Rules
+        setNumberOfColors()
         randomRules()
 
         // Generate Atoms
