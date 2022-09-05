@@ -42,9 +42,7 @@
             cutOff: 6400 * 2, // interaction distance cut-off
             viscosity: 0.2, // speed-dampening
             pulseDuration: 10,
-            reset: () => {
-                randomAtoms(settings.atoms.count, true)
-            },
+            reset: () => resetScene(),
             randomRules: () => {
                 randomRules()
                 randomAtoms(settings.atoms.count, true)
@@ -61,8 +59,24 @@
                 scene: null,
                 renderer: null,
                 controls: null,
-                atomsGroup: null
+                atomsGroup: null,
+                gridHelper: null
             }
+        }
+        const resetScene = () => {
+            randomAtoms(settings.atoms.count, true)
+            settings.scene.controls.target = new THREE.Vector3(settings.dimensions / 2, settings.dimensions / 2, settings.dimensions / 2)
+            addGridHelper()
+        }
+        const addGridHelper = () => {
+            if (settings.scene.gridHelper) {
+                settings.scene.gridHelper.parent.remove(settings.scene.gridHelper)
+            }
+            settings.scene.gridHelper = new THREE.GridHelper(settings.dimensions, 10)
+            settings.scene.gridHelper.position.x = settings.dimensions / 2
+            settings.scene.gridHelper.position.y = 0
+            settings.scene.gridHelper.position.z = settings.dimensions / 2
+            settings.scene.scene.add(settings.scene.gridHelper)
         }
         const initScene = () => {
             const container = document.createElement('div');
@@ -87,12 +101,7 @@
             settings.scene.controls.target = new THREE.Vector3(settings.dimensions / 2, settings.dimensions / 2, settings.dimensions / 2)
             settings.scene.controls.update()
 
-
-            const gridHelper = new THREE.GridHelper(settings.dimensions, 10)
-            gridHelper.position.x = settings.dimensions / 2
-            gridHelper.position.y = 0
-            gridHelper.position.z = settings.dimensions / 2
-            settings.scene.scene.add(gridHelper)
+            addGridHelper()
             window.addEventListener('resize', () => {
                 settings.scene.camera.aspect = window.innerWidth / window.innerHeight
                 settings.scene.camera.updateProjectionMatrix()
@@ -127,6 +136,7 @@
             configFolder.add(settings.atoms, 'count', 1, 1000, 1).name('Atoms per-color').listen().onFinishChange(v => {
                 randomAtoms(v, true)
             })
+            configFolder.add(settings, 'dimensions', 200, 5000, 100).name('Cube Dimensions').listen().onFinishChange(v => settings.reset())
             configFolder.add(settings, 'time_scale', 0.1, 5, 0.01).name('Time Scale').listen()
             configFolder.add(settings, 'cutOff', 1, 20000 * 2, 50).name('Max Distance').listen()
             configFolder.add(settings, 'viscosity', 0.1, 2, 0.1).name('Viscosity').listen()
@@ -134,7 +144,7 @@
             // Drawings
             const drawingsFolder = settings.gui.addFolder('Drawings')
             drawingsFolder.add(settings.atoms, 'radius', 0.5, 10, 0.1).name('Radius').listen().onFinishChange(v => {
-                for (const mesh of settings.scene.atomsGroup.children) mesh.scale.set(v,v,v)
+                for (const mesh of settings.scene.atomsGroup.children) mesh.scale.set(v, v, v)
             })
             // drawingsFolder.add(settings.drawings, 'circle').name('Circle Shape').listen()
             // drawingsFolder.add(settings.drawings, 'lines').name('Draw Lines').listen()
@@ -240,7 +250,7 @@
                 const atom = [randomX(), randomY(), randomX(), 0, 0, 0, color]
                 const mesh = new THREE.Mesh(sphereGeom, meshMaterials[color]);
                 mesh.position.set(atom[0], atom[1], atom[2])
-                mesh.scale.set(settings.atoms.radius,settings.atoms.radius,settings.atoms.radius)
+                mesh.scale.set(settings.atoms.radius, settings.atoms.radius, settings.atoms.radius)
                 settings.scene.atomsGroup.add(mesh)
                 atom.push(mesh)
                 atoms.push(atom)
