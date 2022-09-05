@@ -121,7 +121,7 @@
             configFolder.add(settings, 'reset').name('Reset')
             configFolder.add(settings, 'randomRules').name('Random Rules')
             configFolder.add(settings, 'symmetricRules').name('Symmetric Rules')
-            configFolder.add(settings, 'num_colors', 1, 7, 1).name('number of colors')
+            configFolder.add(settings, 'num_colors', 1, 7, 1).name('Number of Colors')
                 .listen().onFinishChange(v => {
                     settings.colors = [];
                     for (var i = 0; i < settings.num_colors; ++i) {
