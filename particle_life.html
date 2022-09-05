@@ -20,13 +20,15 @@
             border: #504e52;
             border-style: dashed;
             border-width: 5;
+            outline: none;  /* because of the 'tabindex' focus trick */
         }
     </style>
 </head>
 
 <body>
+    <!-- 'tabindex' is a trick to make the canvas capture key events -->
+    <canvas id="canvas" tabindex="1"></canvas>
 
-    <canvas id="canvas"></canvas>
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
 
     <script>
@@ -47,11 +49,13 @@
             },
             rules: {},
             rulesArray: [],
-            colors: ['green', 'red', 'yellow', 'blue'],
+            radii: {},
+            radiiArray: [],
+            colors: ['green', 'red', 'orange', 'cyan'],
             time_scale: 1.0,
-            cutOff: 6400, // interaction distance cut-off
-            viscosity: 0.7, // speed-dampening
+            viscosity: 0.7, // speed-dampening (can be >1 !)
             pulseDuration: 10,
+            wallRepel: 40,
             reset: () => {
                 randomAtoms(settings.atoms.count, true)
             },
@@ -76,6 +80,25 @@
                     pulse_y = e.clientY;
                 }
             )
+        }
+        const setupKeys = () => {
+            canvas.addEventListener('keydown',
+                function (e) {
+                    console.log(e.key)
+                    switch (e.key) {
+                        case 'r':
+                          settings.randomRules()
+                        break;
+                        case 'o':
+                          settings.reset()
+                        break;
+                        case 's':
+                          settings.symmetricRules()
+                        break;
+                        default:
+                          console.log(e.code)
+                    }
+                })
         }
         const updateGUIDisplay = () => {
             console.log('gui', settings.gui)
@@ -103,9 +126,9 @@
                 randomAtoms(v, true)
             })
             configFolder.add(settings, 'time_scale', 0.1, 5, 0.01).name('Time Scale').listen()
-            configFolder.add(settings, 'cutOff', 1, 20000, 50).name('Max Distance').listen()
             configFolder.add(settings, 'viscosity', 0.1, 2, 0.1).name('Viscosity').listen()
             configFolder.add(settings, 'pulseDuration', 1, 100, 1).name('Click Pulse Duration').listen()
+            configFolder.add(settings, 'wallRepel', 0, 100, 1).name('Wall Repel').listen()
             // Drawings
             const drawingsFolder = settings.gui.addFolder('Drawings')
             drawingsFolder.add(settings.atoms, 'radius', 1, 10, 0.5).name('Radius').listen()
@@ -115,12 +138,18 @@
             drawingsFolder.addColor(settings.drawings.background, 'color').name('Background Color').listen()
             // Colors
             for (const atomColor of settings.colors) {
-                const colorFolder = settings.gui.addFolder(`Rules: ${atomColor.capitalise()}`)
+                const colorFolder =
+                    settings.gui.addFolder(`Rules: <font color=\'${atomColor}\'>${atomColor.capitalise()}</font>`)
                 for (const ruleColor of settings.colors) {
-                    colorFolder.add(settings.rules[atomColor], ruleColor, -1, 1, 0.001).name(`${atomColor.capitalise()} x ${ruleColor.capitalise()}`).listen().onFinishChange(v => {
-                        flattenRules()
-                    })
+                    colorFolder.add(settings.rules[atomColor], ruleColor, -1, 1, 0.001)
+                         .name(`<-> <font color=\'${ruleColor}\'>${ruleColor.capitalise()}</font>`)
+                         .listen()
+                         .onFinishChange(v => { flattenRules() }
+                    )
                 }
+                colorFolder.add(settings.radii, atomColor, 1, 200, 5).name('Radius')
+                    .listen().onFinishChange(v => { flattenRules() }
+                )
             }
 
 
@@ -155,6 +184,7 @@
                 for (var j of settings.colors) {
                     settings.rules[i][j] = mulberry32() * 2 - 1;
                 }
+                settings.radii[i] = 80;
             }
             console.log(JSON.stringify(settings.rules));
             flattenRules()
@@ -175,12 +205,14 @@
 
         function flattenRules() {
             settings.rulesArray = []
-            for (let i = 0; i < settings.colors.length; i++) {
+            settings.radiiArray = []
+            for (let c1 of settings.colors) {
                 const ruleRow = []
-                for (let j = 0; j < settings.colors.length; j++) {
-                    ruleRow.push(settings.rules[settings.colors[i]][settings.colors[j]])
+                for (let c2 of settings.colors) {
+                    ruleRow.push(settings.rules[c1][c2])
                 }
                 settings.rulesArray.push(ruleRow)
+                settings.radiiArray.push(settings.radii[c1])
             }
         }
 
@@ -271,7 +303,8 @@
             for (var a of atoms) {
                 let fx = 0;
                 let fy = 0;
-                const r2 = settings.cutOff;
+                const cutOff = settings.radiiArray[a[4]]
+                const r2 = cutOff * cutOff
                 for (var b of atoms) {
                     const g = settings.rulesArray[a[4]][b[4]];
                     const dx = a[0] - b[0];
@@ -297,6 +330,14 @@
                         fx += F * dx;
                         fy += F * dy;
                     }
+                }
+                if (settings.wallRepel > 0) {
+                  const d = settings.wallRepel
+                  const strength = 0.1
+                  if (a[0] <                d) fx += (d -                a[0]) * strength
+                  if (a[0] > canvas.width - d) fx += (canvas.width - d - a[0]) * strength
+                  if (a[1] <                 d) fy += (d                 - a[1]) * strength
+                  if (a[1] > canvas.height - d) fy += (canvas.height - d - a[1]) * strength
                 }
                 const vmix = (1. - settings.viscosity);
                 a[2] = a[2] * vmix + fx * settings.time_scale;
@@ -343,6 +384,7 @@
 
 
         setupClicks()
+        setupKeys()
         setupGUI()
 
         console.log('settings', settings)
