@@ -32,6 +32,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
 
     <script>
+        const predefinedColors = ['green', 'red', 'orange', 'cyan', 'magenta', 'lavender', 'teal'];
         const settings = {
             seed: 91651088029,
             fps: 0,
@@ -52,6 +53,7 @@
             radii: {},
             radiiArray: [],
             colors: ['green', 'red', 'orange', 'cyan'],
+            num_colors: 4,
             time_scale: 1.0,
             viscosity: 0.7, // speed-dampening (can be >1 !)
             pulseDuration: 10,
@@ -119,6 +121,14 @@
             configFolder.add(settings, 'reset').name('Reset')
             configFolder.add(settings, 'randomRules').name('Random Rules')
             configFolder.add(settings, 'symmetricRules').name('Symmetric Rules')
+            configFolder.add(settings, 'num_colors', 1, 7, 1).name('number of colors')
+                .listen().onFinishChange(v => {
+                    settings.colors = [];
+                    for (var i = 0; i < settings.num_colors; ++i) {
+                        settings.colors.push(predefinedColors[i]);
+                    }
+                    startRandom();
+                })
             configFolder.add(settings, 'seed').name('Seed').listen().onFinishChange(v => {
                 startRandom();
             })
