@@ -22,10 +22,10 @@
         const settings = {
             seed: 91651088029,
             fps: 0,
-            dimensions: 1200,
+            dimensions: 500,
             atoms: {
                 count: 500, // Per Color
-                radius: 1.5
+                radius: 0.5
             },
             drawings: { // Drawing options can be expensive on performance
                 lines: false, // draw lines between atoms that arr effecting each other
@@ -40,7 +40,7 @@
             colors: ['green', 'red', 'yellow', 'blue'],
             time_scale: 1.0,
             cutOff: 6400 * 2, // interaction distance cut-off
-            viscosity: 0.2, // speed-dampening
+            viscosity: 0.7, // speed-dampening
             pulseDuration: 10,
             reset: () => resetScene(),
             randomRules: () => {
@@ -143,7 +143,7 @@
             configFolder.add(settings, 'pulseDuration', 1, 100, 1).name('Click Pulse Duration').listen()
             // Drawings
             const drawingsFolder = settings.gui.addFolder('Drawings')
-            drawingsFolder.add(settings.atoms, 'radius', 0.5, 10, 0.1).name('Radius').listen().onFinishChange(v => {
+            drawingsFolder.add(settings.atoms, 'radius', 0.1, 10, 0.1).name('Radius').listen().onFinishChange(v => {
                 for (const mesh of settings.scene.atomsGroup.children) mesh.scale.set(v, v, v)
             })
             // drawingsFolder.add(settings.drawings, 'circle').name('Circle Shape').listen()
