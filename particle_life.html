@@ -37,17 +37,18 @@
             seed: 91651088029,
             fps: 0,
             atoms: {
-                count: 500, // Per Color
-                radius: 1
+                count: 500,  // Per Color
+                radius: 1,
             },
-            drawings: { // Drawing options can be expensive on performance
-                lines: false, // draw lines between atoms that arr effecting each other
-                circle: false, // draw atoms as circles
+            drawings: {  // Drawing options can be expensive on performance
+                lines: false,   // draw lines between atoms that arr effecting each other
+                circle: false,  // draw atoms as circles
                 background: {
                     active: false,
                     color: 'black'
                 },
             },
+            explore: false,
             rules: {},
             rulesArray: [],
             radii: {},
@@ -137,6 +138,7 @@
             configFolder.add(settings, 'viscosity', 0.1, 2, 0.1).name('Viscosity').listen()
             configFolder.add(settings, 'pulseDuration', 1, 100, 1).name('Click Pulse Duration').listen()
             configFolder.add(settings, 'wallRepel', 0, 100, 1).name('Wall Repel').listen()
+            configFolder.add(settings, 'explore').name('Random Exploration').listen()
             // Drawings
             const drawingsFolder = settings.gui.addFolder('Drawings')
             drawingsFolder.add(settings.atoms, 'radius', 1, 10, 0.5).name('Radius').listen()
@@ -167,16 +169,16 @@
         // Seedable 'decent' random generator
         var local_seed = settings.seed;
         function mulberry32() {
-            var t = local_seed += 0x6D2B79F5;
+            let t = local_seed += 0x6D2B79F5;
             t = Math.imul(t ^ t >>> 15, t | 1);
             t ^= t + Math.imul(t ^ t >>> 7, t | 61);
             return ((t ^ t >>> 14) >>> 0) / 4294967296.;
         }
 
         function loadSeedFromUrl() {
-            var hash = window.location.hash;
+            let hash = window.location.hash;
             if (hash != undefined && hash[0] == '#') {
-                var param = Number(hash.substr(1)); // remove the leading '#'
+                let param = Number(hash.substr(1)); // remove the leading '#'
                 if (isFinite(param)) {
                     settings.seed = param;
                     console.log("Using seed " + settings.seed);
@@ -189,9 +191,9 @@
             window.location.hash = "#" + settings.seed;
             local_seed = settings.seed;
             console.log("Seed=" + local_seed);
-            for (var i of settings.colors) {
+            for (const i of settings.colors) {
                 settings.rules[i] = {};
-                for (var j of settings.colors) {
+                for (const j of settings.colors) {
                     settings.rules[i][j] = mulberry32() * 2 - 1;
                 }
                 settings.radii[i] = 80;
@@ -201,8 +203,8 @@
         }
 
         function symmetricRules() {
-            for (var i of settings.colors) {
-                for (var j of settings.colors) {
+            for (const i of settings.colors) {
+                for (const j of settings.colors) {
                     if (j < i) {
                         let v = 0.5 * (settings.rules[i][j] + settings.rules[j][i]);
                         settings.rules[i][j] = settings.rules[j][i] = v;
@@ -216,9 +218,9 @@
         function flattenRules() {
             settings.rulesArray = []
             settings.radiiArray = []
-            for (let c1 of settings.colors) {
+            for (const c1 of settings.colors) {
                 const ruleRow = []
-                for (let c2 of settings.colors) {
+                for (const c2 of settings.colors) {
                     ruleRow.push(settings.rules[c1][c2])
                 }
                 settings.rulesArray.push(ruleRow)
@@ -268,7 +270,7 @@
         
         function setNumberOfColors() {
             settings.colors = [];
-            for (var i = 0; i < settings.numColors; ++i) {
+            for (let i = 0; i < settings.numColors; ++i) {
                 settings.colors.push(predefinedColors[i]);
             }
         }
@@ -313,6 +315,26 @@
         var pulse_x = 0,
             pulse_y = 0;
 
+        var exploration_timer = 0;
+        function exploreParameters() {
+            if (exploration_timer <= 0) {
+                let c1 = settings.colors[Math.floor(mulberry32() * settings.numColors)];
+                if (mulberry32() >= 0.2) {  // 80% of the time, we change the strength
+                  let c2 = settings.colors[Math.floor(mulberry32() * settings.numColors)];
+                  let new_strength = mulberry32();
+                  // for better results, we force opposite-signed values
+                  if (settings.rules[c1][c2] > 0) new_strength = -new_strength;
+                  settings.rules[c1][c2] = new_strength;
+                } else {  // ...otherwise, the radius
+                  let new_radius = 1 + Math.floor(mulberry32() * 200);
+                  if (settings.radii[c1] > 0) new_radius = -new_radius;
+                  settings.radii[c1] = new_radius;
+                }
+                flattenRules();
+                exploration_timer = 100;
+            }
+            exploration_timer -= 1;
+        }
 
         var total_v; // global velocity as a estimate of on-screen activity
 
@@ -320,12 +342,12 @@
         const applyRules = () => {
             total_v = 0.;
             // update velocity first
-            for (var a of atoms) {
+            for (const a of atoms) {
                 let fx = 0;
                 let fy = 0;
                 const cutOff = settings.radiiArray[a[4]]
                 const r2 = cutOff * cutOff
-                for (var b of atoms) {
+                for (const b of atoms) {
                     const g = settings.rulesArray[a[4]][b[4]];
                     const dx = a[0] - b[0];
                     const dy = a[1] - b[1];
@@ -368,7 +390,7 @@
                 total_v += Math.abs(a[3]);
             }
             // update positions now
-            for (var a of atoms) {
+            for (const a of atoms) {
                 a[0] += a[2]
                 a[1] += a[3]
 
@@ -420,13 +442,19 @@
             // Clear canvas
             m.clearRect(0, 0, canvas.width, canvas.height);
             // Draw a black background
-            if (settings.drawings.background.active) drawSquare(0, 0, settings.drawings.background.color, canvas.width, canvas.height);
+            if (settings.drawings.background.active) {
+                drawSquare(0, 0, settings.drawings.background.color, canvas.width, canvas.height);
+            }
             // Appy Rules
             applyRules();
             // Draw Atoms
-            for (let a of atoms) {
-                if (settings.drawings.circle) drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius)
-                else drawSquare(a[0] - settings.atoms.radius, a[1] - settings.atoms.radius, settings.colors[a[4]], settings.atoms.radius * 2)
+            for (const a of atoms) {
+                if (settings.drawings.circle) {
+                    drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius)
+                } else {
+                    drawSquare(a[0] - settings.atoms.radius, a[1] - settings.atoms.radius,
+                               settings.colors[a[4]], settings.atoms.radius * 2)
+                }
             }
 
             updateParams();
@@ -453,6 +481,7 @@
             if (settings.time_scale > 1.1) settings.time_scale /= 1.01;
 
             if (pulse > 0) pulse -= 1;
+            if (settings.explore) exploreParameters();
         }
     </script>
 
