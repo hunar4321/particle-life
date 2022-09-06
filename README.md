@@ -49,16 +49,6 @@ Other Ports:
 1. [Godot](https://github.com/NiclasEriksen/game-of-leif)
 2. [golang](https://github.com/sikora507/go-artificial-life)
 
-Todos:
---------------------
-1. Adding the ability to save and load parameters (so that people can easily share the interesting models they find)
-2. Ability to add more particle types (currently it is fixed to four particle types)
-3. Currently, the biggest bottleneck is the nested for-loops (which calculate the pairwise distance among all particles) making the computational complexity quadratic. It would be amazing if we could find a way around.
-4. Alternative to point 3, computing the pairwise distances are embarrassingly parallel so it can be computed on GPU.
-5. Adding the ability to resize the screen and improving boundary-checking as many fast moving particles can escape the screen bounds.
-6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters.
-7. Adding a randomize button or, even better, having a simple meta rule to mutate the initial rule continously and recursively. This way the patterns will never get stuck on a local maximum and will keep changing!
-8. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition and survival of the fittest. However, here we fine-tune and select the parameters that produce interesting patterns for us but the word "interesting" is easier to say than to define!
 
 The JavaScript code is as simple as this: 
 -------------------------------------
@@ -146,3 +136,16 @@ Self organzing patterns,
 
 This project was inspired by: Jeffery Ventrella's Clusters http://www.ventrella.com/Clusters/. I do not have access to Ventrella's code but I guess the main difference of this project from the other particle life projects is that I did not implement collision detection and this made simulating thousands of particles possible in real-time. Also, I added GUI controls to change the parameters in real-time allowing easy fine-tuning and exploration, hence, I was able to find some never-seen-before patterns emerge form some extremely simple models of relations. 
 The code here is probably an order of magnitude simpler than any other Artificial Life codes out there because I started this code solely as an educational material for non-programmers and general audience to prove the point that complexity can arise from simplicity.
+
+
+Todos:
+--------------------
+1. Adding the ability to save and load parameters (so that people can easily share the interesting models they find)
+2. Ability to add more particle types (currently it is fixed to four particle types)
+3. Currently, the biggest bottleneck is the nested for-loops (which calculate the pairwise distance among all particles) making the computational complexity quadratic. It would be amazing if we could find a way around.
+4. Alternative to point 3, computing the pairwise distances are embarrassingly parallel so it can be computed on GPU.
+5. Adding the ability to resize the screen and improving boundary-checking as many fast moving particles can escape the screen bounds.
+6. Adding a more intuitive UI so that it gives the ability for a finer control over the parameters.
+7. Adding a randomize button or, even better, having a simple meta rule to mutate the initial rule continously and recursively. This way the patterns will never get stuck on a local maximum and will keep changing!
+8. A better way to fine-tune is to use an evolutionary algorithm to select and optimize the parameters but one needs to write a fitness function for that. I currently don't know what fitness function corresponds to in the realm of this program. In our world the fitness function is competition and survival of the fittest. However, here we fine-tune and select the parameters that produce interesting patterns for us but the word "interesting" is easier to say than to define!
+
