@@ -44,6 +44,11 @@ Alternatively, generate a new openFramework project and add ofxGui. Once the pro
 
 You can now compile the C++ code on your machine.
 
+Other Ports:
+-------------
+1. [Godot](https://github.com/NiclasEriksen/game-of-leif)
+2. [golang](https://github.com/sikora507/go-artificial-life)
+
 Todos:
 --------------------
 1. Adding the ability to save and load parameters (so that people can easily share the interesting models they find)
