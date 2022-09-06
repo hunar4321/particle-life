@@ -46,9 +46,9 @@ You can now compile the C++ code on your machine.
 
 Other Ports:
 -------------
-. [Godot](https://github.com/NiclasEriksen/game-of-leif)
-. [golang](https://github.com/sikora507/go-artificial-life)
-. [FreeBasic](https://www.freebasic.net/forum/viewtopic.php?p=294331#p294331)
+- [Godot](https://github.com/NiclasEriksen/game-of-leif)
+- [golang](https://github.com/sikora507/go-artificial-life)
+- [FreeBasic](https://www.freebasic.net/forum/viewtopic.php?p=294331#p294331)
 
 
 The JavaScript code is as simple as this: 
