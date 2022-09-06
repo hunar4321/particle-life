@@ -326,9 +326,7 @@
                   if (settings.rules[c1][c2] > 0) new_strength = -new_strength;
                   settings.rules[c1][c2] = new_strength;
                 } else {  // ...otherwise, the radius
-                  let new_radius = 1 + Math.floor(mulberry32() * 200);
-                  if (settings.radii[c1] > 0) new_radius = -new_radius;
-                  settings.radii[c1] = new_radius;
+                  settings.radii[c1] = 1 + Math.floor(mulberry32() * 200);
                 }
                 flattenRules();
                 exploration_timer = 100;
