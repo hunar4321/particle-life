@@ -6,8 +6,8 @@
 
     <style>
         :root {
-            /* background-color: black; */
             color-scheme: dark;
+            --canvas-bg-color: rgba(0, 0, 0, 0); /* transparent */
         }
 
         body {
@@ -21,6 +21,7 @@
             border-style: dashed;
             border-width: 5;
             outline: none;  /* because of the 'tabindex' focus trick */
+            background-color: var(--canvas-bg-color);
         }
     </style>
 </head>
@@ -44,7 +45,13 @@
             drawings: {  // Drawing options can be expensive on performance
                 lines: false,   // draw lines between atoms that arr effecting each other
                 circle: false,  // draw atoms as circles
-                background_color: '#000000',
+                // set & get Canvas CSS background color ( default: transparent )
+                get background_color() {
+                    return document.querySelector(':root').style.getPropertyValue('--canvas-bg-color') 
+                },
+                set background_color(color) {
+                    document.querySelector(':root').style.setProperty('--canvas-bg-color', color);
+                },
             },
             explore: false,
             explorePeriod: 100,
@@ -435,11 +442,6 @@
             updateCanvasDimensions()
             // Clear canvas
             m.clearRect(0, 0, canvas.width, canvas.height);
-            // Draw background if needed
-            if (settings.drawings.background_color != '#000000') {
-                m.fillStyle = settings.drawings.background_color;
-                m.fillRect(0, 0, canvas.width, canvas.height);
-            }
             // Appy Rules
             applyRules();
             // Draw Atoms
