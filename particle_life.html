@@ -44,10 +44,7 @@
             drawings: {  // Drawing options can be expensive on performance
                 lines: false,   // draw lines between atoms that arr effecting each other
                 circle: false,  // draw atoms as circles
-                background: {
-                    active: false,
-                    color: 'black'
-                },
+                background_color: '#000000',
             },
             explore: false,
             explorePeriod: 100,
@@ -146,8 +143,7 @@
             drawingsFolder.add(settings.atoms, 'radius', 1, 10, 0.5).name('Radius').listen()
             drawingsFolder.add(settings.drawings, 'circle').name('Circle Shape').listen()
             drawingsFolder.add(settings.drawings, 'lines').name('Draw Lines').listen()
-            drawingsFolder.add(settings.drawings.background, 'active').name('Background Color').listen()
-            drawingsFolder.addColor(settings.drawings.background, 'color').name('Background Color').listen()
+            drawingsFolder.addColor(settings.drawings, 'background_color').name('Background Color').listen()
             // Colors
             for (const atomColor of settings.colors) {
                 const colorFolder =
@@ -282,9 +278,9 @@
         const canvas = document.getElementById('canvas');
         const m = canvas.getContext("2d");
         // Draw a square
-        const drawSquare = (x, y, color, width, height) => {
+        const drawSquare = (x, y, color, radius) => {
             m.fillStyle = color;
-            m.fillRect(x, y, width, (height || width));
+            m.fillRect(x - radius, y - radius, 2 * radius, 2 * radius);
         }
 
         // Draw a circle
@@ -439,19 +435,19 @@
             updateCanvasDimensions()
             // Clear canvas
             m.clearRect(0, 0, canvas.width, canvas.height);
-            // Draw a black background
-            if (settings.drawings.background.active) {
-                drawSquare(0, 0, settings.drawings.background.color, canvas.width, canvas.height);
+            // Draw background if needed
+            if (settings.drawings.background_color != '#000000') {
+                m.fillStyle = settings.drawings.background_color;
+                m.fillRect(0, 0, canvas.width, canvas.height);
             }
             // Appy Rules
             applyRules();
             // Draw Atoms
             for (const a of atoms) {
                 if (settings.drawings.circle) {
-                    drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius)
+                    drawCircle(a[0], a[1], settings.colors[a[4]], settings.atoms.radius);
                 } else {
-                    drawSquare(a[0] - settings.atoms.radius, a[1] - settings.atoms.radius,
-                               settings.colors[a[4]], settings.atoms.radius * 2)
+                    drawSquare(a[0], a[1], settings.colors[a[4]], settings.atoms.radius);
                 }
             }
 
