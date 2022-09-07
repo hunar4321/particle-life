@@ -32,6 +32,7 @@
     <script src="https://cdn.jsdelivr.net/npm/lil-gui@0.17"></script>
 
     <script>
+        const maxRadius = 200;
         const predefinedColors = ['green', 'red', 'orange', 'cyan', 'magenta', 'lavender', 'teal'];
         const settings = {
             seed: 91651088029,
@@ -49,10 +50,11 @@
                 },
             },
             explore: false,
+            explorePeriod: 100,
             rules: {},
             rulesArray: [],
             radii: {},
-            radiiArray: [],
+            radii2Array: [],
             colors: [],
             numColors: 4,
             time_scale: 1.0,
@@ -157,7 +159,7 @@
                          .onFinishChange(v => { flattenRules() }
                     )
                 }
-                colorFolder.add(settings.radii, atomColor, 1, 200, 5).name('Radius')
+                colorFolder.add(settings.radii, atomColor, 1, maxRadius, 5).name('Radius')
                     .listen().onFinishChange(v => { flattenRules() }
                 )
             }
@@ -217,14 +219,12 @@
 
         function flattenRules() {
             settings.rulesArray = []
-            settings.radiiArray = []
+            settings.radii2Array = []
             for (const c1 of settings.colors) {
-                const ruleRow = []
                 for (const c2 of settings.colors) {
-                    ruleRow.push(settings.rules[c1][c2])
+                    settings.rulesArray.push(settings.rules[c1][c2])
                 }
-                settings.rulesArray.push(ruleRow)
-                settings.radiiArray.push(settings.radii[c1])
+                settings.radii2Array.push(settings.radii[c1] * settings.radii[c1])
             }
         }
 
@@ -326,10 +326,10 @@
                   if (settings.rules[c1][c2] > 0) new_strength = -new_strength;
                   settings.rules[c1][c2] = new_strength;
                 } else {  // ...otherwise, the radius
-                  settings.radii[c1] = 1 + Math.floor(mulberry32() * 200);
+                  settings.radii[c1] = 1 + Math.floor(mulberry32() * maxRadius);
                 }
                 flattenRules();
-                exploration_timer = 100;
+                exploration_timer = settings.explorePeriod;
             }
             exploration_timer -= 1;
         }
@@ -343,10 +343,10 @@
             for (const a of atoms) {
                 let fx = 0;
                 let fy = 0;
-                const cutOff = settings.radiiArray[a[4]]
-                const r2 = cutOff * cutOff
+                const idx = a[4] * settings.numColors;
+                const r2 = settings.radii2Array[a[4]]
                 for (const b of atoms) {
-                    const g = settings.rulesArray[a[4]][b[4]];
+                    const g = settings.rulesArray[idx + b[4]];
                     const dx = a[0] - b[0];
                     const dy = a[1] - b[1];
                     if (dx !== 0 || dy !== 0) {
