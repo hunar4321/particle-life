@@ -45,12 +45,20 @@
             drawings: {  // Drawing options can be expensive on performance
                 lines: false,   // draw lines between atoms that arr effecting each other
                 circle: false,  // draw atoms as circles
-                // set & get Canvas CSS background color ( default: transparent )
-                get background_color() {
-                    return document.querySelector(':root').style.getPropertyValue('--canvas-bg-color');
+                background_color: '#000000', // Background color
+            },
+            export: {
+                // Export a Screenshot image
+                image: () => {
+                    const imageDataURL = canvas.toDataURL({
+                        format: 'png',
+                        quality: 1
+                    });
+                    dataURL_downloader(imageDataURL);
                 },
-                set background_color(color) {
-                    document.querySelector(':root').style.setProperty('--canvas-bg-color', color);
+                // Export a video recording
+                video: () => {
+                    mediaRecorder.state == 'recording' ? mediaRecorder.stop() : mediaRecorder.start();
                 },
             },
             explore: false,
@@ -151,6 +159,10 @@
             drawingsFolder.add(settings.drawings, 'circle').name('Circle Shape').listen()
             drawingsFolder.add(settings.drawings, 'lines').name('Draw Lines').listen()
             drawingsFolder.addColor(settings.drawings, 'background_color').name('Background Color').listen()
+            // Export
+            const exportFolder = settings.gui.addFolder('Export')
+            exportFolder.add(settings.export, 'image').name('Image')
+            exportFolder.add(settings.export, 'video').name('Video: Start / stop')
             // Colors
             for (const atomColor of settings.colors) {
                 const colorFolder =
@@ -441,8 +453,9 @@
         function update() {
             // Update Canvas Dimensions - if screen size changed
             updateCanvasDimensions()
-            // Clear canvas
-            m.clearRect(0, 0, canvas.width, canvas.height);
+            // Background color
+            m.fillStyle = settings.drawings.background_color;
+            m.fillRect(0, 0, canvas.width, canvas.height);
             // Appy Rules
             applyRules();
             // Draw Atoms
@@ -480,6 +493,49 @@
             if (pulse > 0) pulse -= 1;
             if (settings.explore) exploreParameters();
         }
+
+
+        
+        // Download DataURL
+        function dataURL_downloader(dataURL, name = `particle_life_${Date.now()}`) {
+            const hyperlink = document.createElement("a");
+            // document.body.appendChild(hyperlink);
+            hyperlink.download = name;
+            hyperlink.target = '_blank';
+            hyperlink.href = dataURL;
+            hyperlink.click();
+            hyperlink.remove();
+        };
+
+
+        // Recorde a video ----------------------------------
+        // Stream
+        const videoStream = canvas.captureStream();
+        // Video Recorder
+        const mediaRecorder = new MediaRecorder(videoStream);
+        // temp chunks
+        let chunks = [];
+        // Store chanks
+        mediaRecorder.ondataavailable = function (e) {
+            chunks.push(e.data);
+        };
+        // Download video after recording is stopped
+        mediaRecorder.onstop = function (e) {
+            // Chunks ---> Bolb
+            const blob = new Blob(chunks, { 'type': 'video/mp4' });
+            // Bolb -----> DataURL
+            const videoDataURL = URL.createObjectURL(blob);
+
+            // Download video
+            dataURL_downloader(videoDataURL);
+
+            // Reset Chunks
+            chunks = [];
+        };
+        
+        // mediaRecorder.start(); // Start recording
+        // mediaRecorder.stop(); // Stop recording
+        // --------------------------------------------------
     </script>
 
 </body>
