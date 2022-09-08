@@ -45,13 +45,7 @@
             drawings: {  // Drawing options can be expensive on performance
                 lines: false,   // draw lines between atoms that arr effecting each other
                 circle: false,  // draw atoms as circles
-                // set & get Canvas CSS background color ( default: transparent )
-                get background_color() {
-                    return document.querySelector(':root').style.getPropertyValue('--canvas-bg-color');
-                },
-                set background_color(color) {
-                    document.querySelector(':root').style.setProperty('--canvas-bg-color', color);
-                },
+                background_color: '#000000', // Background color
             },
             export: {
                 // Export a Screenshot image
@@ -459,6 +453,9 @@
         function update() {
             // Update Canvas Dimensions - if screen size changed
             updateCanvasDimensions()
+            // Background color
+            m.fillStyle = settings.drawings.background_color;
+            m.fillRect(0, 0, canvas.width, canvas.height);
             // Appy Rules
             applyRules();
             // Draw Atoms
