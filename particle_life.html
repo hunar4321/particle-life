@@ -62,6 +62,10 @@
                     });
                     dataURL_downloader(imageDataURL);
                 },
+                // Export a video recording
+                video: () => {
+                    mediaRecorder.state == 'recording' ? mediaRecorder.stop() : mediaRecorder.start();
+                },
             },
             explore: false,
             explorePeriod: 100,
@@ -164,6 +168,7 @@
             // Export
             const exportFolder = settings.gui.addFolder('Export')
             exportFolder.add(settings.export, 'image').name('Image')
+            exportFolder.add(settings.export, 'video').name('Video: Start / stop')
             // Colors
             for (const atomColor of settings.colors) {
                 const colorFolder =
@@ -506,6 +511,36 @@
             hyperlink.click();
             hyperlink.remove();
         };
+
+
+        // Recorde a video ----------------------------------
+        // Stream
+        const videoStream = canvas.captureStream();
+        // Video Recorder
+        const mediaRecorder = new MediaRecorder(videoStream);
+        // temp chunks
+        let chunks = [];
+        // Store chanks
+        mediaRecorder.ondataavailable = function (e) {
+            chunks.push(e.data);
+        };
+        // Download video after recording is stopped
+        mediaRecorder.onstop = function (e) {
+            // Chunks ---> Bolb
+            const blob = new Blob(chunks, { 'type': 'video/mp4' });
+            // Bolb -----> DataURL
+            const videoDataURL = URL.createObjectURL(blob);
+
+            // Download video
+            dataURL_downloader(videoDataURL);
+
+            // Reset Chunks
+            chunks = [];
+        };
+        
+        // mediaRecorder.start(); // Start recording
+        // mediaRecorder.stop(); // Stop recording
+        // --------------------------------------------------
     </script>
 
 </body>
