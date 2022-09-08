@@ -47,7 +47,7 @@
                 circle: false,  // draw atoms as circles
                 // set & get Canvas CSS background color ( default: transparent )
                 get background_color() {
-                    return document.querySelector(':root').style.getPropertyValue('--canvas-bg-color') 
+                    return document.querySelector(':root').style.getPropertyValue('--canvas-bg-color');
                 },
                 set background_color(color) {
                     document.querySelector(':root').style.setProperty('--canvas-bg-color', color);
@@ -104,7 +104,7 @@
                           settings.symmetricRules()
                         break;
                         default:
-                          console.log(e.code)
+                          console.log(e.key)
                     }
                 })
         }
@@ -158,8 +158,7 @@
                 for (const ruleColor of settings.colors) {
                     colorFolder.add(settings.rules[atomColor], ruleColor, -1, 1, 0.001)
                          .name(`<-> <font color=\'${ruleColor}\'>${ruleColor.capitalise()}</font>`)
-                         .listen()
-                         .onFinishChange(v => { flattenRules() }
+                         .listen().onFinishChange(v => { flattenRules() }
                     )
                 }
                 colorFolder.add(settings.radii, atomColor, 1, maxRadius, 5).name('Radius')
@@ -270,7 +269,7 @@
             randomAtoms(settings.atoms.count, true)
             updateGUIDisplay()
         }
-        
+
         function setNumberOfColors() {
             settings.colors = [];
             for (let i = 0; i < settings.numColors; ++i) {
@@ -300,7 +299,7 @@
         };
 
         // Draw a line between two atoms
-        function DrawLineBetweenAtoms(ax, ay, bx, by, color) {
+        function drawLineBetweenAtoms(ax, ay, bx, by, color) {
             m.beginPath();
             m.moveTo(ax, ay);
             m.lineTo(bx, by);
@@ -360,7 +359,9 @@
                             fy += F * dy;
 
                             // Draw lines between atoms that are effecting each other.
-                            if (settings.drawings.lines) DrawLineBetweenAtoms(a[0], a[1], b[0], b[1], settings.colors[b[4]]);
+                            if (settings.drawings.lines) {
+                                drawLineBetweenAtoms(a[0], a[1], b[0], b[1], settings.colors[b[4]]);
+                            }
                         }
                     }
                 }
