@@ -53,6 +53,16 @@
                     document.querySelector(':root').style.setProperty('--canvas-bg-color', color);
                 },
             },
+            export: {
+                // Export a Screenshot image
+                image: () => {
+                    const imageDataURL = canvas.toDataURL({
+                        format: 'png',
+                        quality: 1
+                    });
+                    dataURL_downloader(imageDataURL);
+                },
+            },
             explore: false,
             explorePeriod: 100,
             rules: {},
@@ -151,6 +161,9 @@
             drawingsFolder.add(settings.drawings, 'circle').name('Circle Shape').listen()
             drawingsFolder.add(settings.drawings, 'lines').name('Draw Lines').listen()
             drawingsFolder.addColor(settings.drawings, 'background_color').name('Background Color').listen()
+            // Export
+            const exportFolder = settings.gui.addFolder('Export')
+            exportFolder.add(settings.export, 'image').name('Image')
             // Colors
             for (const atomColor of settings.colors) {
                 const colorFolder =
@@ -480,6 +493,19 @@
             if (pulse > 0) pulse -= 1;
             if (settings.explore) exploreParameters();
         }
+
+
+        
+        // Download DataURL
+        function dataURL_downloader(dataURL, name = `particle_life_${Date.now()}`) {
+            const hyperlink = document.createElement("a");
+            // document.body.appendChild(hyperlink);
+            hyperlink.download = name;
+            hyperlink.target = '_blank';
+            hyperlink.href = dataURL;
+            hyperlink.click();
+            hyperlink.remove();
+        };
     </script>
 
 </body>
