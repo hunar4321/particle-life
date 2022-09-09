@@ -633,9 +633,9 @@
         };
         // Download video after recording is stopped
         mediaRecorder.onstop = function (e) {
-            // Chunks ---> Bolb
+            // Chunks ---> Blob
             const blob = new Blob(chunks, { 'type': 'video/mp4' });
-            // Bolb -----> DataURL
+            // Blob -----> DataURL
             const videoDataURL = URL.createObjectURL(blob);
 
             // Download video
