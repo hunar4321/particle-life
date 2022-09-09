@@ -8,8 +8,13 @@ Learn More Here (YouTube video tutorial):
 -----------------------------------------------
 https://youtu.be/0Kx4Y9TVMGg
 
-
-Interface
+Online Demo (JavaScript version):
+-------------
+Click here for a live demo (JavaScript): 
+  - 2d - https://hunar4321.github.io/particle-life/particle_life.html
+  - 3d - https://hunar4321.github.io/particle-life/particle_life_3d.html
+  
+Interface (C++ version)
 --------------------------------------------------------
 ![](images/interface.jpg)
 
@@ -22,12 +27,6 @@ Some Interesting Patterns to Reproduce:
 You do not need to be exact with the parameters to reproduce these patterns. The best way to get interesting patterns is to first try random parameter explorations, once you find an interesting pattern, try fine-tuning it gradually. To avoid becoming stuck at a local maximum, you can make some occasional big parameter jumps. In this way interesting and different patterns shall keep poping up.
 
 ![](images/some_patterns.jpg)
-
-Online Demo:
--------------
-Click here for a live demo (JavaScript): 
-  - 2d - https://hunar4321.github.io/particle-life/particle_life.html
-  - 3d - https://hunar4321.github.io/particle-life/particle_life_3d.html
 
 To use:
 -------------
