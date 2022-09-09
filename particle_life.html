@@ -1,4 +1,5 @@
 <html>
+<title>Life</title>
 
 <head>
 
@@ -34,6 +35,8 @@
 
     <script>
         const maxRadius = 200;
+        const maxClusters = 20;
+        const minClusterSize = 50;
         const predefinedColors = ['green', 'red', 'orange', 'cyan', 'magenta', 'lavender', 'teal'];
         const settings = {
             seed: 91651088029,
@@ -45,6 +48,7 @@
             drawings: {  // Drawing options can be expensive on performance
                 lines: false,   // draw lines between atoms that arr effecting each other
                 circle: false,  // draw atoms as circles
+                clusters: false,
                 background_color: '#000000', // Background color
             },
             export: {
@@ -105,6 +109,9 @@
                         case 'r':
                           settings.randomRules()
                         break;
+                        case 't':
+                          settings.drawings.clusters = !settings.drawings.clusters
+                        break;
                         case 'o':
                           settings.reset()
                         break;
@@ -157,6 +164,7 @@
             const drawingsFolder = settings.gui.addFolder('Drawings')
             drawingsFolder.add(settings.atoms, 'radius', 1, 10, 0.5).name('Radius').listen()
             drawingsFolder.add(settings.drawings, 'circle').name('Circle Shape').listen()
+            drawingsFolder.add(settings.drawings, 'clusters').name('Track Clusters').listen()
             drawingsFolder.add(settings.drawings, 'lines').name('Draw Lines').listen()
             drawingsFolder.addColor(settings.drawings, 'background_color').name('Background Color').listen()
             // Export
@@ -205,6 +213,7 @@
         function randomRules() {
             if (!isFinite(settings.seed)) settings.seed = 0xcafecafe;
             window.location.hash = "#" + settings.seed;
+            document.title = "Life #" + settings.seed;
             local_seed = settings.seed;
             console.log("Seed=" + local_seed);
             for (const i of settings.colors) {
@@ -274,11 +283,12 @@
             for (let c = 0; c < settings.colors.length; c++) {
                 create(number_of_atoms_per_color, c)
             }
+            clusters.length = 0;
         }
 
         function startRandom() {
-            randomRules()
-            randomAtoms(settings.atoms.count, true)
+            randomRules();
+            randomAtoms(settings.atoms.count, true);
             updateGUIDisplay()
         }
 
@@ -302,9 +312,9 @@
         }
 
         // Draw a circle
-        function drawCircle(x, y, color, radius = 1, fill = 1) {
+        function drawCircle(x, y, color, radius, fill = false) {
             m.beginPath();
-            m.arc(x, y, radius, 0 * Math.PI, 2 * Math.PI); // x, y, radius, ArcStart, ArcEnd
+            m.arc(x, y, radius, 0 * Math.PI, 2 * Math.PI);  // x, y, radius, ArcStart, ArcEnd
             m.closePath();
             m.strokeStyle = m.fillStyle = color;
             fill ? m.fill() : m.stroke()
@@ -319,6 +329,104 @@
             m.strokeStyle = color;
             m.stroke();
         };
+
+        // [position-x, position-y, radius, color]
+        //    /* tmp accumulators: */
+        //  {count, accum-x, accum-y, accum-d^2, accum-color}]
+        let clusters = [];
+        function newCluster() {
+            return [randomX(), randomY(), maxRadius, 'white'];
+        }
+        function addNewClusters(num_clusters) {
+            if (clusters.length < num_clusters / 2) {
+                while (clusters.length < num_clusters) clusters.push(newCluster());
+            }
+        }
+        function findNearestCluster(x, y) {
+            let best = -1;
+            let best_d2 = 1.e38;
+            for (let i = 0; i < clusters.length; ++i) {
+                const c = clusters[i];
+                const dx = c[0] - x;
+                const dy = c[1] - y;
+                const d2 = dx * dx + dy * dy;
+                if (d2 < best_d2) {
+                    best = i;
+                    best_d2 = d2;
+                }
+            }
+            return [best, best_d2];
+        }
+        function moveClusters(accums) {
+            let max_d = 0.;   // record max cluster displacement
+            for (let i = 0; i < clusters.length; ++i) {
+                let c = clusters[i];
+                const a = accums[i];
+                if (a[0] > minClusterSize) {
+                    const norm = 1. / a[0];
+                    const new_x = a[1] * norm;
+                    const new_y = a[2] * norm;
+                    max_d = Math.max(max_d, Math.abs(c[0] - new_x), Math.abs(c[1 ] - new_y));
+                    c[0] = new_x;
+                    c[1] = new_y;
+                }
+            }
+            return max_d;
+        }
+        function finalizeClusters(accums) {
+            for (let i = 0; i < clusters.length; ++i) {
+                let c = clusters[i];
+                const a = accums[i];
+                if (a[0] > minClusterSize) {
+                    const norm = 1. / a[0];
+                    const new_r = 1.10 * Math.sqrt(a[3] * norm);  // with 10% extra room
+                    c[2] = 0.95 * c[2] + 0.05 * new_r;  // exponential smoothing
+                    // 'average' color
+                    c[3] = settings.colors[Math.floor(a[4] * norm + .5)];
+                } else {
+                    c[2] = 0.;   // disable the weak cluster
+                }
+            }
+            // note: if half of the particles are not within the average
+            // radius of the cluster, we should probably split it in two
+            // along the main axis!
+        }
+        function trackClusters() {
+            addNewClusters(maxClusters);
+            let accums = [];
+            for (const c of clusters) accums.push([0, 0., 0., 0., 0]);
+            const maxKMeanPasses = 10;
+            for (let pass = maxKMeanPasses; pass >= 0; --pass) {
+                for (let a of accums) a = [0, 0., 0., 0., 0];
+                for (const c of atoms) {
+                    const [best, best_d2] = findNearestCluster(c[0], c[1]);
+                    if (best >= 0 && best_d2 < maxRadius * maxRadius) {
+                        accums[best][0] += 1;
+                        accums[best][1] += c[0];
+                        accums[best][2] += c[1];
+                        accums[best][3] += best_d2;
+                        accums[best][4] += c[4];
+                    }
+                }
+                const max_d = moveClusters(accums);
+                if (max_d < 1.) break;
+            }
+            finalizeClusters(accums);
+        }
+        function drawClusters() {
+            let i = 0;
+            while (i < clusters.length) {
+                let c = clusters[i];
+                if (c[2] > 0.) {
+                    drawCircle(c[0], c[1], c[3], c[2], false);
+                    ++i;
+                } else {
+                    // remove cluster by swapping with last
+                    const last = clusters.pop();
+                    if (i < clusters.length) clusters[i] = last;
+                }
+            }
+        }
 
         // Canvas Dimensions
         updateCanvasDimensions()
@@ -465,6 +573,10 @@
                 } else {
                     drawSquare(a[0], a[1], settings.colors[a[4]], settings.atoms.radius);
                 }
+            }
+            if (settings.drawings.clusters) {
+                trackClusters();
+                drawClusters();
             }
 
             updateParams();
