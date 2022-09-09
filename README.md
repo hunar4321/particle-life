@@ -25,7 +25,9 @@ You do not need to be exact with the parameters to reproduce these patterns. The
 
 Online Demo:
 -------------
-Click here for a live demo (JavaScript): https://hunar4321.github.io/particle-life/particle_life.html#91651088029
+Click here for a live demo (JavaScript): 
+  - 2d - https://hunar4321.github.io/particle-life/particle_life.html
+  - 3d - https://hunar4321.github.io/particle-life/particle_life_3d.html
 
 To use:
 -------------
