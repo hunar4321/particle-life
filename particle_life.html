@@ -497,7 +497,7 @@
 
         
         // Download DataURL
-        function dataURL_downloader(dataURL, name = `particle_life_${Date.now()}`) {
+        function dataURL_downloader(dataURL, name = `particle_life_${settings.seed}`) {
             const hyperlink = document.createElement("a");
             // document.body.appendChild(hyperlink);
             hyperlink.download = name;
