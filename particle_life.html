@@ -312,7 +312,7 @@
         }
 
         // Draw a circle
-        function drawCircle(x, y, color, radius, fill = false) {
+        function drawCircle(x, y, color, radius, fill = true) {
             m.beginPath();
             m.arc(x, y, radius, 0 * Math.PI, 2 * Math.PI);  // x, y, radius, ArcStart, ArcEnd
             m.closePath();
