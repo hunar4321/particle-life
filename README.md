@@ -48,6 +48,7 @@ You can now compile the C++ code on your machine.
 Other Ports:
 -------------
 - [Godot](https://github.com/NiclasEriksen/game-of-leif)
+- [Rust](https://github.com/ChevyRay/smarticles)
 - [golang](https://github.com/sikora507/go-artificial-life)
 - [Lua](https://github.com/ravener/love-life)
 - [FreeBasic](https://www.freebasic.net/forum/viewtopic.php?p=294331#p294331)
