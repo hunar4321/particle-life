@@ -49,7 +49,7 @@ Other Ports:
 -------------
 - [Godot](https://github.com/NiclasEriksen/game-of-leif)
 - [Rust](https://github.com/ChevyRay/smarticles)
-- [Go 1](https://github.com/sikora507/go-artificial-life), [Go 2](https://github.com/fglo/particles-rules-of-attraction)
+- [Go-1](https://github.com/sikora507/go-artificial-life), [Go-2](https://github.com/fglo/particles-rules-of-attraction), [Go-3](https://github.com/youssefboulmalf/Particle-Life-Go)
 - [Lua](https://github.com/ravener/love-life)
 - [Webgl](https://github.com/CapsAdmin/webgl-particles)
 - [Java](https://github.com/helloimalemur/ParticleSimulation)
