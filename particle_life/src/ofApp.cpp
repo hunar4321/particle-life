@@ -275,7 +275,7 @@ void ofApp::setup(){
     gui.add(save.setup("Save Model"));
     gui.add(load.setup("Load Model"));
     gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
-    gui.add(gravitySlider.setup("Gravity", gravity, 0, 1));
+    gui.add(gravitySlider.setup("Gravity", gravity, -1, 1));
     //gui.add(labelG.setup("GREEN:", "-"));
     gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 3000));
     gui.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
