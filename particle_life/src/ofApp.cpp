@@ -181,7 +181,7 @@ void ofApp::saveSettings()
         vSliderWG, vSliderWR, vSliderWW, vSliderWB,
         powerSliderBG, powerSliderBR, powerSliderBW, powerSliderBB,
         vSliderBG, vSliderBR, vSliderBW, vSliderBB,
-        (float)numberSliderG, (float)numberSliderR, (float)numberSliderW, (float)numberSliderB,
+        static_cast<float>(numberSliderG), static_cast<float>(numberSliderR), static_cast<float>(numberSliderW), static_cast<float>(numberSliderB),
         viscoSlider
     };
 
@@ -249,7 +249,7 @@ void ofApp::loadSettings()
         vSliderWG = p[20]; vSliderWR = p[21]; vSliderWW = p[22]; vSliderWB = p[23];
         powerSliderBG = p[24]; powerSliderBR = p[25]; powerSliderBW = p[26]; powerSliderBB = p[27];
         vSliderBG = p[28]; vSliderBR = p[29]; vSliderBW = p[30]; vSliderBB = p[31];
-        numberSliderG = (int)p[32]; numberSliderR = (int)p[33]; numberSliderW = (int)p[34]; numberSliderB = (int)p[35];
+        numberSliderG = static_cast<int>(p[32]); numberSliderR = static_cast<int>(p[33]); numberSliderW = static_cast<int>(p[34]); numberSliderB = static_cast<int>(p[35]);
         viscoSlider = p[36];
     }
     restart();
@@ -376,7 +376,7 @@ void ofApp::draw(){
     {
         lastTime = now;
 
-        fps.setup("FPS", to_string((int)((1000 / (double)delta) * cntFps)));
+        fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<double>(delta)) * cntFps)));
         cntFps = 0;
     }
 
