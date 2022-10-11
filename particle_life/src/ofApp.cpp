@@ -26,10 +26,10 @@ int cntFps = 0;
 clock_t now, lastTime, delta;
 
 //Particle groups by color
-std::vector<Point> green;
-std::vector<Point> red;
-std::vector<Point> white;
-std::vector<Point> blue;
+std::vector<point> green;
+std::vector<point> red;
+std::vector<point> white;
+std::vector<point> blue;
 
 //Get random float in range <a,b>
 float RandomFloat(float a, float b) {
@@ -39,9 +39,9 @@ float RandomFloat(float a, float b) {
 }
 
 //Draw all points from given group
-void Draw(std::vector<Point>* points) {
+void Draw(std::vector<point>* points) {
     for (int i = 0; i < points->size(); i++) {
-        (* points)[i].Draw();
+        (* points)[i].draw();
     }
 }
 
@@ -49,18 +49,18 @@ void Draw(std::vector<Point>* points) {
 int Random(int mn, int mx) { return rand() % (mx - mn) + mn; }
 
 //Generate a number of single colored points randomly distributed on canvas
-std::vector<Point> CreatePoints(int num, int r, int g, int b) {
-    std::vector<Point> points;
+std::vector<point> CreatePoints(int num, int r, int g, int b) {
+    std::vector<point> points;
     for (int i = 0; i < num; i++) {
         int x = Random(550, 1350);
         int y = Random(50, 850);
-        points.push_back(Point(x, y, r, g, b));
+        points.push_back(point(x, y, r, g, b));
     }
     return points;
 }
 
 //Interaction between 2 particle groups
-void ofApp::interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float G, float radius) {
+void ofApp::interaction(std::vector<point>* Group1, std::vector<point>* Group2, float G, float radius) {
 
     //Gravity coefficient
     float g = G / -100;
@@ -98,13 +98,11 @@ void ofApp::interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, 
 
 		//Checking for canvas bounds
         if (boundsToggle) {
-
             if (p1.x < 0) { p1.vx *= -1; p1.x = 0; };
-            if (p1.x > boundWidth) { p1.vx *= -1; p1.x = boundWidth; };
+            if (p1.x > boundWidth) { p1.vx *= -1; p1.x = boundWidth; }
             if (p1.y < 0) { p1.vy *= -1; p1.y = 0; };
-            if (p1.y > boundHeight) { p1.vy *= -1; p1.y = boundHeight; };
+            if (p1.y > boundHeight) { p1.vy *= -1; p1.y = boundHeight; }
         }
-
         (*Group1)[i] = p1;
     }
 
@@ -212,8 +210,8 @@ void ofApp::saveSettings()
 // Dialog gui tested on windows machine only. Not sure if it works on Mac or Linux too.
 void ofApp::loadSettings()
 {
-    std::string load_path = "";
-    std::string text = "";
+    std::string load_path;
+    std::string text;
     ofFileDialogResult result = ofSystemLoadDialog("Load file", false, load_path);
     if (result.bSuccess) {
         load_path = result.getPath();
@@ -227,7 +225,7 @@ void ofApp::loadSettings()
     }
 
     // split text by space and convert them to floats
-    string word = "";
+    string word;
     std::vector<float> p;
     for (auto x : text){
         if (x == ' '){
@@ -446,10 +444,7 @@ void ofApp::draw(){
         ofDrawCircle(p3x, p3y, rr);
         ofSetColor(100, 100, 250);
         ofDrawCircle(p4x, p4y, rr);
-
     }
-
     gui.draw();
-
 }
 

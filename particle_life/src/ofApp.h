@@ -4,7 +4,7 @@
 #include "ofxGui.h"
 #include <fstream>
 
-struct Point {
+struct point {
     //Position
 	float x = 0;
 	float y = 0;
@@ -18,7 +18,7 @@ struct Point {
 	int g = 0;
 	int b = 0;
 
-	Point(const float _x, const float _y, const int _r, const int _g, const int _b) {
+	point(const float _x, const float _y, const int _r, const int _g, const int _b) {
 		x = _x;
 		y = _y;
 		r = _r;
@@ -26,7 +26,7 @@ struct Point {
 		b = _b;
 	}
 
-	void Draw() const
+	void draw() const
 	{
 		ofSetColor(r, g, b);  //set particle color
 		ofDrawCircle(x, y, 3); //draw a point at x,y coordinates, the size of a 3 pixels
@@ -45,7 +45,7 @@ class ofApp final : public ofBaseApp{
 		void random();
 		void saveSettings();
 		void loadSettings();
-		void interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float G, float radius);
+		void interaction(std::vector<point>* Group1, std::vector<point>* Group2, float G, float radius);
 
 		ofxPanel gui;
 
