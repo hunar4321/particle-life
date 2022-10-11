@@ -91,7 +91,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 
 		//Calculate new velocity
         p1.vx = (p1.vx + (fx * g)) * (1.0-viscosity);
-        p1.vy = (p1.vy + (fy * g)) * (1.0-viscosity);
+        p1.vy = (p1.vy + (fy * g)) * (1.0-viscosity) + gravity;
 		//Update position based on velocity
         p1.x += p1.vx;
         p1.y += p1.vy;
@@ -275,6 +275,7 @@ void ofApp::setup(){
     gui.add(save.setup("Save Model"));
     gui.add(load.setup("Load Model"));
     gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
+    gui.add(gravitySlider.setup("Gravity", gravity, 0, 1));
     //gui.add(labelG.setup("GREEN:", "-"));
     gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 3000));
     gui.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
@@ -332,6 +333,7 @@ void ofApp::setup(){
 //------------------------------Update simulation with sliders values------------------------------
 void ofApp::update(){
     viscosity = viscoSlider;
+    gravity = gravitySlider;
     if (numberSliderG > 0) {
         interaction(&green, &green, powerSliderGG, vSliderGG);
         interaction(&green, &red, powerSliderGR, vSliderGR);

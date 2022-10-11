@@ -68,6 +68,7 @@ class ofApp final : public ofBaseApp{
 		int pnumberSliderB = 1000;
 
 		ofxFloatSlider viscoSlider;
+		ofxFloatSlider gravitySlider;
 
 		ofxFloatSlider powerSliderRR;
 		ofxFloatSlider powerSliderRG;
@@ -163,6 +164,7 @@ class ofApp final : public ofBaseApp{
 		float boundHeight = 900;
 	
 		float viscosity = 0.5F;
+		float gravity = 0.0F;
 		float forceVariance = 0.8F;
 		float radiusVariance = 0.6F;
 	
