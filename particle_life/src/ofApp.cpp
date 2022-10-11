@@ -33,13 +33,13 @@ std::vector<point> blue;
 
 //Get random float in range <a,b>
 float RandomFloat(float a, float b) {
-    float diff = b - a;
-    float r = ofRandomuf() * diff;
+	const float diff = b - a;
+	const float r = ofRandomuf() * diff;
     return a + r;
 }
 
 //Draw all points from given group
-void Draw(std::vector<point>* points) {
+void Draw(const std::vector<point>* points) {
     for (int i = 0; i < points->size(); i++) {
         (* points)[i].draw();
     }
@@ -54,7 +54,7 @@ std::vector<point> CreatePoints(int num, int r, int g, int b) {
     for (int i = 0; i < num; i++) {
         int x = Random(550, 1350);
         int y = Random(50, 850);
-        points.push_back(point(x, y, r, g, b));
+        points.emplace_back(x, y, r, g, b);
     }
     return points;
 }
