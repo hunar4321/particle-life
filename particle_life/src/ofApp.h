@@ -162,9 +162,9 @@ class ofApp : public ofBaseApp{
 		float boundWidth = 1600;
 		float boundHeight = 900;
 	
-		float viscosity = 0.5;
-		float forceVariance = 0.8;
-		float radiusVariance = 0.6;
+		float viscosity = 0.5F;
+		float forceVariance = 0.8F;
+		float radiusVariance = 0.6F;
 	
 		ofxLabel fps;
 };
