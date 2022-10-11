@@ -35,7 +35,7 @@ struct Point {
 
 
 //---------------------------------------------CONFIGURE GUI---------------------------------------------//
-class ofApp : public ofBaseApp{
+class ofApp final : public ofBaseApp{
 
 	public:
 		void setup() override;
