@@ -29,7 +29,7 @@ struct point {
 	void draw() const
 	{
 		ofSetColor(r, g, b);  //set particle color
-		ofDrawCircle(x, y, 3); //draw a point at x,y coordinates, the size of a 3 pixels
+		ofDrawCircle(x, y, 3.0F); //draw a point at x,y coordinates, the size of a 3 pixels
 	}
 };
 
@@ -164,7 +164,7 @@ class ofApp final : public ofBaseApp{
 		float boundHeight = 900;
 	
 		float viscosity = 0.5F;
-		float gravity = 0.0F;
+		float worldGravity = 0.0F;
 		float forceVariance = 0.8F;
 		float radiusVariance = 0.6F;
 	
