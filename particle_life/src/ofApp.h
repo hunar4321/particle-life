@@ -45,7 +45,7 @@ class ofApp final : public ofBaseApp{
 		void random();
 		void saveSettings();
 		void loadSettings();
-		void interaction(std::vector<point>* Group1, std::vector<point>* Group2, float G, float radius);
+		void interaction(std::vector<point>* Group1, const std::vector<point>* Group2, float G, float radius);
 
 		ofxPanel gui;
 

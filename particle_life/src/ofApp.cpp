@@ -60,10 +60,10 @@ std::vector<point> CreatePoints(int num, int r, int g, int b) {
 }
 
 //Interaction between 2 particle groups
-void ofApp::interaction(std::vector<point>* Group1, std::vector<point>* Group2, float G, float radius) {
+void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Group2, float G, const float radius) {
 
     //Gravity coefficient
-    float g = G / -100;
+    const float g = G / -100;
 
     omp_set_num_threads(omp_get_num_procs());
     #pragma omp parallel for
@@ -75,11 +75,11 @@ void ofApp::interaction(std::vector<point>* Group1, std::vector<point>* Group2, 
         float fy = 0;
 		//Loop through second group of points
         for (int j = 0; j < Group2->size(); j++) {
-            auto p2 = (*Group2)[j];
-			//Calculate the ddistance between points using Pythagorean theorem
-            auto dx = p1.x - p2.x;
-            auto dy = p1.y - p2.y;
-            auto r = std::sqrt(dx * dx + dy * dy);
+	        const auto p2 = (*Group2)[j];
+			//Calculate the distance between points using Pythagorean theorem
+	        const auto dx = p1.x - p2.x;
+	        const auto dy = p1.y - p2.y;
+	        const auto r = std::sqrt(dx * dx + dy * dy);
 			
 			//Calculate the force in given bounds. 
             if (r < radius && r > 0) {
@@ -172,7 +172,7 @@ void ofApp::random() {
 // Dialog gui tested on windows machine only. Not sure if it works on Mac or Linux too.
 void ofApp::saveSettings()
 {
-    std::vector<float> settings = {
+	const std::vector<float> settings = {
         powerSliderGG, powerSliderGR, powerSliderGW, powerSliderGB,
         vSliderGG, vSliderGR, vSliderGW, vSliderGB,
         powerSliderRG, powerSliderRR, powerSliderRW, powerSliderRB,
