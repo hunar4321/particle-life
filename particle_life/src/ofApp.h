@@ -26,7 +26,8 @@ struct Point {
 		b = _b;
 	}
 
-	void Draw() {
+	void Draw() const
+	{
 		ofSetColor(r, g, b);  //set particle color
 		ofDrawCircle((int)x, (int)y, 3); //draw a point at x,y coordinates, the size of a 3 pixels
 	}
