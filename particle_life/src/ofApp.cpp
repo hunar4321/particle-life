@@ -33,9 +33,8 @@ std::vector<Point> blue;
 
 //Get random float in range <a,b>
 float RandomFloat(float a, float b) {
-    float random = ((float)rand()) / (float)RAND_MAX;
     float diff = b - a;
-    float r = random * diff;
+    float r = ofRandomuf() * diff;
     return a + r;
 }
 
