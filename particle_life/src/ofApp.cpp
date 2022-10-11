@@ -60,7 +60,7 @@ std::vector<Point> CreatePoints(int num, int r, int g, int b) {
 }
 
 //Interaction between 2 particle groups
-void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float G, float radius) {
+void ofApp::interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float G, float radius) {
 
     //Gravity coefficient
     float g = G / -100;
@@ -333,29 +333,29 @@ void ofApp::setup(){
 void ofApp::update(){
     viscosity = viscoSlider;
     if (numberSliderG > 0) {
-        Interaction(&green, &green, powerSliderGG, vSliderGG);
-        Interaction(&green, &red, powerSliderGR, vSliderGR);
-        Interaction(&green, &white, powerSliderGW, vSliderGW);
-        Interaction(&green, &blue, powerSliderGB, vSliderGB);
+        interaction(&green, &green, powerSliderGG, vSliderGG);
+        interaction(&green, &red, powerSliderGR, vSliderGR);
+        interaction(&green, &white, powerSliderGW, vSliderGW);
+        interaction(&green, &blue, powerSliderGB, vSliderGB);
     }
 
     if (numberSliderR > 0) {
-        Interaction(&red, &red, powerSliderRR, vSliderRR);
-        Interaction(&red, &green, powerSliderRG, vSliderRG);
-        Interaction(&red, &white, powerSliderRW, vSliderRW);
-        Interaction(&red, &blue, powerSliderRB, vSliderRB);
+        interaction(&red, &red, powerSliderRR, vSliderRR);
+        interaction(&red, &green, powerSliderRG, vSliderRG);
+        interaction(&red, &white, powerSliderRW, vSliderRW);
+        interaction(&red, &blue, powerSliderRB, vSliderRB);
     }
     if (numberSliderW > 0) {
-        Interaction(&white, &white, powerSliderWW, vSliderWW);
-        Interaction(&white, &green, powerSliderWG, vSliderWG);
-        Interaction(&white, &red, powerSliderWR, vSliderWR);
-        Interaction(&white, &blue, powerSliderWB, vSliderWB);
+        interaction(&white, &white, powerSliderWW, vSliderWW);
+        interaction(&white, &green, powerSliderWG, vSliderWG);
+        interaction(&white, &red, powerSliderWR, vSliderWR);
+        interaction(&white, &blue, powerSliderWB, vSliderWB);
     }
     if (numberSliderB > 0) {
-        Interaction(&blue, &white, powerSliderBW, vSliderBW);
-        Interaction(&blue, &green, powerSliderBG, vSliderBG);
-        Interaction(&blue, &red, powerSliderBR, vSliderBR);
-        Interaction(&blue, &blue, powerSliderBB, vSliderBB);
+        interaction(&blue, &white, powerSliderBW, vSliderBW);
+        interaction(&blue, &green, powerSliderBG, vSliderBG);
+        interaction(&blue, &red, powerSliderBR, vSliderBR);
+        interaction(&blue, &blue, powerSliderBB, vSliderBB);
     }
     
     if (save) { saveSettings(); }
