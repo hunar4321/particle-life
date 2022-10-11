@@ -66,7 +66,7 @@ void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, 
     //Gravity coefficient
     float g = G / -100;
 
-    omp_set_num_threads(4);
+    omp_set_num_threads(8);
     #pragma omp parallel for
     //Loop through first group of points
     for (int i = 0; i < Group1->size(); i++) {
