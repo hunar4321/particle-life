@@ -31,6 +31,7 @@ std::vector<point> red;
 std::vector<point> white;
 std::vector<point> blue;
 
+
 //Get random float in range <a,b>
 float RandomFloat(float a, float b) {
 	const float diff = b - a;
@@ -61,6 +62,9 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 
     //Gravity coefficient
     const float g = G / -100;
+
+    boundHeight = ofGetHeight();
+    boundWidth = ofGetWidth();
 
     omp_set_num_threads(omp_get_num_procs());
     #pragma omp parallel for
@@ -95,10 +99,11 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 
 		//Checking for canvas bounds
         if (boundsToggle) {
-            if (p1.x < 0) { p1.vx *= -1; p1.x = 0; };
+            if (p1.x < 0) { p1.vx *= -1; p1.x = 0; }
             if (p1.x > boundWidth) { p1.vx *= -1; p1.x = boundWidth; }
-            if (p1.y < 0) { p1.vy *= -1; p1.y = 0; };
+            if (p1.y < 0) { p1.vy *= -1; p1.y = 0; }
             if (p1.y > boundHeight) { p1.vy *= -1; p1.y = boundHeight; }
+
         }
         (*Group1)[i] = p1;
     }
