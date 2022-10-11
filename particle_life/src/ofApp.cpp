@@ -33,7 +33,7 @@ std::vector<point> blue;
 
 
 //Get random float in range <a,b>
-float RandomFloat(float a, float b) {
+float RandomFloat(const float a, const float b) {
 	const float diff = b - a;
 	const float r = ofRandomuf() * diff;
     return a + r;
@@ -47,11 +47,11 @@ void Draw(const std::vector<point>* points) {
 }
 
 //Generate a number of single colored points randomly distributed on canvas
-std::vector<point> CreatePoints(int num, int r, int g, int b) {
+std::vector<point> CreatePoints(const int num, int r, int g, int b) {
     std::vector<point> points;
     for (int i = 0; i < num; i++) {
-        int x = ofRandomWidth();
-        int y = ofRandomHeight();
+        int x = static_cast<int>(ofRandomWidth());
+        int y = static_cast<int>(ofRandomHeight());
         points.emplace_back(x, y, r, g, b);
     }
     return points;
@@ -69,7 +69,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
     omp_set_num_threads(omp_get_num_procs());
     #pragma omp parallel for
     //Loop through first group of points
-    for (int i = 0; i < Group1->size(); i++) {
+    for (auto i = 0; i < Group1->size(); i++) {
         auto p1 = (*Group1)[i];
 		//Force acting on particle
         float fx = 0;
