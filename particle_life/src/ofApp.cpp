@@ -46,7 +46,7 @@ void Draw(const std::vector<point>* points) {
 }
 
 //Get random int in range <mn,mx>
-int Random(int mn, int mx) { return rand() % (mx - mn) + mn; }
+int Random(const int mn, const int mx) { return rand() % (mx - mn) + mn; }
 
 //Generate a number of single colored points randomly distributed on canvas
 std::vector<point> CreatePoints(int num, int r, int g, int b) {
