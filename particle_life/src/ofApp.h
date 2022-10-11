@@ -18,7 +18,7 @@ struct Point {
 	int g = 0;
 	int b = 0;
 
-	Point(int _x, int _y, int _r, int _g, int _b) {
+	Point(float _x, float _y, int _r, int _g, int _b) {
 		x = _x;
 		y = _y;
 		r = _r;
