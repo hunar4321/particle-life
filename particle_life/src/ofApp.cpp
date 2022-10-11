@@ -92,6 +92,21 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 		//Calculate new velocity
         p1.vx = (p1.vx + (fx * g)) * (1.0-viscosity);
         p1.vy = (p1.vy + (fy * g)) * (1.0-viscosity) + worldGravity;
+
+        // Wall Repel
+        if (wallRepel > 0.0F)
+        {
+            if (p1.x < wallRepel)
+                p1.vx += (wallRepel - p1.x) * 0.1;
+            if (p1.x > boundWidth - wallRepel)
+                p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
+
+            if (p1.y < wallRepel)
+                p1.vy += (wallRepel - p1.y) * 0.1;
+            if (p1.y > boundHeight - wallRepel)
+                p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
+        }
+
 		//Update position based on velocity
         p1.x += p1.vx;
         p1.y += p1.vy;
@@ -276,6 +291,7 @@ void ofApp::setup(){
     gui.add(load.setup("Load Model"));
     gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
     gui.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
+    gui.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
     //gui.add(labelG.setup("GREEN:", "-"));
     gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 3000));
     gui.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
@@ -334,6 +350,8 @@ void ofApp::setup(){
 void ofApp::update(){
     viscosity = viscoSlider;
     worldGravity = gravitySlider;
+    wallRepel = wallRepelSlider;
+
     if (numberSliderG > 0) {
         interaction(&green, &green, powerSliderGG, vSliderGG);
         interaction(&green, &red, powerSliderGR, vSliderGR);

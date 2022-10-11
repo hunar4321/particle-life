@@ -69,6 +69,7 @@ class ofApp final : public ofBaseApp{
 
 		ofxFloatSlider viscoSlider;
 		ofxFloatSlider gravitySlider;
+		ofxFloatSlider wallRepelSlider;
 
 		ofxFloatSlider powerSliderRR;
 		ofxFloatSlider powerSliderRG;
@@ -167,6 +168,7 @@ class ofApp final : public ofBaseApp{
 		float worldGravity = 0.0F;
 		float forceVariance = 0.8F;
 		float radiusVariance = 0.6F;
+		float wallRepel = 40.0F;
 	
 		ofxLabel fps;
 };
