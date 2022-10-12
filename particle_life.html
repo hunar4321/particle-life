@@ -74,7 +74,8 @@
             colors: [],
             numColors: 4,
             time_scale: 1.0,
-            viscosity: 0.7, // speed-dampening (can be >1 !)
+            viscosity: 0.7,  // speed-dampening (can be >1 !)
+            gravity: 0.0,  // pulling downward
             pulseDuration: 10,
             wallRepel: 40,
             reset: () => {
@@ -158,7 +159,10 @@
             })
             configFolder.add(settings, 'time_scale', 0.1, 5, 0.01).name('Time Scale').listen()
             configFolder.add(settings, 'viscosity', 0.1, 2, 0.1).name('Viscosity').listen()
-            configFolder.add(settings, 'pulseDuration', 1, 50, 1).name('Click Pulse Duration').listen()
+
+            configFolder.add(settings, 'gravity', 0., 1., 0.05).name('Gravity').listen()
+            configFolder.add(settings, 'pulseDuration', 1, 100, 1).name('Click Pulse Duration').listen()
+
             configFolder.add(settings, 'wallRepel', 0, 100, 1).name('Wall Repel').listen()
             configFolder.add(settings, 'explore').name('Random Exploration').listen()
             // Drawings
@@ -504,6 +508,7 @@
                   if (a[1] <                 d) fy += (d                 - a[1]) * strength
                   if (a[1] > canvas.height - d) fy += (canvas.height - d - a[1]) * strength
                 }
+                fy += settings.gravity;
                 const vmix = (1. - settings.viscosity);
                 a[2] = a[2] * vmix + fx * settings.time_scale;
                 a[3] = a[3] * vmix + fy * settings.time_scale;

@@ -26,61 +26,61 @@ int cntFps = 0;
 clock_t now, lastTime, delta;
 
 //Particle groups by color
-std::vector<Point> green;
-std::vector<Point> red;
-std::vector<Point> white;
-std::vector<Point> blue;
+std::vector<point> green;
+std::vector<point> red;
+std::vector<point> white;
+std::vector<point> blue;
+
 
 //Get random float in range <a,b>
-float RandomFloat(float a, float b) {
-    float random = ((float)rand()) / (float)RAND_MAX;
-    float diff = b - a;
-    float r = random * diff;
+float RandomFloat(const float a, const float b) {
+	const float diff = b - a;
+	const float r = ofRandomuf() * diff;
     return a + r;
 }
 
 //Draw all points from given group
-void Draw(std::vector<Point>* points) {
+void Draw(const std::vector<point>* points) {
     for (int i = 0; i < points->size(); i++) {
-        (* points)[i].Draw();
+        (* points)[i].draw();
     }
 }
 
-//Get random int in range <mn,mx>
-int Random(int mn, int mx) { return rand() % (mx - mn) + mn; }
-
 //Generate a number of single colored points randomly distributed on canvas
-std::vector<Point> CreatePoints(int num, int r, int g, int b) {
-    std::vector<Point> points;
+std::vector<point> CreatePoints(const int num, int r, int g, int b) {
+    std::vector<point> points;
     for (int i = 0; i < num; i++) {
-        int x = Random(550, 1350);
-        int y = Random(50, 850);
-        points.push_back(Point(x, y, r, g, b));
+        int x = static_cast<int>(ofRandomWidth());
+        int y = static_cast<int>(ofRandomHeight());
+        points.emplace_back(x, y, r, g, b);
     }
     return points;
 }
 
 //Interaction between 2 particle groups
-void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float G, float radius) {
+void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Group2, float G, const float radius) {
 
     //Gravity coefficient
-    float g = G / -100;
+    const float g = G / -100;
 
-    omp_set_num_threads(4);
+    boundHeight = ofGetHeight();
+    boundWidth = ofGetWidth();
+
+    omp_set_num_threads(omp_get_num_procs());
     #pragma omp parallel for
     //Loop through first group of points
-    for (int i = 0; i < Group1->size(); i++) {
+    for (auto i = 0; i < Group1->size(); i++) {
         auto p1 = (*Group1)[i];
 		//Force acting on particle
         float fx = 0;
         float fy = 0;
 		//Loop through second group of points
         for (int j = 0; j < Group2->size(); j++) {
-            auto p2 = (*Group2)[j];
-			//Calculate the ddistance between points using Pythagorean theorem
-            auto dx = p1.x - p2.x;
-            auto dy = p1.y - p2.y;
-            auto r = std::sqrt(dx * dx + dy * dy);
+	        const auto p2 = (*Group2)[j];
+			//Calculate the distance between points using Pythagorean theorem
+	        const auto dx = p1.x - p2.x;
+	        const auto dy = p1.y - p2.y;
+	        const auto r = std::sqrt(dx * dx + dy * dy);
 			
 			//Calculate the force in given bounds. 
             if (r < radius && r > 0) {
@@ -91,7 +91,22 @@ void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, 
 
 		//Calculate new velocity
         p1.vx = (p1.vx + (fx * g)) * (1.0-viscosity);
-        p1.vy = (p1.vy + (fy * g)) * (1.0-viscosity);
+        p1.vy = (p1.vy + (fy * g)) * (1.0-viscosity) + worldGravity;
+
+        // Wall Repel
+        if (wallRepel > 0.0F)
+        {
+            if (p1.x < wallRepel)
+                p1.vx += (wallRepel - p1.x) * 0.1;
+            if (p1.x > boundWidth - wallRepel)
+                p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
+
+            if (p1.y < wallRepel)
+                p1.vy += (wallRepel - p1.y) * 0.1;
+            if (p1.y > boundHeight - wallRepel)
+                p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
+        }
+
 		//Update position based on velocity
         p1.x += p1.vx;
         p1.y += p1.vy;
@@ -99,13 +114,12 @@ void ofApp::Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, 
 
 		//Checking for canvas bounds
         if (boundsToggle) {
+            if (p1.x < 0) { p1.vx *= -1; p1.x = 0; }
+            if (p1.x > boundWidth) { p1.vx *= -1; p1.x = boundWidth; }
+            if (p1.y < 0) { p1.vy *= -1; p1.y = 0; }
+            if (p1.y > boundHeight) { p1.vy *= -1; p1.y = boundHeight; }
 
-            if (p1.x < 0) { p1.vx *= -1; p1.x = 0; };
-            if (p1.x > boundWidth) { p1.vx *= -1; p1.x = boundWidth; };
-            if (p1.y < 0) { p1.vy *= -1; p1.y = 0; };
-            if (p1.y > boundHeight) { p1.vy *= -1; p1.y = boundHeight; };
         }
-
         (*Group1)[i] = p1;
     }
 
@@ -175,7 +189,7 @@ void ofApp::random() {
 // Dialog gui tested on windows machine only. Not sure if it works on Mac or Linux too.
 void ofApp::saveSettings()
 {
-    std::vector<float> settings = {
+	const std::vector<float> settings = {
         powerSliderGG, powerSliderGR, powerSliderGW, powerSliderGB,
         vSliderGG, vSliderGR, vSliderGW, vSliderGB,
         powerSliderRG, powerSliderRR, powerSliderRW, powerSliderRB,
@@ -184,7 +198,7 @@ void ofApp::saveSettings()
         vSliderWG, vSliderWR, vSliderWW, vSliderWB,
         powerSliderBG, powerSliderBR, powerSliderBW, powerSliderBB,
         vSliderBG, vSliderBR, vSliderBW, vSliderBB,
-        (float)numberSliderG, (float)numberSliderR, (float)numberSliderW, (float)numberSliderB,
+        static_cast<float>(numberSliderG), static_cast<float>(numberSliderR), static_cast<float>(numberSliderW), static_cast<float>(numberSliderB),
         viscoSlider
     };
 
@@ -213,8 +227,8 @@ void ofApp::saveSettings()
 // Dialog gui tested on windows machine only. Not sure if it works on Mac or Linux too.
 void ofApp::loadSettings()
 {
-    std::string load_path = "";
-    std::string text = "";
+    std::string load_path;
+    std::string text;
     ofFileDialogResult result = ofSystemLoadDialog("Load file", false, load_path);
     if (result.bSuccess) {
         load_path = result.getPath();
@@ -228,7 +242,7 @@ void ofApp::loadSettings()
     }
 
     // split text by space and convert them to floats
-    string word = "";
+    string word;
     std::vector<float> p;
     for (auto x : text){
         if (x == ' '){
@@ -252,7 +266,7 @@ void ofApp::loadSettings()
         vSliderWG = p[20]; vSliderWR = p[21]; vSliderWW = p[22]; vSliderWB = p[23];
         powerSliderBG = p[24]; powerSliderBR = p[25]; powerSliderBW = p[26]; powerSliderBB = p[27];
         vSliderBG = p[28]; vSliderBR = p[29]; vSliderBW = p[30]; vSliderBB = p[31];
-        numberSliderG = (int)p[32]; numberSliderR = (int)p[33]; numberSliderW = (int)p[34]; numberSliderB = (int)p[35];
+        numberSliderG = static_cast<int>(p[32]); numberSliderR = static_cast<int>(p[33]); numberSliderW = static_cast<int>(p[34]); numberSliderB = static_cast<int>(p[35]);
         viscoSlider = p[36];
     }
     restart();
@@ -276,6 +290,8 @@ void ofApp::setup(){
     gui.add(save.setup("Save Model"));
     gui.add(load.setup("Load Model"));
     gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
+    gui.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
+    gui.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
     //gui.add(labelG.setup("GREEN:", "-"));
     gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 3000));
     gui.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
@@ -333,30 +349,33 @@ void ofApp::setup(){
 //------------------------------Update simulation with sliders values------------------------------
 void ofApp::update(){
     viscosity = viscoSlider;
+    worldGravity = gravitySlider;
+    wallRepel = wallRepelSlider;
+
     if (numberSliderG > 0) {
-        Interaction(&green, &green, powerSliderGG, vSliderGG);
-        Interaction(&green, &red, powerSliderGR, vSliderGR);
-        Interaction(&green, &white, powerSliderGW, vSliderGW);
-        Interaction(&green, &blue, powerSliderGB, vSliderGB);
+        interaction(&green, &green, powerSliderGG, vSliderGG);
+        interaction(&green, &red, powerSliderGR, vSliderGR);
+        interaction(&green, &white, powerSliderGW, vSliderGW);
+        interaction(&green, &blue, powerSliderGB, vSliderGB);
     }
 
     if (numberSliderR > 0) {
-        Interaction(&red, &red, powerSliderRR, vSliderRR);
-        Interaction(&red, &green, powerSliderRG, vSliderRG);
-        Interaction(&red, &white, powerSliderRW, vSliderRW);
-        Interaction(&red, &blue, powerSliderRB, vSliderRB);
+        interaction(&red, &red, powerSliderRR, vSliderRR);
+        interaction(&red, &green, powerSliderRG, vSliderRG);
+        interaction(&red, &white, powerSliderRW, vSliderRW);
+        interaction(&red, &blue, powerSliderRB, vSliderRB);
     }
     if (numberSliderW > 0) {
-        Interaction(&white, &white, powerSliderWW, vSliderWW);
-        Interaction(&white, &green, powerSliderWG, vSliderWG);
-        Interaction(&white, &red, powerSliderWR, vSliderWR);
-        Interaction(&white, &blue, powerSliderWB, vSliderWB);
+        interaction(&white, &white, powerSliderWW, vSliderWW);
+        interaction(&white, &green, powerSliderWG, vSliderWG);
+        interaction(&white, &red, powerSliderWR, vSliderWR);
+        interaction(&white, &blue, powerSliderWB, vSliderWB);
     }
     if (numberSliderB > 0) {
-        Interaction(&blue, &white, powerSliderBW, vSliderBW);
-        Interaction(&blue, &green, powerSliderBG, vSliderBG);
-        Interaction(&blue, &red, powerSliderBR, vSliderBR);
-        Interaction(&blue, &blue, powerSliderBB, vSliderBB);
+        interaction(&blue, &white, powerSliderBW, vSliderBW);
+        interaction(&blue, &green, powerSliderBG, vSliderBG);
+        interaction(&blue, &red, powerSliderBR, vSliderBR);
+        interaction(&blue, &blue, powerSliderBB, vSliderBB);
     }
     
     if (save) { saveSettings(); }
@@ -379,7 +398,7 @@ void ofApp::draw(){
     {
         lastTime = now;
 
-        fps.setup("FPS", to_string((int)((1000 / (double)delta) * cntFps)));
+        fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<double>(delta)) * cntFps)));
         cntFps = 0;
     }
 
@@ -447,10 +466,7 @@ void ofApp::draw(){
         ofDrawCircle(p3x, p3y, rr);
         ofSetColor(100, 100, 250);
         ofDrawCircle(p4x, p4y, rr);
-
     }
-
     gui.draw();
-
 }
 
