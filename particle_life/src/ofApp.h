@@ -28,8 +28,8 @@ struct point {
 
 	void draw() const
 	{
-		ofSetColor(r, g, b, 200);  //set particle color + some alpha
-		ofDrawCircle(x, y, 3.0F); //draw a point at x,y coordinates, the size of a 3 pixels
+		ofSetColor(r, g, b, 100);  //set particle color + some alpha
+		ofDrawCircle(x, y, 2.0F); //draw a point at x,y coordinates, the size of a 2 pixels
 	}
 };
 
@@ -63,10 +63,10 @@ class ofApp final : public ofBaseApp{
 		ofxIntSlider numberSliderW;
 		ofxIntSlider numberSliderB;
 
-		int pnumberSliderR = 1000;
-		int pnumberSliderG = 1000;
-		int pnumberSliderW = 1000;
-		int pnumberSliderB = 1000;
+		int pnumberSliderR = 2000;
+		int pnumberSliderG = 2000;
+		int pnumberSliderW = 2000;
+		int pnumberSliderB = 2000;
 
 		ofxFloatSlider viscoSlider;
 		ofxFloatSlider gravitySlider;
