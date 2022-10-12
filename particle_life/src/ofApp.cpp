@@ -71,18 +71,21 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
     //Loop through first group of points
     for (auto i = 0; i < Group1->size(); i++) {
         auto p1 = (*Group1)[i];
+
 		//Force acting on particle
         float fx = 0;
         float fy = 0;
+
 		//Loop through second group of points
-        for (int j = 0; j < Group2->size(); j++) {
+        //This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap in comparaison
+        for (auto j = 0; j < Group2->size(); j++) {
 	        const auto p2 = (*Group2)[j];
 			//Calculate the distance between points using Pythagorean theorem
 	        const auto dx = p1.x - p2.x;
 	        const auto dy = p1.y - p2.y;
-	        const auto r = std::sqrt(dx * dx + dy * dy);
-			
-			//Calculate the force in given bounds. 
+            const auto r = std::sqrt(dx * dx + dy * dy);
+
+            //Calculate the force in given bounds. 
             if (r < radius && r > 0) {
                 fx += (dx / r);
                 fy += (dy / r);
@@ -96,15 +99,10 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
         // Wall Repel
         if (wallRepel > 0.0F)
         {
-            if (p1.x < wallRepel)
-                p1.vx += (wallRepel - p1.x) * 0.1;
-            if (p1.x > boundWidth - wallRepel)
-                p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
-
-            if (p1.y < wallRepel)
-                p1.vy += (wallRepel - p1.y) * 0.1;
-            if (p1.y > boundHeight - wallRepel)
-                p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
+            if (p1.x < wallRepel) p1.vx += (wallRepel - p1.x) * 0.1;
+            if (p1.y < wallRepel) p1.vy += (wallRepel - p1.y) * 0.1;
+            if (p1.x > boundWidth - wallRepel)  p1.vx += (boundWidth  - wallRepel - p1.x) * 0.1;
+            if (p1.y > boundHeight - wallRepel) p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
         }
 
 		//Update position based on velocity
