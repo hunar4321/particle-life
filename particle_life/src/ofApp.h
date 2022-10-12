@@ -4,7 +4,7 @@
 #include "ofxGui.h"
 #include <fstream>
 
-struct Point {
+struct point {
     //Position
 	float x = 0;
 	float y = 0;
@@ -18,7 +18,7 @@ struct Point {
 	int g = 0;
 	int b = 0;
 
-	Point(int _x, int _y, int _r, int _g, int _b) {
+	point(const float _x, const float _y, const int _r, const int _g, const int _b) {
 		x = _x;
 		y = _y;
 		r = _r;
@@ -26,25 +26,26 @@ struct Point {
 		b = _b;
 	}
 
-	void Draw() {
+	void draw() const
+	{
 		ofSetColor(r, g, b);  //set particle color
-		ofDrawCircle((int)x, (int)y, 3); //draw a point at x,y coordinates, the size of a 3 pixels
+		ofDrawCircle(x, y, 3.0F); //draw a point at x,y coordinates, the size of a 3 pixels
 	}
 };
 
 
 //---------------------------------------------CONFIGURE GUI---------------------------------------------//
-class ofApp : public ofBaseApp{
+class ofApp final : public ofBaseApp{
 
 	public:
-		void setup();
-		void update();
-		void draw();
+		void setup() override;
+		void update() override;
+		void draw() override;
 		void restart();
 		void random();
 		void saveSettings();
 		void loadSettings();
-		void Interaction(std::vector<Point>* Group1, std::vector<Point>* Group2, float m, float radius);
+		void interaction(std::vector<point>* Group1, const std::vector<point>* Group2, float G, float radius);
 
 		ofxPanel gui;
 
@@ -67,6 +68,8 @@ class ofApp : public ofBaseApp{
 		int pnumberSliderB = 1000;
 
 		ofxFloatSlider viscoSlider;
+		ofxFloatSlider gravitySlider;
+		ofxFloatSlider wallRepelSlider;
 
 		ofxFloatSlider powerSliderRR;
 		ofxFloatSlider powerSliderRG;
@@ -161,9 +164,11 @@ class ofApp : public ofBaseApp{
 		float boundWidth = 1600;
 		float boundHeight = 900;
 	
-		float viscosity = 0.5;
-		float forceVariance = 0.8;
-		float radiusVariance = 0.6;
+		float viscosity = 0.5F;
+		float worldGravity = 0.0F;
+		float forceVariance = 0.8F;
+		float radiusVariance = 0.6F;
+		float wallRepel = 40.0F;
 	
 		ofxLabel fps;
 };
