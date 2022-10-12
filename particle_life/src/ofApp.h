@@ -28,7 +28,7 @@ struct point {
 
 	void draw() const
 	{
-		ofSetColor(r, g, b);  //set particle color
+		ofSetColor(r, g, b, 200);  //set particle color + some alpha
 		ofDrawCircle(x, y, 3.0F); //draw a point at x,y coordinates, the size of a 3 pixels
 	}
 };
@@ -56,6 +56,7 @@ class ofApp final : public ofBaseApp{
 		ofxButton load;
 		ofxToggle boundsToggle;
 		ofxToggle modelToggle;
+		ofxToggle motionBlurToggle;
 
 		ofxIntSlider numberSliderR;
 		ofxIntSlider numberSliderG;

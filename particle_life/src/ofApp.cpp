@@ -339,7 +339,11 @@ void ofApp::setup(){
     gui.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
     gui.add(boundsToggle.setup("Bounded", true));
     gui.add(modelToggle.setup("Show Model", false));
+    gui.add(motionBlurToggle.setup("Motion Blur", false));
     gui.add(fps.setup("FPS", "0"));
+
+    ofSetBackgroundAuto(false);
+    ofEnableAlphaBlending();
 
     restart();
 }
@@ -384,7 +388,14 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 
-	ofBackground(0);  // Clear the screen with a black color
+    if (motionBlurToggle) {
+        ofSetColor(0, 0, 0, 64);
+        ofDrawRectangle(0, 0, boundWidth, boundHeight);
+    }
+    else {
+        //ofBackground(0);  // Clear the screen with a black color
+        ofClear(0);
+    }
 
     //fps counter
     cntFps++;
@@ -395,7 +406,6 @@ void ofApp::draw(){
     if (delta >= 1000)
     {
         lastTime = now;
-
         fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<double>(delta)) * cntFps)));
         cntFps = 0;
     }
