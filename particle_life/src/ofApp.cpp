@@ -97,8 +97,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
         p1.vy = (p1.vy + (fy * g)) * (1.0-viscosity) + worldGravity;
 
         // Wall Repel
-        if (wallRepel > 0.0F)
-        {
+        if (wallRepel > 0.0F) {
             if (p1.x < wallRepel) p1.vx += (wallRepel - p1.x) * 0.1;
             if (p1.y < wallRepel) p1.vy += (wallRepel - p1.y) * 0.1;
             if (p1.x > boundWidth - wallRepel)  p1.vx += (boundWidth  - wallRepel - p1.x) * 0.1;
@@ -109,18 +108,15 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
         p1.x += p1.vx;
         p1.y += p1.vy;
 
-
 		//Checking for canvas bounds
         if (boundsToggle) {
             if (p1.x < 0) { p1.vx *= -1; p1.x = 0; }
             if (p1.x > boundWidth) { p1.vx *= -1; p1.x = boundWidth; }
             if (p1.y < 0) { p1.vy *= -1; p1.y = 0; }
             if (p1.y > boundHeight) { p1.vy *= -1; p1.y = boundHeight; }
-
         }
         (*Group1)[i] = p1;
     }
-
 }
 
 //Generate new sets of points
@@ -141,10 +137,10 @@ void ofApp::random() {
     powerSliderGW = RandomFloat(-100, 100) * forceVariance;
     powerSliderGB = RandomFloat(-100, 100) * forceVariance;
 
-    vSliderGG = RandomFloat(10, 500) * radiusVariance;
-    vSliderGR = RandomFloat(10, 500) * radiusVariance;
-    vSliderGW = RandomFloat(10, 500) * radiusVariance;
-    vSliderGB = RandomFloat(10, 500) * radiusVariance;
+    vSliderGG = RandomFloat(10, 200) * radiusVariance;
+    vSliderGR = RandomFloat(10, 200) * radiusVariance;
+    vSliderGW = RandomFloat(10, 200) * radiusVariance;
+    vSliderGB = RandomFloat(10, 200) * radiusVariance;
 
     // RED
     //numberSliderR = RandomFloat(0, 3000);
@@ -153,10 +149,10 @@ void ofApp::random() {
     powerSliderRW = RandomFloat(-100, 100) * forceVariance;
     powerSliderRB = RandomFloat(-100, 100) * forceVariance;
 
-    vSliderRG = RandomFloat(10, 500) * radiusVariance;
-    vSliderRR = RandomFloat(10, 500) * radiusVariance;
-    vSliderRW = RandomFloat(10, 500) * radiusVariance;
-    vSliderRB = RandomFloat(10, 500) * radiusVariance;
+    vSliderRG = RandomFloat(10, 200) * radiusVariance;
+    vSliderRR = RandomFloat(10, 200) * radiusVariance;
+    vSliderRW = RandomFloat(10, 200) * radiusVariance;
+    vSliderRB = RandomFloat(10, 200) * radiusVariance;
 
     // WHITE
    // numberSliderW = RandomFloat(0, 3000);
@@ -165,10 +161,10 @@ void ofApp::random() {
     powerSliderWG = RandomFloat(-100, 100) * forceVariance;
     powerSliderWB = RandomFloat(-100, 100) * forceVariance;
 
-    vSliderWG = RandomFloat(10, 500) * radiusVariance;
-    vSliderWR = RandomFloat(10, 500) * radiusVariance;
-    vSliderWW = RandomFloat(10, 500) * radiusVariance;
-    vSliderWB = RandomFloat(10, 500) * radiusVariance;
+    vSliderWG = RandomFloat(10, 200) * radiusVariance;
+    vSliderWR = RandomFloat(10, 200) * radiusVariance;
+    vSliderWW = RandomFloat(10, 200) * radiusVariance;
+    vSliderWB = RandomFloat(10, 200) * radiusVariance;
 
     // BLUE
     //numberSliderB = RandomFloat(0, 3000);
@@ -177,10 +173,10 @@ void ofApp::random() {
     powerSliderBR = RandomFloat(-100, 100) * forceVariance;
     powerSliderBG = RandomFloat(-100, 100) * forceVariance;
 
-    vSliderBG = RandomFloat(10, 500) * radiusVariance;
-    vSliderBR = RandomFloat(10, 500) * radiusVariance;
-    vSliderBW = RandomFloat(10, 500) * radiusVariance;
-    vSliderBB = RandomFloat(10, 500) * radiusVariance;
+    vSliderBG = RandomFloat(10, 200) * radiusVariance;
+    vSliderBR = RandomFloat(10, 200) * radiusVariance;
+    vSliderBW = RandomFloat(10, 200) * radiusVariance;
+    vSliderBB = RandomFloat(10, 200) * radiusVariance;
 }
 
 /// this is a cheap and quick way to save and load parameters (openFramework have betters ways but requires some additional library setups) 
@@ -393,7 +389,6 @@ void ofApp::draw(){
         ofDrawRectangle(0, 0, boundWidth, boundHeight);
     }
     else {
-        //ofBackground(0);  // Clear the screen with a black color
         ofClear(0);
     }
 
