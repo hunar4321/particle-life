@@ -63,10 +63,10 @@ class ofApp final : public ofBaseApp{
 		ofxIntSlider numberSliderW;
 		ofxIntSlider numberSliderB;
 
-		int pnumberSliderR = 2000;
-		int pnumberSliderG = 2000;
-		int pnumberSliderW = 2000;
-		int pnumberSliderB = 2000;
+		int pnumberSliderR = 1000;
+		int pnumberSliderG = 1000;
+		int pnumberSliderW = 1000;
+		int pnumberSliderB = 1000;
 
 		ofxFloatSlider viscoSlider;
 		ofxFloatSlider gravitySlider;
@@ -162,8 +162,8 @@ class ofApp final : public ofBaseApp{
 		ofxLabel aboutL3;
 
 		// simulation bounds
-		float boundWidth = 1600;
-		float boundHeight = 900;
+		int boundWidth = 1600;
+		int boundHeight = 900;
 	
 		float viscosity = 0.5F;
 		float worldGravity = 0.0F;

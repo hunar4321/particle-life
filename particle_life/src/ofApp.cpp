@@ -2,22 +2,23 @@
 
 #include <iostream>
 #include <vector>
-#include <omp.h>
+//#include <omp.h>
 
-// parameters for image positions
-float xshift = 400;
-float yshift = 80;
-float anchor = 0;
-float length = 70;
-float p1x = anchor+xshift;
-float p1y = anchor+yshift;
-float p2x = anchor+length+xshift;
-float p2y = anchor+yshift;
-float p3x = anchor+length+xshift;
-float p3y = anchor+length+yshift;
-float p4x = anchor + xshift;
-float p4y = anchor + length + yshift;
-float rr = 8;
+// parameters for GUI
+constexpr float xshift = 400;
+constexpr float yshift = 80;
+constexpr float anchor = 0;
+constexpr float length = 70;
+constexpr float p1x = anchor+xshift;
+constexpr float p1y = anchor+yshift;
+constexpr float p2x = anchor+length+xshift;
+constexpr float p2y = anchor+yshift;
+constexpr float p3x = anchor+length+xshift;
+constexpr float p3y = anchor+length+yshift;
+constexpr float p4x = anchor + xshift;
+constexpr float p4y = anchor + length + yshift;
+constexpr float rr = 8;
+
 int countThresh = 0;
 std::string fps_text;
 
@@ -41,15 +42,13 @@ float RandomFloat(const float a, const float b) {
 
 //Draw all points from given group
 void Draw(const std::vector<point>* points) {
-    for (int i = 0; i < points->size(); i++) {
-        (* points)[i].draw();
-    }
+    for(auto &&point : *points) point.draw();
 }
 
 //Generate a number of single colored points randomly distributed on canvas
 std::vector<point> CreatePoints(const int num, int r, int g, int b) {
     std::vector<point> points;
-    for (int i = 0; i < num; i++) {
+    for (auto i = 0; i < num; i++) {
         int x = static_cast<int>(ofRandomWidth());
         int y = static_cast<int>(ofRandomHeight());
         points.emplace_back(x, y, r, g, b);
@@ -66,11 +65,11 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
     boundHeight = ofGetHeight();
     boundWidth = ofGetWidth();
 
-    omp_set_num_threads(omp_get_num_procs());
-    #pragma omp parallel for
     //Loop through first group of points
+    //omp_set_num_threads(omp_get_num_procs());
+    #pragma omp parallel for shared(Group1) default(none) schedule(runtime)
     for (auto i = 0; i < Group1->size(); i++) {
-        auto p1 = (*Group1)[i];
+        auto &p1 = (*Group1)[i];
 
 		//Force acting on particle
         float fx = 0;
@@ -79,7 +78,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 		//Loop through second group of points
         //This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap in comparaison
         for (auto j = 0; j < Group2->size(); j++) {
-	        const auto p2 = (*Group2)[j];
+	        const auto &p2 = (*Group2)[j];
 			//Calculate the distance between points using Pythagorean theorem
 	        const auto dx = p1.x - p2.x;
 	        const auto dy = p1.y - p2.y;
@@ -115,9 +114,10 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
             if (p1.y < 0) { p1.vy *= -1; p1.y = 0; }
             if (p1.y > boundHeight) { p1.vy *= -1; p1.y = boundHeight; }
         }
-        (*Group1)[i] = p1;
+        //(*Group1)[i] = p1;    // seems to be useless
     }
 }
+/* omp end parallel */
 
 //Generate new sets of points
 void ofApp::restart() {
@@ -196,7 +196,7 @@ void ofApp::saveSettings()
         viscoSlider
     };
 
-    std::string save_path = "";
+    std::string save_path;
     ofFileDialogResult result = ofSystemSaveDialog("model.txt", "Save");
     if (result.bSuccess) {
         save_path = result.getPath();
@@ -243,7 +243,7 @@ void ofApp::loadSettings()
             p.push_back(std::stof(word));
             word = "";
         }else {
-            word = word + x;
+            word += x;
         }
     }
 
@@ -287,7 +287,7 @@ void ofApp::setup(){
     gui.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
     gui.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
     //gui.add(labelG.setup("GREEN:", "-"));
-    gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 3000));
+    gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 5000));
     gui.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
     gui.add(powerSliderGR.setup("green x red:", ppowerSliderGR, -100, 100));
     gui.add(powerSliderGW.setup("green x white:", ppowerSliderGW, -100, 100));
@@ -299,7 +299,7 @@ void ofApp::setup(){
     gui.add(vSliderGB.setup("radius g x b:", pvSliderGB, 10, 500));
 
     //gui.add(labelR.setup("RED:", "-"));
-    gui.add(numberSliderR.setup("RED:", pnumberSliderR, 0, 3000));
+    gui.add(numberSliderR.setup("RED:", pnumberSliderR, 0, 5000));
     gui.add(powerSliderRR.setup("red x red:", ppowerSliderRR, -100, 100));
     gui.add(powerSliderRG.setup("red x green:", ppowerSliderRG, -100, 100));
     gui.add(powerSliderRW.setup("red x white:", ppowerSliderRW, -100, 100));
@@ -311,7 +311,7 @@ void ofApp::setup(){
     gui.add(vSliderRB.setup("radius r x b:", pvSliderRB, 10, 500));
 
     //gui.add(labelW.setup("WHITE:", "-"));
-    gui.add(numberSliderW.setup("WHITE:", pnumberSliderW, 0, 3000));
+    gui.add(numberSliderW.setup("WHITE:", pnumberSliderW, 0, 5000));
     gui.add(powerSliderWW.setup("white x white:", ppowerSliderWW, -100, 100));
     gui.add(powerSliderWR.setup("white x red:", ppowerSliderWR, -100, 100));
     gui.add(powerSliderWG.setup("white x green:", ppowerSliderWG, -100, 100));
@@ -323,7 +323,7 @@ void ofApp::setup(){
     gui.add(vSliderWB.setup("radius w x b:", pvSliderWB, 10, 500));
 
     //gui.add(labelB.setup("BLUE:", "-"));
-    gui.add(numberSliderB.setup("BLUE:", pnumberSliderB, 0, 3000));
+    gui.add(numberSliderB.setup("BLUE:", pnumberSliderB, 0, 5000));
     gui.add(powerSliderBB.setup("blue x blue:", ppowerSliderBB, -100, 100));
     gui.add(powerSliderBW.setup("blue x white:", ppowerSliderBW, -100, 100));
     gui.add(powerSliderBR.setup("blue x red:", ppowerSliderBR, -100, 100));
@@ -421,43 +421,43 @@ void ofApp::draw(){
         ofDrawCircle(xshift, yshift, 150);
 
         ofSetLineWidth(5);
-        ofSetColor(150 - powerSliderGR, 150 + powerSliderGR, 150);
+        ofSetColor(150.0F - powerSliderGR, 150.0F + powerSliderGR, 150);
         ofDrawLine(p1x, p1y - 10, p2x, p2y - 10);
-        ofSetColor(150 - powerSliderRG, 150 + powerSliderRG, 150);
+        ofSetColor(150.0F - powerSliderRG, 150.0F + powerSliderRG, 150);
         ofDrawLine(p1x, p1y + 10, p2x, p2y + 10);
-        ofSetColor(150 - powerSliderGW, 150 + powerSliderGW, 150);
+        ofSetColor(150.0F - powerSliderGW, 150.0F + powerSliderGW, 150);
         ofDrawLine(p3x, p3y - 10, p1x, p1y - 10);
-        ofSetColor(150 - powerSliderWG, 150 + powerSliderWG, 150);
+        ofSetColor(150.0F - powerSliderWG, 150.0F + powerSliderWG, 150);
         ofDrawLine(p3x, p3y + 10, p1x, p1y + 10);
 
-        ofSetColor(150 - powerSliderGB, 150 + powerSliderGB, 150);
+        ofSetColor(150.0F - powerSliderGB, 150.0F + powerSliderGB, 150);
         ofDrawLine(p4x - 10, p4y, p1x - 10, p1y);
-        ofSetColor(150 - powerSliderBG, 150 + powerSliderBG, 150);
+        ofSetColor(150.0F - powerSliderBG, 150.0F + powerSliderBG, 150);
         ofDrawLine(p4x + 10, p4y, p1x + 10, p1y);
 
-        ofSetColor(150 - powerSliderRW, 150 + powerSliderRW, 150);
+        ofSetColor(150.0F - powerSliderRW, 150.0F + powerSliderRW, 150);
         ofDrawLine(p2x - 10, p2y, p3x - 10, p3y);
-        ofSetColor(150 - powerSliderWR, 150 + powerSliderWR, 150);
+        ofSetColor(150.0F - powerSliderWR, 150.0F + powerSliderWR, 150);
         ofDrawLine(p2x + 10, p2y, p3x + 10, p3y);
 
-        ofSetColor(150 - powerSliderRB, 150 + powerSliderRB, 150);
+        ofSetColor(150.0F - powerSliderRB, 150.0F + powerSliderRB, 150);
         ofDrawLine(p2x, p2y - 10, p4x, p4y - 10);
-        ofSetColor(150 - powerSliderBR, 150 + powerSliderBR, 150);
+        ofSetColor(150.0F - powerSliderBR, 150.0F + powerSliderBR, 150);
         ofDrawLine(p2x, p2y + 10, p4x, p4y + 10);
 
-        ofSetColor(150 - powerSliderWB, 150 + powerSliderWB, 150);
+        ofSetColor(150.0F - powerSliderWB, 150.0F + powerSliderWB, 150);
         ofDrawLine(p3x, p3y - 10, p4x, p4y - 10);
-        ofSetColor(150 - powerSliderBW, 150 + powerSliderBW, 150);
+        ofSetColor(150.0F - powerSliderBW, 150.0F + powerSliderBW, 150);
         ofDrawLine(p3x, p3y + 10, p4x, p4y + 10);
 
         ofNoFill();
-        ofSetColor(150 - powerSliderGG, 150 + powerSliderGG, 150);
+        ofSetColor(150.0F - powerSliderGG, 150.0F + powerSliderGG, 150);
         ofDrawCircle(p1x - 20, p1y - 20, rr + 20);
-        ofSetColor(150 - powerSliderRR, 150 + powerSliderRR, 150);
+        ofSetColor(150.0F - powerSliderRR, 150.0F + powerSliderRR, 150);
         ofDrawCircle(p2x + 20, p2y - 20, rr + 20);
-        ofSetColor(150 - powerSliderWW, 150 + powerSliderWW, 150);
+        ofSetColor(150.0F - powerSliderWW, 150.0F + powerSliderWW, 150);
         ofDrawCircle(p3x + 20, p3y + 20, rr + 20);
-        ofSetColor(150 - powerSliderBB, 150 + powerSliderBB, 150);
+        ofSetColor(150.0F - powerSliderBB, 150.0F + powerSliderBB, 150);
         ofDrawCircle(p4x - 20, p4y + 20, rr + 20);
 
         ofFill();
