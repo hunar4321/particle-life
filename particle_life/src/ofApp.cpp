@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <vector>
-//#include <omp.h>
 
 // parameters for GUI
 constexpr float xshift = 400;
@@ -19,7 +18,7 @@ constexpr float p4x = anchor + xshift;
 constexpr float p4y = anchor + length + yshift;
 constexpr float rr = 8;
 
-int countThresh = 0;
+//int countThresh = 0;
 std::string fps_text;
 
 //Simulation parameters
@@ -42,12 +41,13 @@ float RandomFloat(const float a, const float b) {
 
 //Draw all points from given group
 void Draw(const std::vector<point>* points) {
-    for(auto &&point : *points) point.draw();
+    for(auto &point : *points) point.draw();
 }
 
 //Generate a number of single colored points randomly distributed on canvas
 std::vector<point> CreatePoints(const int num, int r, int g, int b) {
     std::vector<point> points;
+    points.reserve(num);
     for (auto i = 0; i < num; i++) {
         int x = static_cast<int>(ofRandomWidth());
         int y = static_cast<int>(ofRandomHeight());
@@ -64,11 +64,12 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 
     boundHeight = ofGetHeight();
     boundWidth = ofGetWidth();
+    const auto group1size = Group1->size();
+    const auto group2size = Group2->size();
 
     //Loop through first group of points
-    //omp_set_num_threads(omp_get_num_procs());
-    #pragma omp parallel for shared(Group1) default(none) schedule(runtime)
-    for (auto i = 0; i < Group1->size(); i++) {
+	#pragma omp parallel for default(none) schedule(runtime)
+    for (auto i = 0; i < group1size; i++) {
         auto &p1 = (*Group1)[i];
 
 		//Force acting on particle
@@ -77,7 +78,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 
 		//Loop through second group of points
         //This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap in comparaison
-        for (auto j = 0; j < Group2->size(); j++) {
+        for (auto j = 0; j < group2size; j++) {
 	        const auto &p2 = (*Group2)[j];
 			//Calculate the distance between points using Pythagorean theorem
 	        const auto dx = p1.x - p2.x;
@@ -192,7 +193,10 @@ void ofApp::saveSettings()
         vSliderWG, vSliderWR, vSliderWW, vSliderWB,
         powerSliderBG, powerSliderBR, powerSliderBW, powerSliderBB,
         vSliderBG, vSliderBR, vSliderBW, vSliderBB,
-        static_cast<float>(numberSliderG), static_cast<float>(numberSliderR), static_cast<float>(numberSliderW), static_cast<float>(numberSliderB),
+        static_cast<float>(numberSliderG),
+		static_cast<float>(numberSliderR),
+		static_cast<float>(numberSliderW),
+		static_cast<float>(numberSliderB),
         viscoSlider
     };
 
@@ -401,7 +405,7 @@ void ofApp::draw(){
     if (delta >= 1000)
     {
         lastTime = now;
-        fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<double>(delta)) * cntFps)));
+        fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<float>(delta)) * cntFps)));
         cntFps = 0;
     }
 
