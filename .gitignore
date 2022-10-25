@@ -1,0 +1,10 @@
+
+Desktop
+*.obj
+*.pdb
+*.lib
+*.log
+*.tlog
+particle_life/.idea/
+particle_life/.vs/
+particle_life/obj/
