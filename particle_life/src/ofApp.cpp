@@ -95,7 +95,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 	const auto group1size = Group1->size();
 	const auto group2size = Group2->size();
 
-#pragma omp parallel for default(none) schedule(guided, 64)
+	#pragma omp parallel for default(none) schedule(guided, 64)
 	for (auto i = 0; i < group1size; i++)
 	{
 		auto& p1 = (*Group1)[i];
