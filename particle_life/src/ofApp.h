@@ -59,6 +59,9 @@ public:
 	ofxToggle modelToggle;
 	ofxToggle motionBlurToggle;
 
+	ofxIntSlider probabilitySlider;
+	int probability = 100;
+
 	ofxIntSlider numberSliderR;
 	ofxIntSlider numberSliderG;
 	ofxIntSlider numberSliderW;

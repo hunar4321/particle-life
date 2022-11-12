@@ -101,7 +101,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 		#pragma omp for
 		for (auto i = 0; i < group1size; i++)
 		{
-			if (rd() % 100 < 75) {
+			if (rd() % 100 < probability) {
 				auto& p1 = (*Group1)[i];
 				float fx = 0;
 				float fy = 0;
@@ -383,6 +383,7 @@ void ofApp::setup()
 	gui.add(randomChoice.setup("Randomize"));
 	gui.add(save.setup("Save Model"));
 	gui.add(load.setup("Load Model"));
+	gui.add(probabilitySlider.setup("Probability", probability, 1, 100));
 	gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
 	gui.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
 	gui.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
@@ -447,6 +448,7 @@ void ofApp::setup()
 //------------------------------Update simulation with sliders values------------------------------
 void ofApp::update()
 {
+	probability = probabilitySlider;
 	viscosity = viscoSlider;
 	worldGravity = gravitySlider;
 	wallRepel = wallRepelSlider;
