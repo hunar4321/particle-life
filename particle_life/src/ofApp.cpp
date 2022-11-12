@@ -365,6 +365,7 @@ void ofApp::loadSettings()
 		numberSliderB = static_cast<int>(p[35]);
 		viscoSlider = p[36];
 	}
+	probabilitySlider = 100;
 	restart();
 }
 
