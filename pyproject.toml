@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "particle-life-2gian"
+version = "0.1.0"
+description = ""
+authors = ["gianfa"]
+readme = "README.md"
+packages = [{include = "learn_artificial_life"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.23.4"
+matplotlib = "^3.6.2"
+pygame = "^2.1.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

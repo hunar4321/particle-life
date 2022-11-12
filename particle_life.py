@@ -3,29 +3,41 @@ import pygame
 import random
 
 atoms=[]
-window_size = 300
+window_size = 800
 pygame.init()
 window = pygame.display.set_mode((window_size, window_size))
 
 
-def draw(surface, x, y, color, size):
+def draw(surface, x, y, color, size: float):
     for i in range(0, size):
         pygame.draw.line(surface, color, (x, y-1), (x, y+2), abs(size))
                
 def atom(x, y, c):
+    "Define an atom by position (x,y) and color"
     return {"x": x, "y": y, "vx": 0, "vy": 0, "color": c}
 
 def randomxy():
     return round(random.random()*window_size + 1)
 
-def create(number, color):
+def create(number, color, atoms):
+    """Create a new atoms group and add them to `atoms` list"""
     group = []
     for i in range(number):
-        group.append(atom(randomxy(), randomxy(), color))
-        atoms.append((group[i]))
+        new_atom = atom(randomxy(), randomxy(), color)
+        group.append(new_atom)
+        atoms.append(new_atom)
     return group
 
-def rule(atoms1, atoms2, g):
+# `up` are atoms1 update rules #
+
+def up_potential_energy(atoms1:dict, atoms2:dict, g: int) -> None:
+    """Update rule between two atoms groups
+
+    Args:
+        atoms1 (dict): The atoms group to update
+        atoms2 (dict): The atoms group with which `atoms1` interacts
+        g (int): 
+    """
     for i in range(len(atoms1)):
         fx = 0
         fy = 0
@@ -35,7 +47,7 @@ def rule(atoms1, atoms2, g):
             dx = a["x"] - b["x"]
             dy = a["y"] - b["y"]
             d = (dx*dx + dy*dy)**0.5
-            if( d > 0 and d < 80):
+            if( 0 < d < 80):
                 F = g/d
                 fx += F*dx
                 fy += F*dy
@@ -46,20 +58,27 @@ def rule(atoms1, atoms2, g):
         if(a["x"] <= 0 or a["x"] >= window_size):
             a["vx"] *=-1
         if(a["y"] <= 0 or a["y"] >= window_size):
-            a["vy"] *=-1        
+            a["vy"] *=-1
+    None   
+
+# Create the atoms color teams
+yellow = create(100, "yellow", atoms)
+red = create(100, "red", atoms)
+blue = create(10, "blue", atoms)
 
 
-yellow = create(100, "yellow")
-red = create(100, "red")
 
 run = True
 while run:
     window.fill(0)
-    rule(red, red, 0.1)
-    rule(red, yellow, -0.15)
-    rule(yellow, yellow, -0.1)
+    up_potential_energy(red, red, 0.1)
+    up_potential_energy(red, yellow, -0.15)
+    up_potential_energy(yellow, yellow, -0.1)
+
+    up_potential_energy(blue, red, 10)
+    up_potential_energy(blue, yellow, 10)
     for i in range(len(atoms)):
-        draw(window,  atoms[i]["x"], atoms[i]["y"], atoms[i]["color"], 3)
+        draw(window,  atoms[i]["x"], atoms[i]["y"], atoms[i]["color"], size=3)
         
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
