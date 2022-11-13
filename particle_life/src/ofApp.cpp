@@ -380,65 +380,81 @@ void ofApp::setup()
 	gui.loadFont("Arial", 12);
 	gui.setWidthElements(300.0f);
 
-	gui.add(resetButton.setup("START/RESTART"));
+	gui.add(fps.setup("FPS", "0"));
+
+	gui.add(resetButton.setup("Restart"));
 	gui.add(randomChoice.setup("Randomize"));
 	gui.add(save.setup("Save Model"));
 	gui.add(load.setup("Load Model"));
+	gui.add(boundsToggle.setup("Bounded", false));
+	gui.add(modelToggle.setup("Show Model", false));
+	gui.add(motionBlurToggle.setup("Motion Blur", false));
+
+
 	gui.add(probabilitySlider.setup("Probability", probability, 1, 100));
 	gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
 	gui.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
 	gui.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
-	//gui.add(labelG.setup("GREEN:", "-"));
-	gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 10000));
-	gui.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
-	gui.add(powerSliderGR.setup("green x red:", ppowerSliderGR, -100, 100));
-	gui.add(powerSliderGW.setup("green x white:", ppowerSliderGW, -100, 100));
-	gui.add(powerSliderGB.setup("green x blue:", ppowerSliderGB, -100, 100));
 
-	gui.add(vSliderGG.setup("radius g x g:", pvSliderGG, 10, 500));
-	gui.add(vSliderGR.setup("radius g x r:", pvSliderGR, 10, 500));
-	gui.add(vSliderGW.setup("radius g x w:", pvSliderGW, 10, 500));
-	gui.add(vSliderGB.setup("radius g x b:", pvSliderGB, 10, 500));
+	// GREEN
+	greenGroup.setup("Green");
+	greenGroup.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 10000));
+	greenGroup.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
+	greenGroup.add(powerSliderGR.setup("green x red:", ppowerSliderGR, -100, 100));
+	greenGroup.add(powerSliderGW.setup("green x white:", ppowerSliderGW, -100, 100));
+	greenGroup.add(powerSliderGB.setup("green x blue:", ppowerSliderGB, -100, 100));
 
-	//gui.add(labelR.setup("RED:", "-"));
-	gui.add(numberSliderR.setup("RED:", pnumberSliderR, 0, 10000));
-	gui.add(powerSliderRR.setup("red x red:", ppowerSliderRR, -100, 100));
-	gui.add(powerSliderRG.setup("red x green:", ppowerSliderRG, -100, 100));
-	gui.add(powerSliderRW.setup("red x white:", ppowerSliderRW, -100, 100));
-	gui.add(powerSliderRB.setup("red x blue:", ppowerSliderRB, -100, 100));
+	greenGroup.add(vSliderGG.setup("radius g x g:", pvSliderGG, 10, 500));
+	greenGroup.add(vSliderGR.setup("radius g x r:", pvSliderGR, 10, 500));
+	greenGroup.add(vSliderGW.setup("radius g x w:", pvSliderGW, 10, 500));
+	greenGroup.add(vSliderGB.setup("radius g x b:", pvSliderGB, 10, 500));
 
-	gui.add(vSliderRG.setup("radius r x g:", pvSliderRG, 10, 500));
-	gui.add(vSliderRR.setup("radius r x r:", pvSliderRR, 10, 500));
-	gui.add(vSliderRW.setup("radius r x w:", pvSliderRW, 10, 500));
-	gui.add(vSliderRB.setup("radius r x b:", pvSliderRB, 10, 500));
+	gui.add(&greenGroup);
 
-	//gui.add(labelW.setup("WHITE:", "-"));
-	gui.add(numberSliderW.setup("WHITE:", pnumberSliderW, 0, 10000));
-	gui.add(powerSliderWW.setup("white x white:", ppowerSliderWW, -100, 100));
-	gui.add(powerSliderWR.setup("white x red:", ppowerSliderWR, -100, 100));
-	gui.add(powerSliderWG.setup("white x green:", ppowerSliderWG, -100, 100));
-	gui.add(powerSliderWB.setup("white x blue:", ppowerSliderWB, -100, 100));
+	// RED
+	redGroup.setup("Red");
+	redGroup.add(numberSliderR.setup("RED:", pnumberSliderR, 0, 10000));
+	redGroup.add(powerSliderRR.setup("red x red:", ppowerSliderRR, -100, 100));
+	redGroup.add(powerSliderRG.setup("red x green:", ppowerSliderRG, -100, 100));
+	redGroup.add(powerSliderRW.setup("red x white:", ppowerSliderRW, -100, 100));
+	redGroup.add(powerSliderRB.setup("red x blue:", ppowerSliderRB, -100, 100));
 
-	gui.add(vSliderWG.setup("radius w x g:", pvSliderWG, 10, 500));
-	gui.add(vSliderWR.setup("radius w x r:", pvSliderWR, 10, 500));
-	gui.add(vSliderWW.setup("radius w x w:", pvSliderWW, 10, 500));
-	gui.add(vSliderWB.setup("radius w x b:", pvSliderWB, 10, 500));
+	redGroup.add(vSliderRG.setup("radius r x g:", pvSliderRG, 10, 500));
+	redGroup.add(vSliderRR.setup("radius r x r:", pvSliderRR, 10, 500));
+	redGroup.add(vSliderRW.setup("radius r x w:", pvSliderRW, 10, 500));
+	redGroup.add(vSliderRB.setup("radius r x b:", pvSliderRB, 10, 500));
 
-	//gui.add(labelB.setup("BLUE:", "-"));
-	gui.add(numberSliderB.setup("BLUE:", pnumberSliderB, 0, 10000));
-	gui.add(powerSliderBB.setup("blue x blue:", ppowerSliderBB, -100, 100));
-	gui.add(powerSliderBW.setup("blue x white:", ppowerSliderBW, -100, 100));
-	gui.add(powerSliderBR.setup("blue x red:", ppowerSliderBR, -100, 100));
-	gui.add(powerSliderBG.setup("blue x green:", ppowerSliderBG, -100, 100));
+	gui.add(&redGroup);
 
-	gui.add(vSliderBG.setup("radius b x g:", pvSliderBG, 10, 500));
-	gui.add(vSliderBR.setup("radius b x r:", pvSliderBR, 10, 500));
-	gui.add(vSliderBW.setup("radius b x w:", pvSliderBW, 10, 500));
-	gui.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
-	gui.add(boundsToggle.setup("Bounded", true));
-	gui.add(modelToggle.setup("Show Model", false));
-	gui.add(motionBlurToggle.setup("Motion Blur", false));
-	gui.add(fps.setup("FPS", "0"));
+	// WHITE
+	whiteGroup.setup("White");
+	whiteGroup.add(numberSliderW.setup("WHITE:", pnumberSliderW, 0, 10000));
+	whiteGroup.add(powerSliderWW.setup("white x white:", ppowerSliderWW, -100, 100));
+	whiteGroup.add(powerSliderWR.setup("white x red:", ppowerSliderWR, -100, 100));
+	whiteGroup.add(powerSliderWG.setup("white x green:", ppowerSliderWG, -100, 100));
+	whiteGroup.add(powerSliderWB.setup("white x blue:", ppowerSliderWB, -100, 100));
+
+	whiteGroup.add(vSliderWG.setup("radius w x g:", pvSliderWG, 10, 500));
+	whiteGroup.add(vSliderWR.setup("radius w x r:", pvSliderWR, 10, 500));
+	whiteGroup.add(vSliderWW.setup("radius w x w:", pvSliderWW, 10, 500));
+	whiteGroup.add(vSliderWB.setup("radius w x b:", pvSliderWB, 10, 500));
+
+	gui.add(&whiteGroup);
+
+	// BLUE
+	blueGroup.setup("Blue");
+	blueGroup.add(numberSliderB.setup("BLUE:", pnumberSliderB, 0, 10000));
+	blueGroup.add(powerSliderBB.setup("blue x blue:", ppowerSliderBB, -100, 100));
+	blueGroup.add(powerSliderBW.setup("blue x white:", ppowerSliderBW, -100, 100));
+	blueGroup.add(powerSliderBR.setup("blue x red:", ppowerSliderBR, -100, 100));
+	blueGroup.add(powerSliderBG.setup("blue x green:", ppowerSliderBG, -100, 100));
+
+	blueGroup.add(vSliderBG.setup("radius b x g:", pvSliderBG, 10, 500));
+	blueGroup.add(vSliderBR.setup("radius b x r:", pvSliderBR, 10, 500));
+	blueGroup.add(vSliderBW.setup("radius b x w:", pvSliderBW, 10, 500));
+	blueGroup.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
+
+	gui.add(&blueGroup);
 
 	ofSetBackgroundAuto(false);
 	ofEnableAlphaBlending();

@@ -51,6 +51,11 @@ public:
 
 	ofxPanel gui;
 
+	ofxGuiGroup redGroup;
+	ofxGuiGroup greenGroup;
+	ofxGuiGroup blueGroup;
+	ofxGuiGroup whiteGroup;
+
 	ofxButton resetButton;
 	ofxButton selectButton;
 	ofxButton randomChoice;
