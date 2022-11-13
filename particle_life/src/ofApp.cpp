@@ -528,7 +528,6 @@ void ofApp::draw()
 	if (numberSliderG > 0) { Draw(&green); }
 	if (numberSliderB > 0) { Draw(&blue); }
 
-
 	//Draw GUI
 	if (modelToggle == true)
 	{
@@ -586,4 +585,13 @@ void ofApp::draw()
 		ofDrawCircle(p4x, p4y, rr);
 	}
 	gui.draw();
+}
+
+void ofApp::keyPressed(int key)
+{
+	if(key == ' ')
+	{
+		random();
+		restart();
+	}
 }
