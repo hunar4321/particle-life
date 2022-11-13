@@ -12,6 +12,7 @@ numpy = "^1.23.4"
 matplotlib = "^3.6.2"
 pygame = "^2.1.2"
 pytest = "^7.2.0"
+flake8 = "^5.0.4"
 
 
 [build-system]
