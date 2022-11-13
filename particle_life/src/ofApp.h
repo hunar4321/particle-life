@@ -74,6 +74,7 @@ public:
 	float evoChance = 1;
 	ofxFloatSlider evoAmountSlider;
 	float evoAmount = 1;
+	ofxToggle radiusToogle;
 
 	ofxIntSlider probabilitySlider;
 	int probability = 100;

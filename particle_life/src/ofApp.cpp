@@ -117,7 +117,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 					const auto r = dx * dx + dy * dy;
 
 					//Calculate the force in given bounds. 
-					if (r != 0 && r < (radius * radius))
+					if (r != 0 && (radiusToogle || r < radius * radius))
 					{
 						fx += (dx / std::sqrt(dx * dx + dy * dy));
 						fy += (dy / std::sqrt(dx * dx + dy * dy));
@@ -470,6 +470,7 @@ void ofApp::setup()
 	expGroup.add(evoToggle.setup("Evolve parameters", false));
 	expGroup.add(evoProbSlider.setup("evo chance%", evoChance, 0, 100));
 	expGroup.add(evoAmountSlider.setup("evo amount%%", evoAmount, 0, 100));
+	expGroup.add(radiusToogle.setup("infinite radius", false));
 	expGroup.minimize();
 	gui.add(&expGroup);
 
