@@ -95,6 +95,8 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 	const auto group1size = Group1->size();
 	const auto group2size = Group2->size();
 
+	const bool radius_toggle = radiusToogle;
+
 	#pragma omp parallel  default(none) 
 	{
 		std::random_device rd;
@@ -117,7 +119,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 					const auto r = dx * dx + dy * dy;
 
 					//Calculate the force in given bounds. 
-					if (r != 0 && (radiusToogle || r < radius * radius))
+					if (r != 0 && (radius_toggle || r < radius * radius))
 					{
 						fx += (dx / std::sqrt(dx * dx + dy * dy));
 						fy += (dy / std::sqrt(dx * dx + dy * dy));
@@ -543,22 +545,22 @@ void ofApp::update()
 		if(vSliderWB < 0.0F) vSliderWB = 0;
 		if(vSliderWW < 0.0F) vSliderWW = 0;
 
-		if (vSliderRR > 500.0F) vSliderRR = 500.0F;
-		if (vSliderRG > 500.0F) vSliderRG = 500.0F;
-		if (vSliderRB > 500.0F) vSliderRB = 500.0F;
-		if (vSliderRW > 500.0F) vSliderRW = 500.0F;
-		if (vSliderGR > 500.0F) vSliderGR = 500.0F;
-		if (vSliderGG > 500.0F) vSliderGG = 500.0F;
-		if (vSliderGB > 500.0F) vSliderGB = 500.0F;
-		if (vSliderGW > 500.0F) vSliderGW = 500.0F;
-		if (vSliderBR > 500.0F) vSliderBR = 500.0F;
-		if (vSliderBG > 500.0F) vSliderBG = 500.0F;
-		if (vSliderBB > 500.0F) vSliderBB = 500.0F;
-		if (vSliderBW > 500.0F) vSliderBW = 500.0F;
-		if (vSliderWR > 500.0F) vSliderWR = 500.0F;
-		if (vSliderWG > 500.0F) vSliderWG = 500.0F;
-		if (vSliderWB > 500.0F) vSliderWB = 500.0F;
-		if (vSliderWW > 500.0F) vSliderWW = 500.0F;
+		if (vSliderRR > 200.0F) vSliderRR = 200.0F;
+		if (vSliderRG > 200.0F) vSliderRG = 200.0F;
+		if (vSliderRB > 200.0F) vSliderRB = 200.0F;
+		if (vSliderRW > 200.0F) vSliderRW = 200.0F;
+		if (vSliderGR > 200.0F) vSliderGR = 200.0F;
+		if (vSliderGG > 200.0F) vSliderGG = 200.0F;
+		if (vSliderGB > 200.0F) vSliderGB = 200.0F;
+		if (vSliderGW > 200.0F) vSliderGW = 200.0F;
+		if (vSliderBR > 200.0F) vSliderBR = 200.0F;
+		if (vSliderBG > 200.0F) vSliderBG = 200.0F;
+		if (vSliderBB > 200.0F) vSliderBB = 200.0F;
+		if (vSliderBW > 200.0F) vSliderBW = 200.0F;
+		if (vSliderWR > 200.0F) vSliderWR = 200.0F;
+		if (vSliderWG > 200.0F) vSliderWG = 200.0F;
+		if (vSliderWB > 200.0F) vSliderWB = 200.0F;
+		if (vSliderWW > 200.0F) vSliderWW = 200.0F;
 	}
 
 	if (numberSliderR > 0)
