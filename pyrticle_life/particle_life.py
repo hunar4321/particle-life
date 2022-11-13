@@ -17,12 +17,13 @@ def draw(surface, x, y, color, size: float):
         pygame.draw.line(surface, color, (x, y-1), (x, y+2), abs(size))
 
 
-
-
 # Create the atoms color teams
-yellow = create_atoms(100, "yellow", bodies, window_size)
-red = create_atoms(100, "red", bodies, window_size)
-blue = create_atoms(10, "blue", bodies, window_size)
+yellow = create_group(
+    Atom, 100, color="yellow", bodies=bodies, window_size=window_size)
+red = create_group(
+    Atom, 100, color="red", bodies=bodies, window_size=window_size)
+blue = create_group(
+    MassBody, 10, color="blue", bodies=bodies, window_size=window_size, mass=5)
 
 
 
@@ -35,12 +36,14 @@ while run:
 
     rules.potential_energy(blue, red, 10, window_size)
     rules.potential_energy(blue, yellow, 10, window_size)
+    rules.gravity(blue, blue, 10, window_size)
     for i in range(len(bodies)):
-        draw(window,  bodies[i]["x"], bodies[i]["y"], bodies[i]["color"], size=3)
+        draw(window,  bodies[i].x, bodies[i].y, bodies[i].color, size=3)
         
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+
     pygame.display.flip()
 pygame.quit()
 exit()
