@@ -409,6 +409,7 @@ void ofApp::setup()
 	greenGroup.add(vSliderGW.setup("radius g x w:", pvSliderGW, 10, 500));
 	greenGroup.add(vSliderGB.setup("radius g x b:", pvSliderGB, 10, 500));
 
+	greenGroup.minimize();
 	gui.add(&greenGroup);
 
 	// RED
@@ -424,6 +425,7 @@ void ofApp::setup()
 	redGroup.add(vSliderRW.setup("radius r x w:", pvSliderRW, 10, 500));
 	redGroup.add(vSliderRB.setup("radius r x b:", pvSliderRB, 10, 500));
 
+	redGroup.minimize();
 	gui.add(&redGroup);
 
 	// WHITE
@@ -439,6 +441,7 @@ void ofApp::setup()
 	whiteGroup.add(vSliderWW.setup("radius w x w:", pvSliderWW, 10, 500));
 	whiteGroup.add(vSliderWB.setup("radius w x b:", pvSliderWB, 10, 500));
 
+	whiteGroup.minimize();
 	gui.add(&whiteGroup);
 
 	// BLUE
@@ -454,6 +457,7 @@ void ofApp::setup()
 	blueGroup.add(vSliderBW.setup("radius b x w:", pvSliderBW, 10, 500));
 	blueGroup.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
 
+	blueGroup.minimize();
 	gui.add(&blueGroup);
 
 	ofSetBackgroundAuto(false);
