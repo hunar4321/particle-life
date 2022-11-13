@@ -6,6 +6,7 @@
 # * NodeJS
 # * R
 
+.vscode
 
 # General
 *_ignore.*
