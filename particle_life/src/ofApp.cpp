@@ -383,22 +383,31 @@ void ofApp::setup()
 	gui.add(fps.setup("FPS", "0"));
 
 	gui.add(resetButton.setup("Restart"));
-	gui.add(randomChoice.setup("Randomize"));
+	gui.add(randomChoice.setup("Randomize (space bar)"));
 	gui.add(save.setup("Save Model"));
 	gui.add(load.setup("Load Model"));
-	gui.add(boundsToggle.setup("Bounded", false));
 	gui.add(modelToggle.setup("Show Model", false));
 	gui.add(motionBlurToggle.setup("Motion Blur", false));
 
+	globalGroup.setup("Global");
+	globalGroup.add(probabilitySlider.setup("Probability", probability, 1, 100));
+	globalGroup.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
+	globalGroup.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
+	globalGroup.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
+	globalGroup.add(boundsToggle.setup("Bounded", false));
 
-	gui.add(probabilitySlider.setup("Probability", probability, 1, 100));
-	gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
-	gui.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
-	gui.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
+	gui.add(&globalGroup);
+
+	// Quantity
+	qtyGroup.setup("Quantity (require restart/randomize)");
+	qtyGroup.add(numberSliderG.setup("Green", pnumberSliderG, 0, 10000));
+	qtyGroup.add(numberSliderR.setup("Red", pnumberSliderR, 0, 10000));
+	qtyGroup.add(numberSliderW.setup("White", pnumberSliderW, 0, 10000));
+	qtyGroup.add(numberSliderB.setup("Blue", pnumberSliderB, 0, 10000));
+	gui.add(&qtyGroup);
 
 	// GREEN
 	greenGroup.setup("Green");
-	greenGroup.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 10000));
 	greenGroup.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
 	greenGroup.add(powerSliderGR.setup("green x red:", ppowerSliderGR, -100, 100));
 	greenGroup.add(powerSliderGW.setup("green x white:", ppowerSliderGW, -100, 100));
@@ -414,7 +423,6 @@ void ofApp::setup()
 
 	// RED
 	redGroup.setup("Red");
-	redGroup.add(numberSliderR.setup("RED:", pnumberSliderR, 0, 10000));
 	redGroup.add(powerSliderRR.setup("red x red:", ppowerSliderRR, -100, 100));
 	redGroup.add(powerSliderRG.setup("red x green:", ppowerSliderRG, -100, 100));
 	redGroup.add(powerSliderRW.setup("red x white:", ppowerSliderRW, -100, 100));
@@ -430,7 +438,6 @@ void ofApp::setup()
 
 	// WHITE
 	whiteGroup.setup("White");
-	whiteGroup.add(numberSliderW.setup("WHITE:", pnumberSliderW, 0, 10000));
 	whiteGroup.add(powerSliderWW.setup("white x white:", ppowerSliderWW, -100, 100));
 	whiteGroup.add(powerSliderWR.setup("white x red:", ppowerSliderWR, -100, 100));
 	whiteGroup.add(powerSliderWG.setup("white x green:", ppowerSliderWG, -100, 100));
@@ -446,7 +453,6 @@ void ofApp::setup()
 
 	// BLUE
 	blueGroup.setup("Blue");
-	blueGroup.add(numberSliderB.setup("BLUE:", pnumberSliderB, 0, 10000));
 	blueGroup.add(powerSliderBB.setup("blue x blue:", ppowerSliderBB, -100, 100));
 	blueGroup.add(powerSliderBW.setup("blue x white:", ppowerSliderBW, -100, 100));
 	blueGroup.add(powerSliderBR.setup("blue x red:", ppowerSliderBR, -100, 100));

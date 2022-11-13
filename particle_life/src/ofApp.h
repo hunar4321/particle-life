@@ -51,6 +51,8 @@ public:
 
 	ofxPanel gui;
 
+	ofxGuiGroup globalGroup;
+	ofxGuiGroup qtyGroup;
 	ofxGuiGroup redGroup;
 	ofxGuiGroup greenGroup;
 	ofxGuiGroup blueGroup;
