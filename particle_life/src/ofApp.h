@@ -63,9 +63,17 @@ public:
 	ofxButton randomChoice;
 	ofxButton save;
 	ofxButton load;
+
 	ofxToggle boundsToggle;
 	ofxToggle modelToggle;
 	ofxToggle motionBlurToggle;
+
+	ofxGuiGroup expGroup;
+	ofxToggle evoToggle;
+	ofxFloatSlider evoProbSlider;
+	float evoChance = 1;
+	ofxFloatSlider evoAmountSlider;
+	float evoAmount = 1;
 
 	ofxIntSlider probabilitySlider;
 	int probability = 100;
