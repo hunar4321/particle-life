@@ -42,6 +42,7 @@ public:
 	void setup() override;
 	void update() override;
 	void draw() override;
+	void keyPressed(int key) override;
 	void restart();
 	void random();
 	void saveSettings();
@@ -58,6 +59,9 @@ public:
 	ofxToggle boundsToggle;
 	ofxToggle modelToggle;
 	ofxToggle motionBlurToggle;
+
+	ofxIntSlider probabilitySlider;
+	int probability = 100;
 
 	ofxIntSlider numberSliderR;
 	ofxIntSlider numberSliderG;

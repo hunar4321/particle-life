@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 
 // parameters for GUI
 constexpr float xshift = 400;
@@ -30,7 +31,6 @@ std::vector<point> green;
 std::vector<point> red;
 std::vector<point> white;
 std::vector<point> blue;
-
 
 /**
  * @brief Return a random float in range [a,b[
@@ -95,73 +95,79 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 	const auto group1size = Group1->size();
 	const auto group2size = Group2->size();
 
-	#pragma omp parallel for default(none) schedule(guided, 64)
-	for (auto i = 0; i < group1size; i++)
+	#pragma omp parallel  default(none) 
 	{
-		auto& p1 = (*Group1)[i];
-		float fx = 0;
-		float fy = 0;
-
-		//This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap in comparaison
-		for (auto j = 0; j < group2size; j++)
+		std::random_device rd;
+		#pragma omp for
+		for (auto i = 0; i < group1size; i++)
 		{
-			const auto& p2 = (*Group2)[j];
+			if (rd() % 100 < probability) {
+				auto& p1 = (*Group1)[i];
+				float fx = 0;
+				float fy = 0;
 
-			// you don't need sqrt for distance comparaison. (you need it to compute the actual distance however)
-			const auto dx = p1.x - p2.x;
-			const auto dy = p1.y - p2.y;
-			const auto r = dx * dx + dy * dy;
+				//This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap
+				for (auto j = 0; j < group2size; j++)
+				{
+					const auto& p2 = (*Group2)[j];
 
-			//Calculate the force in given bounds. 
-			if (r > 0 && r < (radius * radius))
-			{
-				fx += (dx / std::sqrt(dx * dx + dy * dy));
-				fy += (dy / std::sqrt(dx * dx + dy * dy));
+					// you don't need sqrt to compare distance. (you need it to compute the actual distance however)
+					const auto dx = p1.x - p2.x;
+					const auto dy = p1.y - p2.y;
+					const auto r = dx * dx + dy * dy;
+
+					//Calculate the force in given bounds. 
+					if (r != 0 && r < (radius * radius))
+					{
+						fx += (dx / std::sqrt(dx * dx + dy * dy));
+						fy += (dy / std::sqrt(dx * dx + dy * dy));
+					}
+				}
+
+				//Calculate new velocity
+				p1.vx = (p1.vx + (fx * g)) * (1.0 - viscosity);
+				p1.vy = (p1.vy + (fy * g)) * (1.0 - viscosity) + worldGravity;
+
+				// Wall Repel
+				if (wallRepel > 0.0F)
+				{
+					if (p1.x < wallRepel) p1.vx += (wallRepel - p1.x) * 0.1;
+					if (p1.y < wallRepel) p1.vy += (wallRepel - p1.y) * 0.1;
+					if (p1.x > boundWidth - wallRepel) p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
+					if (p1.y > boundHeight - wallRepel) p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
+				}
+
+				//Update position based on velocity
+				p1.x += p1.vx;
+				p1.y += p1.vy;
+
+				//Checking for canvas bounds
+				if (boundsToggle)
+				{
+					if (p1.x < 0)
+					{
+						p1.vx *= -1;
+						p1.x = 0;
+					}
+					if (p1.x > boundWidth)
+					{
+						p1.vx *= -1;
+						p1.x = boundWidth;
+					}
+					if (p1.y < 0)
+					{
+						p1.vy *= -1;
+						p1.y = 0;
+					}
+					if (p1.y > boundHeight)
+					{
+						p1.vy *= -1;
+						p1.y = boundHeight;
+					}
+				}
+				//(*Group1)[i] = p1;    // seems to be useless
 			}
 		}
-
-		//Calculate new velocity
-		p1.vx = (p1.vx + (fx * g)) * (1.0 - viscosity);
-		p1.vy = (p1.vy + (fy * g)) * (1.0 - viscosity) + worldGravity;
-
-		// Wall Repel
-		if (wallRepel > 0.0F)
-		{
-			if (p1.x < wallRepel) p1.vx += (wallRepel - p1.x) * 0.1;
-			if (p1.y < wallRepel) p1.vy += (wallRepel - p1.y) * 0.1;
-			if (p1.x > boundWidth - wallRepel) p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
-			if (p1.y > boundHeight - wallRepel) p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
-		}
-
-		//Update position based on velocity
-		p1.x += p1.vx;
-		p1.y += p1.vy;
-
-		//Checking for canvas bounds
-		if (boundsToggle)
-		{
-			if (p1.x < 0)
-			{
-				p1.vx *= -1;
-				p1.x = 0;
-			}
-			if (p1.x > boundWidth)
-			{
-				p1.vx *= -1;
-				p1.x = boundWidth;
-			}
-			if (p1.y < 0)
-			{
-				p1.vy *= -1;
-				p1.y = 0;
-			}
-			if (p1.y > boundHeight)
-			{
-				p1.vy *= -1;
-				p1.y = boundHeight;
-			}
-		}
-		//(*Group1)[i] = p1;    // seems to be useless
 	}
 }
 
@@ -359,6 +365,7 @@ void ofApp::loadSettings()
 		numberSliderB = static_cast<int>(p[35]);
 		viscoSlider = p[36];
 	}
+	probabilitySlider = 100;
 	restart();
 }
 
@@ -377,11 +384,12 @@ void ofApp::setup()
 	gui.add(randomChoice.setup("Randomize"));
 	gui.add(save.setup("Save Model"));
 	gui.add(load.setup("Load Model"));
+	gui.add(probabilitySlider.setup("Probability", probability, 1, 100));
 	gui.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
 	gui.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
 	gui.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
 	//gui.add(labelG.setup("GREEN:", "-"));
-	gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 5000));
+	gui.add(numberSliderG.setup("GREEN:", pnumberSliderG, 0, 10000));
 	gui.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
 	gui.add(powerSliderGR.setup("green x red:", ppowerSliderGR, -100, 100));
 	gui.add(powerSliderGW.setup("green x white:", ppowerSliderGW, -100, 100));
@@ -393,7 +401,7 @@ void ofApp::setup()
 	gui.add(vSliderGB.setup("radius g x b:", pvSliderGB, 10, 500));
 
 	//gui.add(labelR.setup("RED:", "-"));
-	gui.add(numberSliderR.setup("RED:", pnumberSliderR, 0, 5000));
+	gui.add(numberSliderR.setup("RED:", pnumberSliderR, 0, 10000));
 	gui.add(powerSliderRR.setup("red x red:", ppowerSliderRR, -100, 100));
 	gui.add(powerSliderRG.setup("red x green:", ppowerSliderRG, -100, 100));
 	gui.add(powerSliderRW.setup("red x white:", ppowerSliderRW, -100, 100));
@@ -405,7 +413,7 @@ void ofApp::setup()
 	gui.add(vSliderRB.setup("radius r x b:", pvSliderRB, 10, 500));
 
 	//gui.add(labelW.setup("WHITE:", "-"));
-	gui.add(numberSliderW.setup("WHITE:", pnumberSliderW, 0, 5000));
+	gui.add(numberSliderW.setup("WHITE:", pnumberSliderW, 0, 10000));
 	gui.add(powerSliderWW.setup("white x white:", ppowerSliderWW, -100, 100));
 	gui.add(powerSliderWR.setup("white x red:", ppowerSliderWR, -100, 100));
 	gui.add(powerSliderWG.setup("white x green:", ppowerSliderWG, -100, 100));
@@ -417,7 +425,7 @@ void ofApp::setup()
 	gui.add(vSliderWB.setup("radius w x b:", pvSliderWB, 10, 500));
 
 	//gui.add(labelB.setup("BLUE:", "-"));
-	gui.add(numberSliderB.setup("BLUE:", pnumberSliderB, 0, 5000));
+	gui.add(numberSliderB.setup("BLUE:", pnumberSliderB, 0, 10000));
 	gui.add(powerSliderBB.setup("blue x blue:", ppowerSliderBB, -100, 100));
 	gui.add(powerSliderBW.setup("blue x white:", ppowerSliderBW, -100, 100));
 	gui.add(powerSliderBR.setup("blue x red:", ppowerSliderBR, -100, 100));
@@ -441,42 +449,42 @@ void ofApp::setup()
 //------------------------------Update simulation with sliders values------------------------------
 void ofApp::update()
 {
+	probability = probabilitySlider;
 	viscosity = viscoSlider;
 	worldGravity = gravitySlider;
 	wallRepel = wallRepelSlider;
 
-	if (numberSliderG > 0)
-	{
-		interaction(&green, &green, powerSliderGG, vSliderGG);
-		if (numberSliderR > 0) interaction(&green, &red, powerSliderGR, vSliderGR);
-		if (numberSliderW > 0) interaction(&green, &white, powerSliderGW, vSliderGW);
-		if (numberSliderB > 0) interaction(&green, &blue, powerSliderGB, vSliderGB);
-	}
-
 	if (numberSliderR > 0)
 	{
-		if (numberSliderR > 0) interaction(&red, &red, powerSliderRR, vSliderRR);
+		interaction(&red, &red, powerSliderRR, vSliderRR);
 		if (numberSliderG > 0) interaction(&red, &green, powerSliderRG, vSliderRG);
+		if (numberSliderB > 0) interaction(&red, &blue, powerSliderRB, vSliderRB);
 		if (numberSliderW > 0) interaction(&red, &white, powerSliderRW, vSliderRW);
-		interaction(&red, &blue, powerSliderRB, vSliderRB);
 	}
 
-	if (numberSliderW > 0)
+	if (numberSliderG > 0)
 	{
-		interaction(&white, &white, powerSliderWW, vSliderWW);
-		if (numberSliderG > 0) interaction(&white, &green, powerSliderWG, vSliderWG);
-		if (numberSliderR > 0) interaction(&white, &red, powerSliderWR, vSliderWR);
-		if (numberSliderB > 0) interaction(&white, &blue, powerSliderWB, vSliderWB);
+		if (numberSliderR > 0) interaction(&green, &red, powerSliderGR, vSliderGR);
+		interaction(&green, &green, powerSliderGG, vSliderGG);
+		if (numberSliderB > 0) interaction(&green, &blue, powerSliderGB, vSliderGB);
+		if (numberSliderW > 0) interaction(&green, &white, powerSliderGW, vSliderGW);
 	}
 
 	if (numberSliderB > 0)
 	{
-		if (numberSliderW > 0) interaction(&blue, &white, powerSliderBW, vSliderBW);
-		if (numberSliderG > 0) interaction(&blue, &green, powerSliderBG, vSliderBG);
 		if (numberSliderR > 0) interaction(&blue, &red, powerSliderBR, vSliderBR);
+		if (numberSliderG > 0) interaction(&blue, &green, powerSliderBG, vSliderBG);
 		interaction(&blue, &blue, powerSliderBB, vSliderBB);
+		if (numberSliderW > 0) interaction(&blue, &white, powerSliderBW, vSliderBW);
 	}
 
+	if (numberSliderW > 0)
+	{
+		if (numberSliderR > 0) interaction(&white, &red, powerSliderWR, vSliderWR);
+		if (numberSliderG > 0) interaction(&white, &green, powerSliderWG, vSliderWG);
+		if (numberSliderB > 0) interaction(&white, &blue, powerSliderWB, vSliderWB);
+		interaction(&white, &white, powerSliderWW, vSliderWW);
+	}
 
 	if (save) { saveSettings(); }
 	if (load) { loadSettings(); }
@@ -519,7 +527,6 @@ void ofApp::draw()
 	if (numberSliderR > 0) { Draw(&red); }
 	if (numberSliderG > 0) { Draw(&green); }
 	if (numberSliderB > 0) { Draw(&blue); }
-
 
 	//Draw GUI
 	if (modelToggle == true)
@@ -578,4 +585,13 @@ void ofApp::draw()
 		ofDrawCircle(p4x, p4y, rr);
 	}
 	gui.draw();
+}
+
+void ofApp::keyPressed(int key)
+{
+	if(key == ' ')
+	{
+		random();
+		restart();
+	}
 }
