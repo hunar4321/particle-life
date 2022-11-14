@@ -394,7 +394,6 @@ void ofApp::setup()
 	gui.add(save.setup("Save Model"));
 	gui.add(load.setup("Load Model"));
 	gui.add(modelToggle.setup("Show Model", false));
-	gui.add(motionBlurToggle.setup("Motion Blur", false));
 
 	globalGroup.setup("Global");
 	globalGroup.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
@@ -478,6 +477,8 @@ void ofApp::setup()
 	expGroup.add(evoAmountSlider.setup("evo amount%%", evoAmount, 0, 100));
 	expGroup.add(radiusToogle.setup("infinite radius", false));
 	expGroup.add(probabilitySlider.setup("interaction prob%", probability, 1, 100));
+	expGroup.add(motionBlurToggle.setup("Motion Blur", false));
+
 
 	expGroup.minimize();
 	gui.add(&expGroup);
