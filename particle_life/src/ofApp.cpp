@@ -32,6 +32,9 @@ std::vector<point> red;
 std::vector<point> white;
 std::vector<point> blue;
 
+//Subdivison grid
+grid subdiv;
+
 /**
  * @brief Return a random float in range [a,b[
  *
@@ -377,6 +380,8 @@ void ofApp::setup()
 {
 	lastTime = clock();
 	ofSetWindowTitle("Particle Life - www.brainxyz.com");
+	ofSetVerticalSync(false);
+
 	// Interface
 	gui.setup("Settings");
 	gui.loadFont("Arial", 12);
@@ -392,7 +397,6 @@ void ofApp::setup()
 	gui.add(motionBlurToggle.setup("Motion Blur", false));
 
 	globalGroup.setup("Global");
-	globalGroup.add(probabilitySlider.setup("Probability", probability, 1, 100));
 	globalGroup.add(viscoSlider.setup("Viscosity/Friction", viscosity, 0, 1));
 	globalGroup.add(gravitySlider.setup("Gravity", worldGravity, -1, 1));
 	globalGroup.add(wallRepelSlider.setup("Wall Repel", wallRepel, 0, 100));
@@ -473,6 +477,8 @@ void ofApp::setup()
 	expGroup.add(evoProbSlider.setup("evo chance%", evoChance, 0, 100));
 	expGroup.add(evoAmountSlider.setup("evo amount%%", evoAmount, 0, 100));
 	expGroup.add(radiusToogle.setup("infinite radius", false));
+	expGroup.add(probabilitySlider.setup("interaction prob%", probability, 1, 100));
+
 	expGroup.minimize();
 	gui.add(&expGroup);
 

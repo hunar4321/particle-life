@@ -3,6 +3,13 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 
+#define GRID_DIV 4
+
+/*
+ * for collision detection :
+ * if (distance(x center, x line) < radius) then intersect 
+ */
+
 struct point
 {
 	//Position
@@ -17,6 +24,8 @@ struct point
 	int r = 0;
 	int g = 0;
 	int b = 0;
+
+	int gridId = -1;
 
 	point(const float _x, const float _y, const int _r, const int _g, const int _b)
 	{
@@ -34,6 +43,10 @@ struct point
 	}
 };
 
+struct grid
+{
+	const int gridSize = GRID_DIV * GRID_DIV; // must be a power of 2
+};
 
 //---------------------------------------------CONFIGURE GUI---------------------------------------------//
 class ofApp final : public ofBaseApp
