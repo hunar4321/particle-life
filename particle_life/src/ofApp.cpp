@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "ofUtils.h"
 
 #include <iostream>
 #include <vector>
@@ -21,10 +22,12 @@ constexpr float rr = 8;
 
 //int countThresh = 0;
 std::string fps_text;
+std::string physic_text;
 
 //Simulation parameters
 int cntFps = 0;
 clock_t now, lastTime, delta;
+clock_t physic_begin, physic_delta;
 
 //Particle groups by color
 std::vector<point> green;
@@ -478,7 +481,7 @@ void ofApp::setup()
 	expGroup.add(radiusToogle.setup("infinite radius", false));
 	expGroup.add(probabilitySlider.setup("interaction prob%", probability, 1, 100));
 	expGroup.add(motionBlurToggle.setup("Motion Blur", false));
-
+	expGroup.add(physicLabel.setup("physic (ms)", "0"));
 
 	expGroup.minimize();
 	gui.add(&expGroup);
@@ -492,6 +495,8 @@ void ofApp::setup()
 //------------------------------Update simulation with sliders values------------------------------
 void ofApp::update()
 {
+	physic_begin = clock();
+
 	probability = probabilitySlider;
 	viscosity = viscoSlider;
 	worldGravity = gravitySlider;
@@ -604,6 +609,8 @@ void ofApp::update()
 
 	if (save) { saveSettings(); }
 	if (load) { loadSettings(); }
+	physic_delta = clock() - physic_begin;
+
 }
 
 //--------------------------------------------------------------
@@ -629,6 +636,8 @@ void ofApp::draw()
 	{
 		lastTime = now;
 		fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<float>(delta)) * cntFps)));
+		physicLabel.setup("physics (ms)", to_string(physic_delta) );
+
 		cntFps = 0;
 	}
 

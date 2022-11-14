@@ -88,6 +88,7 @@ public:
 	ofxFloatSlider evoAmountSlider;
 	float evoAmount = 1;
 	ofxToggle radiusToogle;
+	ofxLabel physicLabel;
 
 	ofxIntSlider probabilitySlider;
 	int probability = 100;
