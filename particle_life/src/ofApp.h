@@ -12,29 +12,23 @@
 
 struct point
 {
+
+	point(float _x, float _y, const int _r, const int _g, const int _b) : x(_x), y(_y), r(_r), g(_g), b(_b) {}
+
 	//Position
-	float x = 0;
-	float y = 0;
+	float x;
+	float y;
 
 	//Velocity
 	float vx = 0;
 	float vy = 0;
 
 	//Color
-	int r = 0;
-	int g = 0;
-	int b = 0;
+	const int r;
+	const int g;
+	const int b;
 
 	int gridId = -1;
-
-	point(const float _x, const float _y, const int _r, const int _g, const int _b)
-	{
-		x = _x;
-		y = _y;
-		r = _r;
-		g = _g;
-		b = _b;
-	}
 
 	void draw() const
 	{
@@ -91,7 +85,7 @@ public:
 	ofxLabel physicLabel;
 
 	ofxIntSlider probabilitySlider;
-	int probability = 100;
+	unsigned int probability = 100;
 
 	ofxIntSlider numberSliderR;
 	ofxIntSlider numberSliderG;

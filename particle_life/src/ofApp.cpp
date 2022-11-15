@@ -45,7 +45,7 @@ grid subdiv;
  * @param b higher bound
  * @return random float
  */
-float RandomFloat(const float a, const float b)
+inline float RandomFloat(const float a, const float b)
 {
 	const float diff = b - a;
 	const float r = ofRandomuf() * diff;
@@ -71,7 +71,7 @@ void Draw(const std::vector<point>* points)
  * @param b blue
  * @return a group of random point
  */
-std::vector<point> CreatePoints(const int num, int r, int g, int b)
+std::vector<point> CreatePoints(const int num, const int r, const int g, const int b)
 {
 	std::vector<point> points;
 	points.reserve(num);
@@ -103,7 +103,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 
 	const bool radius_toggle = radiusToogle;
 
-	#pragma omp parallel  default(none) 
+	#pragma omp parallel
 	{
 		std::random_device rd;
 		#pragma omp for
@@ -125,7 +125,7 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 					const auto r = dx * dx + dy * dy;
 
 					//Calculate the force in given bounds. 
-					if (r != 0 && (radius_toggle || r < radius * radius))
+					if ((r < radius * radius || radius_toggle) && r != 0.0F)
 					{
 						fx += (dx / std::sqrt(dx * dx + dy * dy));
 						fy += (dy / std::sqrt(dx * dx + dy * dy));
@@ -173,7 +173,6 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 						p1.y = boundHeight;
 					}
 				}
-				//(*Group1)[i] = p1;    // seems to be useless
 			}
 		}
 	}
@@ -496,7 +495,6 @@ void ofApp::setup()
 void ofApp::update()
 {
 	physic_begin = clock();
-
 	probability = probabilitySlider;
 	viscosity = viscoSlider;
 	worldGravity = gravitySlider;
@@ -610,7 +608,6 @@ void ofApp::update()
 	if (save) { saveSettings(); }
 	if (load) { loadSettings(); }
 	physic_delta = clock() - physic_begin;
-
 }
 
 //--------------------------------------------------------------
