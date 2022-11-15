@@ -93,15 +93,13 @@ std::vector<point> CreatePoints(const int num, const int r, const int g, const i
  */
 void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Group2, const float G, const float radius)
 {
-	//Gravity coefficient
-	const float g = G / -100;
+	const float g = G / -100;	//Gravity coefficient
+	const auto group1size = Group1->size();
+	const auto group2size = Group2->size();
+	const bool radius_toggle = radiusToogle;
 
 	boundHeight = ofGetHeight();
 	boundWidth = ofGetWidth();
-	const auto group1size = Group1->size();
-	const auto group2size = Group2->size();
-
-	const bool radius_toggle = radiusToogle;
 
 	#pragma omp parallel
 	{

@@ -12,7 +12,6 @@
 
 struct point
 {
-
 	point(float _x, float _y, const int _r, const int _g, const int _b) : x(_x), y(_y), r(_r), g(_g), b(_b) {}
 
 	//Position
@@ -75,14 +74,16 @@ public:
 	ofxToggle modelToggle;
 	ofxToggle motionBlurToggle;
 
+	// some experimental stuff here
 	ofxGuiGroup expGroup;
 	ofxToggle evoToggle;
 	ofxFloatSlider evoProbSlider;
-	float evoChance = 1;
 	ofxFloatSlider evoAmountSlider;
+	float evoChance = 1;
 	float evoAmount = 1;
 	ofxToggle radiusToogle;
 	ofxLabel physicLabel;
+	//end of experimental
 
 	ofxIntSlider probabilitySlider;
 	unsigned int probability = 100;
@@ -120,7 +121,6 @@ public:
 	float ppowerSliderGG = 0;
 	float ppowerSliderGW = 0;
 	float ppowerSliderGB = 0;
-
 
 	ofxFloatSlider powerSliderWR;
 	ofxFloatSlider powerSliderWG;
@@ -181,14 +181,15 @@ public:
 	float pvSliderBG = 180;
 	float pvSliderBW = 180;
 	float pvSliderBB = 180;
+
 	ofxLabel labelG;
 	ofxLabel labelR;
 	ofxLabel labelW;
 	ofxLabel labelB;
-
 	ofxLabel aboutL1;
 	ofxLabel aboutL2;
 	ofxLabel aboutL3;
+	ofxLabel fps;
 
 	// simulation bounds
 	int boundWidth = 1600;
@@ -199,6 +200,4 @@ public:
 	float forceVariance = 0.8F;
 	float radiusVariance = 0.6F;
 	float wallRepel = 20.0F;
-
-	ofxLabel fps;
 };
