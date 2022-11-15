@@ -3,29 +3,31 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 
+#define GRID_DIV 4
+
+/*
+ * for collision detection :
+ * if (distance(x center, x line) < radius) then intersect 
+ */
+
 struct point
 {
+	point(float _x, float _y, const int _r, const int _g, const int _b) : x(_x), y(_y), r(_r), g(_g), b(_b) {}
+
 	//Position
-	float x = 0;
-	float y = 0;
+	float x;
+	float y;
 
 	//Velocity
 	float vx = 0;
 	float vy = 0;
 
 	//Color
-	int r = 0;
-	int g = 0;
-	int b = 0;
+	const int r;
+	const int g;
+	const int b;
 
-	point(const float _x, const float _y, const int _r, const int _g, const int _b)
-	{
-		x = _x;
-		y = _y;
-		r = _r;
-		g = _g;
-		b = _b;
-	}
+	int gridId = -1;
 
 	void draw() const
 	{
@@ -34,6 +36,10 @@ struct point
 	}
 };
 
+struct grid
+{
+	const int gridSize = GRID_DIV * GRID_DIV; // must be a power of 2
+};
 
 //---------------------------------------------CONFIGURE GUI---------------------------------------------//
 class ofApp final : public ofBaseApp
@@ -51,17 +57,36 @@ public:
 
 	ofxPanel gui;
 
+	ofxGuiGroup globalGroup;
+	ofxGuiGroup qtyGroup;
+	ofxGuiGroup redGroup;
+	ofxGuiGroup greenGroup;
+	ofxGuiGroup blueGroup;
+	ofxGuiGroup whiteGroup;
+
 	ofxButton resetButton;
 	ofxButton selectButton;
 	ofxButton randomChoice;
 	ofxButton save;
 	ofxButton load;
+
 	ofxToggle boundsToggle;
 	ofxToggle modelToggle;
 	ofxToggle motionBlurToggle;
 
+	// some experimental stuff here
+	ofxGuiGroup expGroup;
+	ofxToggle evoToggle;
+	ofxFloatSlider evoProbSlider;
+	ofxFloatSlider evoAmountSlider;
+	float evoChance = 1;
+	float evoAmount = 1;
+	ofxToggle radiusToogle;
+	ofxLabel physicLabel;
+	//end of experimental
+
 	ofxIntSlider probabilitySlider;
-	int probability = 100;
+	unsigned int probability = 100;
 
 	ofxIntSlider numberSliderR;
 	ofxIntSlider numberSliderG;
@@ -96,7 +121,6 @@ public:
 	float ppowerSliderGG = 0;
 	float ppowerSliderGW = 0;
 	float ppowerSliderGB = 0;
-
 
 	ofxFloatSlider powerSliderWR;
 	ofxFloatSlider powerSliderWG;
@@ -157,14 +181,15 @@ public:
 	float pvSliderBG = 180;
 	float pvSliderBW = 180;
 	float pvSliderBB = 180;
+
 	ofxLabel labelG;
 	ofxLabel labelR;
 	ofxLabel labelW;
 	ofxLabel labelB;
-
 	ofxLabel aboutL1;
 	ofxLabel aboutL2;
 	ofxLabel aboutL3;
+	ofxLabel fps;
 
 	// simulation bounds
 	int boundWidth = 1600;
@@ -175,6 +200,4 @@ public:
 	float forceVariance = 0.8F;
 	float radiusVariance = 0.6F;
 	float wallRepel = 20.0F;
-
-	ofxLabel fps;
 };
