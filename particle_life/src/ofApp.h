@@ -57,12 +57,16 @@ public:
 
 	ofxPanel gui;
 
+#pragma region guigroup
+
 	ofxGuiGroup globalGroup;
 	ofxGuiGroup qtyGroup;
 	ofxGuiGroup redGroup;
 	ofxGuiGroup greenGroup;
 	ofxGuiGroup blueGroup;
 	ofxGuiGroup whiteGroup;
+
+#pragma endregion guigroup
 
 	ofxButton resetButton;
 	ofxButton selectButton;
@@ -72,9 +76,9 @@ public:
 
 	ofxToggle boundsToggle;
 	ofxToggle modelToggle;
-	ofxToggle motionBlurToggle;
 
-	// some experimental stuff here
+#pragma region some experimental features
+
 	ofxGuiGroup expGroup;
 	ofxToggle evoToggle;
 	ofxFloatSlider evoProbSlider;
@@ -83,20 +87,19 @@ public:
 	float evoAmount = 1;
 	ofxToggle radiusToogle;
 	ofxLabel physicLabel;
-	//end of experimental
-
 	ofxIntSlider probabilitySlider;
 	unsigned int probability = 100;
+	ofxToggle motionBlurToggle;
 
+#pragma endregion some experimental features
+
+
+
+#pragma region slider
 	ofxIntSlider numberSliderR;
 	ofxIntSlider numberSliderG;
 	ofxIntSlider numberSliderW;
 	ofxIntSlider numberSliderB;
-
-	int pnumberSliderR = 1000;
-	int pnumberSliderG = 1000;
-	int pnumberSliderW = 1000;
-	int pnumberSliderB = 1000;
 
 	ofxFloatSlider viscoSlider;
 	ofxFloatSlider gravitySlider;
@@ -106,81 +109,76 @@ public:
 	ofxFloatSlider powerSliderRG;
 	ofxFloatSlider powerSliderRW;
 	ofxFloatSlider powerSliderRB;
-
-	float ppowerSliderRR = 0;
-	float ppowerSliderRG = 0;
-	float ppowerSliderRW = 0;
-	float ppowerSliderRB = 0;
-
 	ofxFloatSlider powerSliderGR;
 	ofxFloatSlider powerSliderGG;
 	ofxFloatSlider powerSliderGW;
 	ofxFloatSlider powerSliderGB;
-
-	float ppowerSliderGR = 0;
-	float ppowerSliderGG = 0;
-	float ppowerSliderGW = 0;
-	float ppowerSliderGB = 0;
-
 	ofxFloatSlider powerSliderWR;
 	ofxFloatSlider powerSliderWG;
 	ofxFloatSlider powerSliderWW;
 	ofxFloatSlider powerSliderWB;
-
-	float ppowerSliderWR = 0;
-	float ppowerSliderWG = 0;
-	float ppowerSliderWW = 0;
-	float ppowerSliderWB = 0;
-
 	ofxFloatSlider powerSliderBR;
 	ofxFloatSlider powerSliderBG;
 	ofxFloatSlider powerSliderBW;
 	ofxFloatSlider powerSliderBB;
-
-	float ppowerSliderBR = 0;
-	float ppowerSliderBG = 0;
-	float ppowerSliderBW = 0;
-	float ppowerSliderBB = 0;
-
 	ofxFloatSlider vSliderRR;
 	ofxFloatSlider vSliderRG;
 	ofxFloatSlider vSliderRW;
 	ofxFloatSlider vSliderRB;
-
-	float pvSliderRR = 180;
-	float pvSliderRG = 180;
-	float pvSliderRW = 180;
-	float pvSliderRB = 180;
-
 	ofxFloatSlider vSliderGR;
 	ofxFloatSlider vSliderGG;
 	ofxFloatSlider vSliderGW;
 	ofxFloatSlider vSliderGB;
-
-	float pvSliderGR = 180;
-	float pvSliderGG = 180;
-	float pvSliderGW = 180;
-	float pvSliderGB = 180;
-
 	ofxFloatSlider vSliderWR;
 	ofxFloatSlider vSliderWG;
 	ofxFloatSlider vSliderWW;
 	ofxFloatSlider vSliderWB;
-
-	float pvSliderWR = 180;
-	float pvSliderWG = 180;
-	float pvSliderWW = 180;
-	float pvSliderWB = 180;
-
 	ofxFloatSlider vSliderBR;
 	ofxFloatSlider vSliderBG;
 	ofxFloatSlider vSliderBW;
 	ofxFloatSlider vSliderBB;
 
+#pragma endregion slider
+
+#pragma region slider values
+	int pnumberSliderR = 1000;
+	int pnumberSliderG = 1000;
+	int pnumberSliderW = 1000;
+	int pnumberSliderB = 1000;
+
+	float ppowerSliderRR = 0;
+	float ppowerSliderRG = 0;
+	float ppowerSliderRW = 0;
+	float ppowerSliderRB = 0;
+	float ppowerSliderGR = 0;
+	float ppowerSliderGG = 0;
+	float ppowerSliderGW = 0;
+	float ppowerSliderGB = 0;
+	float ppowerSliderWR = 0;
+	float ppowerSliderWG = 0;
+	float ppowerSliderWW = 0;
+	float ppowerSliderWB = 0;
+	float ppowerSliderBR = 0;
+	float ppowerSliderBG = 0;
+	float ppowerSliderBW = 0;
+	float ppowerSliderBB = 0;
+	float pvSliderRR = 180;
+	float pvSliderRG = 180;
+	float pvSliderRW = 180;
+	float pvSliderRB = 180;
+	float pvSliderGR = 180;
+	float pvSliderGG = 180;
+	float pvSliderGW = 180;
+	float pvSliderGB = 180;
+	float pvSliderWR = 180;
+	float pvSliderWG = 180;
+	float pvSliderWW = 180;
+	float pvSliderWB = 180;
 	float pvSliderBR = 180;
 	float pvSliderBG = 180;
 	float pvSliderBW = 180;
 	float pvSliderBB = 180;
+#pragma endregion slider values
 
 	ofxLabel labelG;
 	ofxLabel labelR;
@@ -199,5 +197,5 @@ public:
 	float worldGravity = 0.0F;
 	float forceVariance = 0.8F;
 	float radiusVariance = 0.6F;
-	float wallRepel = 20.0F;
+	float wallRepel = 10.0F;
 };
