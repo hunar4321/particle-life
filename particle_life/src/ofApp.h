@@ -29,9 +29,13 @@ struct point
 
 	int gridId = -1;
 
-	void draw() const
+	void setColor() const 
 	{
 		ofSetColor(r, g, b, 100); //set particle color + some alpha
+	}
+
+	void draw() const
+	{
 		ofDrawCircle(x, y, 2.0F); //draw a point at x,y coordinates, the size of a 2 pixels
 	}
 };
