@@ -59,6 +59,7 @@ inline float RandomFloat(const float a, const float b)
  */
 void Draw(const std::vector<point>* points)
 {
+	points->front().setColor();
 	for (auto& point : *points) point.draw();
 }
 
