@@ -504,75 +504,17 @@ void ofApp::update()
 	evoChance = evoProbSlider;
 	evoAmount = evoAmountSlider;
 
-	if(evoToggle && ofRandom(1.0F) < (evoChance / 100.0F))
+	if (evoToggle && ofRandom(1.0F) < (evoChance / 100.0F))
 	{
-		powerSliderRR = powerSliderRR + ((ofRandom(2.0F) - 1.0F) * (powerSliderRR.getMax() - powerSliderRR.getMin()) * (evoAmount / 100.0F));
-		powerSliderRG = powerSliderRG + ((ofRandom(2.0F) - 1.0F) * (powerSliderRG.getMax() - powerSliderRG.getMin()) * (evoAmount / 100.0F));
-		powerSliderRB = powerSliderRB + ((ofRandom(2.0F) - 1.0F) * (powerSliderRB.getMax() - powerSliderRB.getMin()) * (evoAmount / 100.0F));
-		powerSliderRW = powerSliderRW + ((ofRandom(2.0F) - 1.0F) * (powerSliderRW.getMax() - powerSliderRW.getMin()) * (evoAmount / 100.0F));
-		powerSliderGR = powerSliderGR + ((ofRandom(2.0F) - 1.0F) * (powerSliderGR.getMax() - powerSliderGR.getMin()) * (evoAmount / 100.0F));
-		powerSliderGG = powerSliderGG + ((ofRandom(2.0F) - 1.0F) * (powerSliderGG.getMax() - powerSliderGG.getMin()) * (evoAmount / 100.0F));
-		powerSliderGB = powerSliderGB + ((ofRandom(2.0F) - 1.0F) * (powerSliderGB.getMax() - powerSliderGB.getMin()) * (evoAmount / 100.0F));
-		powerSliderGW = powerSliderGW + ((ofRandom(2.0F) - 1.0F) * (powerSliderGW.getMax() - powerSliderGW.getMin()) * (evoAmount / 100.0F));
-		powerSliderBR = powerSliderBR + ((ofRandom(2.0F) - 1.0F) * (powerSliderBR.getMax() - powerSliderBR.getMin()) * (evoAmount / 100.0F));
-		powerSliderBG = powerSliderBG + ((ofRandom(2.0F) - 1.0F) * (powerSliderBG.getMax() - powerSliderBG.getMin()) * (evoAmount / 100.0F));
-		powerSliderBB = powerSliderBB + ((ofRandom(2.0F) - 1.0F) * (powerSliderBB.getMax() - powerSliderBB.getMin()) * (evoAmount / 100.0F));
-		powerSliderBW = powerSliderBW + ((ofRandom(2.0F) - 1.0F) * (powerSliderBW.getMax() - powerSliderBW.getMin()) * (evoAmount / 100.0F));
-		powerSliderWR = powerSliderWR + ((ofRandom(2.0F) - 1.0F) * (powerSliderWR.getMax() - powerSliderWR.getMin()) * (evoAmount / 100.0F));
-		powerSliderWG = powerSliderWG + ((ofRandom(2.0F) - 1.0F) * (powerSliderWG.getMax() - powerSliderWG.getMin()) * (evoAmount / 100.0F));
-		powerSliderWB = powerSliderWB + ((ofRandom(2.0F) - 1.0F) * (powerSliderWB.getMax() - powerSliderWB.getMin()) * (evoAmount / 100.0F));
-		powerSliderWW = powerSliderWW + ((ofRandom(2.0F) - 1.0F) * (powerSliderWW.getMax() - powerSliderWW.getMin()) * (evoAmount / 100.0F));
+		for (auto& slider : powersliders) {
+			*slider = *slider + ((ofRandom(2.0F) - 1.0F) * (slider->getMax() - slider->getMin()) * (evoAmount / 100.0F));
+		}
 
-		vSliderRR = vSliderRR + ((ofRandom(2.0F) - 1.0F) * (vSliderRR.getMax() - vSliderRR.getMin()) * (evoAmount / 100.0F));
-		vSliderRG = vSliderRG + ((ofRandom(2.0F) - 1.0F) * (vSliderRG.getMax() - vSliderRG.getMin()) * (evoAmount / 100.0F));
-		vSliderRB = vSliderRB + ((ofRandom(2.0F) - 1.0F) * (vSliderRB.getMax() - vSliderRB.getMin()) * (evoAmount / 100.0F));
-		vSliderRW = vSliderRW + ((ofRandom(2.0F) - 1.0F) * (vSliderRW.getMax() - vSliderRW.getMin()) * (evoAmount / 100.0F));
-		vSliderGR = vSliderGR + ((ofRandom(2.0F) - 1.0F) * (vSliderGR.getMax() - vSliderGR.getMin()) * (evoAmount / 100.0F));
-		vSliderGG = vSliderGG + ((ofRandom(2.0F) - 1.0F) * (vSliderGG.getMax() - vSliderGG.getMin()) * (evoAmount / 100.0F));
-		vSliderGB = vSliderGB + ((ofRandom(2.0F) - 1.0F) * (vSliderGB.getMax() - vSliderGB.getMin()) * (evoAmount / 100.0F));
-		vSliderGW = vSliderGW + ((ofRandom(2.0F) - 1.0F) * (vSliderGW.getMax() - vSliderGW.getMin()) * (evoAmount / 100.0F));
-		vSliderBR = vSliderBR + ((ofRandom(2.0F) - 1.0F) * (vSliderBR.getMax() - vSliderBR.getMin()) * (evoAmount / 100.0F));
-		vSliderBG = vSliderBG + ((ofRandom(2.0F) - 1.0F) * (vSliderBG.getMax() - vSliderBG.getMin()) * (evoAmount / 100.0F));
-		vSliderBB = vSliderBB + ((ofRandom(2.0F) - 1.0F) * (vSliderBB.getMax() - vSliderBB.getMin()) * (evoAmount / 100.0F));
-		vSliderBW = vSliderBW + ((ofRandom(2.0F) - 1.0F) * (vSliderBW.getMax() - vSliderBW.getMin()) * (evoAmount / 100.0F));
-		vSliderWR = vSliderWR + ((ofRandom(2.0F) - 1.0F) * (vSliderWR.getMax() - vSliderWR.getMin()) * (evoAmount / 100.0F));
-		vSliderWG = vSliderWG + ((ofRandom(2.0F) - 1.0F) * (vSliderWG.getMax() - vSliderWG.getMin()) * (evoAmount / 100.0F));
-		vSliderWB = vSliderWB + ((ofRandom(2.0F) - 1.0F) * (vSliderWB.getMax() - vSliderWB.getMin()) * (evoAmount / 100.0F));
-		vSliderWW = vSliderWW + ((ofRandom(2.0F) - 1.0F) * (vSliderWW.getMax() - vSliderWW.getMin()) * (evoAmount / 100.0F));
-
-		if(vSliderRR < 0.0F) vSliderRR = 0;
-		if(vSliderRG < 0.0F) vSliderRG = 0;
-		if(vSliderRB < 0.0F) vSliderRB = 0;
-		if(vSliderRW < 0.0F) vSliderRW = 0;
-		if(vSliderGR < 0.0F) vSliderGR = 0;
-		if(vSliderGG < 0.0F) vSliderGG = 0;
-		if(vSliderGB < 0.0F) vSliderGB = 0;
-		if(vSliderGW < 0.0F) vSliderGW = 0;
-		if(vSliderBR < 0.0F) vSliderBR = 0;
-		if(vSliderBG < 0.0F) vSliderBG = 0;
-		if(vSliderBB < 0.0F) vSliderBB = 0;
-		if(vSliderBW < 0.0F) vSliderBW = 0;
-		if(vSliderWR < 0.0F) vSliderWR = 0;
-		if(vSliderWG < 0.0F) vSliderWG = 0;
-		if(vSliderWB < 0.0F) vSliderWB = 0;
-		if(vSliderWW < 0.0F) vSliderWW = 0;
-
-		if (vSliderRR > 200.0F) vSliderRR = 200.0F;
-		if (vSliderRG > 200.0F) vSliderRG = 200.0F;
-		if (vSliderRB > 200.0F) vSliderRB = 200.0F;
-		if (vSliderRW > 200.0F) vSliderRW = 200.0F;
-		if (vSliderGR > 200.0F) vSliderGR = 200.0F;
-		if (vSliderGG > 200.0F) vSliderGG = 200.0F;
-		if (vSliderGB > 200.0F) vSliderGB = 200.0F;
-		if (vSliderGW > 200.0F) vSliderGW = 200.0F;
-		if (vSliderBR > 200.0F) vSliderBR = 200.0F;
-		if (vSliderBG > 200.0F) vSliderBG = 200.0F;
-		if (vSliderBB > 200.0F) vSliderBB = 200.0F;
-		if (vSliderBW > 200.0F) vSliderBW = 200.0F;
-		if (vSliderWR > 200.0F) vSliderWR = 200.0F;
-		if (vSliderWG > 200.0F) vSliderWG = 200.0F;
-		if (vSliderWB > 200.0F) vSliderWB = 200.0F;
-		if (vSliderWW > 200.0F) vSliderWW = 200.0F;
+		for (auto& slider : vsliders) {
+			*slider = *slider + ((ofRandom(2.0F) - 1.0F) * (slider->getMax() - slider->getMin()) * (evoAmount / 100.0F));
+			if (*slider < 0.0F) *slider = 0;
+			if (*slider > 200.0F) *slider = 200.0F;
+		}
 	}
 
 	if (numberSliderR > 0)
