@@ -142,6 +142,20 @@ public:
 	ofxFloatSlider vSliderBW;
 	ofxFloatSlider vSliderBB;
 
+	vector<ofxFloatSlider*> powersliders = {
+		&powerSliderRR, &powerSliderRG, &powerSliderRB, &powerSliderRW,
+		&powerSliderGR, &powerSliderGG, &powerSliderGB, &powerSliderGW,
+		&powerSliderBR, &powerSliderBG, &powerSliderBB, &powerSliderBW,
+		&powerSliderWR, &powerSliderWG, &powerSliderWB, &powerSliderWW,
+	};
+
+	vector<ofxFloatSlider*> vsliders = {
+		&vSliderRR, &vSliderRG, &vSliderRB, &vSliderRW,
+		&vSliderGR, &vSliderGG, &vSliderGB, &vSliderGW,
+		&vSliderBR, &vSliderBG, &vSliderBB, &vSliderBW,
+		&vSliderWR, &vSliderWG, &vSliderWB, &vSliderWW,
+	};
+
 #pragma endregion slider
 
 #pragma region slider values
