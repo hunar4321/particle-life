@@ -29,12 +29,12 @@ struct point
 
 	int gridId = -1;
 
-	void setColor() const 
+	inline void setColor() const 
 	{
 		ofSetColor(r, g, b, 100); //set particle color + some alpha
 	}
 
-	void draw() const
+	inline void draw() const
 	{
 		ofDrawCircle(x, y, 2.0F); //draw a point at x,y coordinates, the size of a 2 pixels
 	}
@@ -57,7 +57,7 @@ public:
 	void random();
 	void saveSettings();
 	void loadSettings();
-	void interaction(std::vector<point>* Group1, const std::vector<point>* Group2, float G, float radius);
+	void interaction(std::vector<point>& Group1, const std::vector<point>& Group2, float G, float radius);
 
 	ofxPanel gui;
 

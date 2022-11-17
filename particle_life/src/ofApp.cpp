@@ -59,7 +59,8 @@ inline float RandomFloat(const float a, const float b)
  */
 void Draw(const std::vector<point>* points)
 {
-	points->front().setColor();
+	points->front().setColor();	// all points within a vector are of the same const color. no need to call it for every point.
+								// this save a lot of GL API calls
 	for (auto& point : *points) point.draw();
 }
 
@@ -92,11 +93,11 @@ std::vector<point> CreatePoints(const int num, const int r, const int g, const i
  * @param G gravity coefficient
  * @param radius radius of interaction
  */
-void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Group2, const float G, const float radius)
+void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, const float G, const float radius)
 {
 	const float g = G / -100;	//Gravity coefficient
-	const auto group1size = Group1->size();
-	const auto group2size = Group2->size();
+	const auto& group1size = Group1.size();
+	const auto& group2size = Group2.size();
 	const bool radius_toggle = radiusToogle;
 
 	boundHeight = ofGetHeight();
@@ -109,14 +110,14 @@ void ofApp::interaction(std::vector<point>* Group1, const std::vector<point>* Gr
 		for (auto i = 0; i < group1size; i++)
 		{
 			if (rd() % 100 < probability) {
-				auto& p1 = (*Group1)[i];
+				auto& p1 = Group1[i];
 				float fx = 0;
 				float fy = 0;
 
 				//This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap
 				for (auto j = 0; j < group2size; j++)
 				{
-					const auto& p2 = (*Group2)[j];
+					const auto& p2 = Group2[j];
 
 					// you don't need sqrt to compare distance. (you need it to compute the actual distance however)
 					const auto dx = p1.x - p2.x;
@@ -576,34 +577,34 @@ void ofApp::update()
 
 	if (numberSliderR > 0)
 	{
-		interaction(&red, &red, powerSliderRR, vSliderRR);
-		if (numberSliderG > 0) interaction(&red, &green, powerSliderRG, vSliderRG);
-		if (numberSliderB > 0) interaction(&red, &blue, powerSliderRB, vSliderRB);
-		if (numberSliderW > 0) interaction(&red, &white, powerSliderRW, vSliderRW);
+		interaction(red, red, powerSliderRR, vSliderRR);
+		if (numberSliderG > 0) interaction(red, green, powerSliderRG, vSliderRG);
+		if (numberSliderB > 0) interaction(red, blue, powerSliderRB, vSliderRB);
+		if (numberSliderW > 0) interaction(red, white, powerSliderRW, vSliderRW);
 	}
 
 	if (numberSliderG > 0)
 	{
-		if (numberSliderR > 0) interaction(&green, &red, powerSliderGR, vSliderGR);
-		interaction(&green, &green, powerSliderGG, vSliderGG);
-		if (numberSliderB > 0) interaction(&green, &blue, powerSliderGB, vSliderGB);
-		if (numberSliderW > 0) interaction(&green, &white, powerSliderGW, vSliderGW);
+		if (numberSliderR > 0) interaction(green, red, powerSliderGR, vSliderGR);
+		interaction(green, green, powerSliderGG, vSliderGG);
+		if (numberSliderB > 0) interaction(green, blue, powerSliderGB, vSliderGB);
+		if (numberSliderW > 0) interaction(green, white, powerSliderGW, vSliderGW);
 	}
 
 	if (numberSliderB > 0)
 	{
-		if (numberSliderR > 0) interaction(&blue, &red, powerSliderBR, vSliderBR);
-		if (numberSliderG > 0) interaction(&blue, &green, powerSliderBG, vSliderBG);
-		interaction(&blue, &blue, powerSliderBB, vSliderBB);
-		if (numberSliderW > 0) interaction(&blue, &white, powerSliderBW, vSliderBW);
+		if (numberSliderR > 0) interaction(blue, red, powerSliderBR, vSliderBR);
+		if (numberSliderG > 0) interaction(blue, green, powerSliderBG, vSliderBG);
+		interaction(blue, blue, powerSliderBB, vSliderBB);
+		if (numberSliderW > 0) interaction(blue, white, powerSliderBW, vSliderBW);
 	}
 
 	if (numberSliderW > 0)
 	{
-		if (numberSliderR > 0) interaction(&white, &red, powerSliderWR, vSliderWR);
-		if (numberSliderG > 0) interaction(&white, &green, powerSliderWG, vSliderWG);
-		if (numberSliderB > 0) interaction(&white, &blue, powerSliderWB, vSliderWB);
-		interaction(&white, &white, powerSliderWW, vSliderWW);
+		if (numberSliderR > 0) interaction(white, red, powerSliderWR, vSliderWR);
+		if (numberSliderG > 0) interaction(white, green, powerSliderWG, vSliderWG);
+		if (numberSliderB > 0) interaction(white, blue, powerSliderWB, vSliderWB);
+		interaction(white, white, powerSliderWW, vSliderWW);
 	}
 
 	if (save) { saveSettings(); }
