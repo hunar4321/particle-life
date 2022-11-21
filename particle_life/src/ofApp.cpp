@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <float.h>
 
 // parameters for GUI
 constexpr float xshift = 400;
@@ -125,12 +126,10 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
 					const auto r = dx * dx + dy * dy;
 
 					//Calculate the force in given bounds. 
-					if ((r < radius * radius || radius_toggle)) {
-						if (r != 0.0F)
-						{
-							fx += (dx / std::sqrt(dx * dx + dy * dy));
-							fy += (dy / std::sqrt(dx * dx + dy * dy));
-						}
+					if ((r < radius * radius)) {
+						const float n = 1 / std::max(FLT_EPSILON, std::sqrt(dx * dx + dy * dy));
+						fx += (dx * n);
+						fy += (dy * n);
 					}
 				}
 
