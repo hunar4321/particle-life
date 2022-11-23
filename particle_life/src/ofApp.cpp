@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <random>
-#include <float.h>
 
 // parameters for GUI
 constexpr float xshift = 400;
@@ -96,10 +95,10 @@ std::vector<point> CreatePoints(const int num, const int r, const int g, const i
  */
 void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, const float G, const float radius)
 {
-	const float g = G / -100;	//Gravity coefficient
-	const auto& group1size = Group1.size();
-	const auto& group2size = Group2.size();
+	const int group1size = static_cast<int>(Group1.size());
+	const int group2size = static_cast<int>(Group2.size());
 	const bool radius_toggle = radiusToogle;
+	const float g = G / -100;	//Gravity coefficient
 
 	boundHeight = ofGetHeight();
 	boundWidth = ofGetWidth();
@@ -127,7 +126,7 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
 
 					//Calculate the force in given bounds. 
 					if ((r < radius * radius)) {
-						const float n = 1 / std::max(FLT_EPSILON, std::sqrt(dx * dx + dy * dy));
+						const float n = 1 / std::max(std::numeric_limits<float>::epsilon(), std::sqrt(dx * dx + dy * dy));
 						fx += (dx * n);
 						fy += (dy * n);
 					}
