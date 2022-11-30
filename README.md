@@ -52,6 +52,7 @@ Other Ports:
 - [Go-1](https://github.com/sikora507/go-artificial-life), [Go-2](https://github.com/fglo/particles-rules-of-attraction), [Go-3](https://github.com/youssefboulmalf/Particle-Life-Go)
 - [Python](https://github.com/gianfa/pyrticleslife)
 - [Lua](https://github.com/ravener/love-life)
+- [QB64-PE](https://github.com/a740g/Particle-Life)
 - [Webgl](https://github.com/CapsAdmin/webgl-particles)
 - [Java](https://github.com/helloimalemur/ParticleSimulation)
 - [C# Winforms](https://github.com/BlinkSun/ParticleLifeSimulation)
