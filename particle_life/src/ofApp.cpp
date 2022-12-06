@@ -98,10 +98,7 @@ std::vector<point> CreatePoints(const int num, const int r, const int g, const i
  */
 void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, const float G, const float radius)
 {
-	const int group1size = static_cast<int>(Group1.size());
-	const int group2size = static_cast<int>(Group2.size());
-	const float g = G / -100;	//Gravity coefficient
-
+	const float g = G / -100;	// attraction coefficient
 	boundHeight = ofGetHeight();
 	boundWidth = ofGetWidth();
 
@@ -109,25 +106,22 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
 	//			oneapi::tbb::blocked_range<size_t>(0, group1size), 
 	//			[&Group1, &Group2, group1size, group2size, radius, g, this]
 	//			(const oneapi::tbb::blocked_range<size_t>& r) {
-	for (int i = 0; i < group1size; i++) {
-
-		point& p1 = Group1[i];
+	for(point& p1 : Group1) 
+	{
 		float fx = 0;
 		float fy = 0;
 
-		//This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap
-		for (auto j = 0; j < group2size; j++)
+		for (const point& p2 : Group2) 
 		{
-			// you don't need sqrt to compare distance. (you need it to compute the actual distance however)
-			const float dx = p1.x - Group2[j].x;
-			const float dy = p1.y - Group2[j].y;
-			const float distance_squared = dx * dx + dy * dy;
+			const float dx = p1.x - p2.x;
+			const float dy = p1.y - p2.y;
+			const float distance = std::sqrt(dx * dx + dy * dy);
 
-			//Calculate the force in given bounds. 
-			if ((distance_squared < radius * radius)) {
-				const float n = 1 / std::max(std::numeric_limits<float>::epsilon(), std::sqrt(distance_squared));
-				fx += (dx * n);
-				fy += (dy * n);
+			//Calculate the force within radius (attraction/repulsion do not apply outside the radius)
+			if ((distance < radius)) {
+				const float force = 1 / std::max(std::numeric_limits<float>::epsilon(), distance);	// avoid dividing by zero
+				fx += (dx * force);
+				fy += (dy * force);
 			}
 		}
 
@@ -156,7 +150,7 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
 				p1.vx *= -1;
 				p1.x = 0;
 			}
-			if (p1.x > boundWidth)
+			else if (p1.x > boundWidth)
 			{
 				p1.vx *= -1;
 				p1.x = boundWidth;
@@ -166,7 +160,7 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
 				p1.vy *= -1;
 				p1.y = 0;
 			}
-			if (p1.y > boundHeight)
+			else if (p1.y > boundHeight)
 			{
 				p1.vy *= -1;
 				p1.y = boundHeight;
