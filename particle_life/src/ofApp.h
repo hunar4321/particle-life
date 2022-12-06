@@ -27,8 +27,6 @@ struct point
 	const int g;
 	const int b;
 
-	int gridId = -1;
-
 	inline void setColor() const 
 	{
 		ofSetColor(r, g, b, 100); //set particle color + some alpha
@@ -37,6 +35,7 @@ struct point
 	inline void draw() const
 	{
 		ofDrawCircle(x, y, 2.0F); //draw a point at x,y coordinates, the size of a 2 pixels
+		//ofDrawTriangle(x, y, x + 2, y + 2, x + 2, y - 2);
 	}
 };
 
@@ -159,10 +158,10 @@ public:
 #pragma endregion slider
 
 #pragma region slider values
-	int pnumberSliderR = 1000;
-	int pnumberSliderG = 1000;
-	int pnumberSliderW = 1000;
-	int pnumberSliderB = 1000;
+	int pnumberSliderR = 10000;
+	int pnumberSliderG = 10000;
+	int pnumberSliderW = 10000;
+	int pnumberSliderB = 10000;
 
 	float ppowerSliderRR = 0;
 	float ppowerSliderRG = 0;

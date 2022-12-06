@@ -5,6 +5,9 @@
 #include <vector>
 #include <random>
 
+#include "oneapi/tbb.h"
+
+
 // parameters for GUI
 constexpr float xshift = 400;
 constexpr float yshift = 80;
@@ -57,11 +60,11 @@ inline float RandomFloat(const float a, const float b)
  *
  * @param points a group of point
  */
-void Draw(const std::vector<point>* points)
+void Draw(const std::vector<point>& points)
 {
-	points->front().setColor();	// all points within a vector are of the same const color. no need to call it for every point.
+	points.front().setColor();	// all points within a vector are of the same const color. no need to call it for every point.
 								// this save a lot of GL API calls
-	for (auto& point : *points) point.draw();
+	for (auto& point : points) point.draw();
 }
 
 /**
@@ -97,86 +100,81 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
 {
 	const int group1size = static_cast<int>(Group1.size());
 	const int group2size = static_cast<int>(Group2.size());
-	const bool radius_toggle = radiusToogle;
 	const float g = G / -100;	//Gravity coefficient
 
 	boundHeight = ofGetHeight();
 	boundWidth = ofGetWidth();
 
-	#pragma omp parallel
-	{
-		std::random_device rd;
-		#pragma omp for
-		for (auto i = 0; i < group1size; i++)
+	//		oneapi::tbb::parallel_for(
+	//			oneapi::tbb::blocked_range<size_t>(0, group1size), 
+	//			[&Group1, &Group2, group1size, group2size, radius, g, this]
+	//			(const oneapi::tbb::blocked_range<size_t>& r) {
+	for (int i = 0; i < group1size; i++) {
+
+		point& p1 = Group1[i];
+		float fx = 0;
+		float fy = 0;
+
+		//This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap
+		for (auto j = 0; j < group2size; j++)
 		{
-			if (rd() % 100 < probability) {
-				auto& p1 = Group1[i];
-				float fx = 0;
-				float fy = 0;
+			// you don't need sqrt to compare distance. (you need it to compute the actual distance however)
+			const float dx = p1.x - Group2[j].x;
+			const float dy = p1.y - Group2[j].y;
+			const float distance_squared = dx * dx + dy * dy;
 
-				//This inner loop is, of course, where most of the CPU time is spent. Everything else is cheap
-				for (auto j = 0; j < group2size; j++)
-				{
-					const auto& p2 = Group2[j];
+			//Calculate the force in given bounds. 
+			if ((distance_squared < radius * radius)) {
+				const float n = 1 / std::max(std::numeric_limits<float>::epsilon(), std::sqrt(distance_squared));
+				fx += (dx * n);
+				fy += (dy * n);
+			}
+		}
 
-					// you don't need sqrt to compare distance. (you need it to compute the actual distance however)
-					const auto dx = p1.x - p2.x;
-					const auto dy = p1.y - p2.y;
-					const auto r = dx * dx + dy * dy;
+		//Calculate new velocity
+		p1.vx = (p1.vx + (fx * g)) * (1.0 - viscosity);
+		p1.vy = (p1.vy + (fy * g)) * (1.0 - viscosity) + worldGravity;
 
-					//Calculate the force in given bounds. 
-					if ((r < radius * radius)) {
-						const float n = 1 / std::max(std::numeric_limits<float>::epsilon(), std::sqrt(dx * dx + dy * dy));
-						fx += (dx * n);
-						fy += (dy * n);
-					}
-				}
+		// Wall Repel
+		if (wallRepel > 0.0F)
+		{
+			if (p1.x < wallRepel) p1.vx += (wallRepel - p1.x) * 0.1;
+			if (p1.y < wallRepel) p1.vy += (wallRepel - p1.y) * 0.1;
+			if (p1.x > boundWidth - wallRepel) p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
+			if (p1.y > boundHeight - wallRepel) p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
+		}
 
-				//Calculate new velocity
-				p1.vx = (p1.vx + (fx * g)) * (1.0 - viscosity);
-				p1.vy = (p1.vy + (fy * g)) * (1.0 - viscosity) + worldGravity;
+		//Update position based on velocity
+		p1.x += p1.vx;
+		p1.y += p1.vy;
 
-				// Wall Repel
-				if (wallRepel > 0.0F)
-				{
-					if (p1.x < wallRepel) p1.vx += (wallRepel - p1.x) * 0.1;
-					if (p1.y < wallRepel) p1.vy += (wallRepel - p1.y) * 0.1;
-					if (p1.x > boundWidth - wallRepel) p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
-					if (p1.y > boundHeight - wallRepel) p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
-				}
-
-				//Update position based on velocity
-				p1.x += p1.vx;
-				p1.y += p1.vy;
-
-				//Checking for canvas bounds
-				if (boundsToggle)
-				{
-					if (p1.x < 0)
-					{
-						p1.vx *= -1;
-						p1.x = 0;
-					}
-					if (p1.x > boundWidth)
-					{
-						p1.vx *= -1;
-						p1.x = boundWidth;
-					}
-					if (p1.y < 0)
-					{
-						p1.vy *= -1;
-						p1.y = 0;
-					}
-					if (p1.y > boundHeight)
-					{
-						p1.vy *= -1;
-						p1.y = boundHeight;
-					}
-				}
+		//Checking for canvas bounds
+		if (boundsToggle)
+		{
+			if (p1.x < 0)
+			{
+				p1.vx *= -1;
+				p1.x = 0;
+			}
+			if (p1.x > boundWidth)
+			{
+				p1.vx *= -1;
+				p1.x = boundWidth;
+			}
+			if (p1.y < 0)
+			{
+				p1.vy *= -1;
+				p1.y = 0;
+			}
+			if (p1.y > boundHeight)
+			{
+				p1.vy *= -1;
+				p1.y = boundHeight;
 			}
 		}
 	}
 }
+	
 
 /* omp end parallel */
 
@@ -488,6 +486,7 @@ void ofApp::setup()
 	ofSetBackgroundAuto(false);
 	ofEnableAlphaBlending();
 
+	random();
 	restart();
 }
 
@@ -514,38 +513,24 @@ void ofApp::update()
 			if (*slider > 200.0F) *slider = 200.0F;
 		}
 	}
-
-	if (numberSliderR > 0)
-	{
-		interaction(red, red, powerSliderRR, vSliderRR);
-		if (numberSliderG > 0) interaction(red, green, powerSliderRG, vSliderRG);
-		if (numberSliderB > 0) interaction(red, blue, powerSliderRB, vSliderRB);
-		if (numberSliderW > 0) interaction(red, white, powerSliderRW, vSliderRW);
-	}
-
-	if (numberSliderG > 0)
-	{
-		if (numberSliderR > 0) interaction(green, red, powerSliderGR, vSliderGR);
-		interaction(green, green, powerSliderGG, vSliderGG);
-		if (numberSliderB > 0) interaction(green, blue, powerSliderGB, vSliderGB);
-		if (numberSliderW > 0) interaction(green, white, powerSliderGW, vSliderGW);
-	}
-
-	if (numberSliderB > 0)
-	{
-		if (numberSliderR > 0) interaction(blue, red, powerSliderBR, vSliderBR);
-		if (numberSliderG > 0) interaction(blue, green, powerSliderBG, vSliderBG);
-		interaction(blue, blue, powerSliderBB, vSliderBB);
-		if (numberSliderW > 0) interaction(blue, white, powerSliderBW, vSliderBW);
-	}
-
-	if (numberSliderW > 0)
-	{
-		if (numberSliderR > 0) interaction(white, red, powerSliderWR, vSliderWR);
-		if (numberSliderG > 0) interaction(white, green, powerSliderWG, vSliderWG);
-		if (numberSliderB > 0) interaction(white, blue, powerSliderWB, vSliderWB);
-		interaction(white, white, powerSliderWW, vSliderWW);
-	}
+	oneapi::tbb::parallel_invoke(
+		[&] { interaction(red,   red,   powerSliderRR, vSliderRR); },
+		[&] { interaction(red,   green, powerSliderRR, vSliderRG); },
+		[&] { interaction(red,   blue,  powerSliderRR, vSliderRB); },
+		[&] { interaction(red,   white, powerSliderRR, vSliderRW); },
+		[&] { interaction(green, red,   powerSliderGR, vSliderGR); },
+		[&] { interaction(green, green, powerSliderGG, vSliderGG); },
+		[&] { interaction(green, blue,  powerSliderGB, vSliderGB); },
+		[&] { interaction(green, white, powerSliderGW, vSliderGW); },
+		[&] { interaction(blue,  red,   powerSliderBR, vSliderBR); },
+		[&] { interaction(blue,  green, powerSliderBG, vSliderBG); },
+		[&] { interaction(blue,  blue,  powerSliderBB, vSliderBB); },
+		[&] { interaction(blue,  white, powerSliderBW, vSliderBW); },
+		[&] { interaction(white, red,   powerSliderWR, vSliderWR); },
+		[&] { interaction(white, green, powerSliderWG, vSliderWG); },
+		[&] { interaction(white, blue,  powerSliderWB, vSliderWB); },
+		[&] { interaction(white, white, powerSliderWW, vSliderWW); }
+	);
 
 	if (save) { saveSettings(); }
 	if (load) { loadSettings(); }
@@ -587,10 +572,10 @@ void ofApp::draw()
 		random();
 		restart();
 	}
-	if (numberSliderW > 0) { Draw(&white); }
-	if (numberSliderR > 0) { Draw(&red); }
-	if (numberSliderG > 0) { Draw(&green); }
-	if (numberSliderB > 0) { Draw(&blue); }
+	if (numberSliderW > 0) { Draw(white); }
+	if (numberSliderR > 0) { Draw(red); }
+	if (numberSliderG > 0) { Draw(green); }
+	if (numberSliderB > 0) { Draw(blue); }
 
 	//Draw GUI
 	if (modelToggle == true)
