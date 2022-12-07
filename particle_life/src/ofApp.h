@@ -6,35 +6,11 @@
 
 #define GRID_DIV 4
 
-/*
- * for collision detection :
- * if (distance(x center, x line) < radius) then intersect 
- */
-
-/*
-struct point
-{
-	point(float _x, float _y, const int _r, const int _g, const int _b) : x(_x), y(_y), r(_r), g(_g), b(_b) {}
-
-	float x;		// x position
-	float y;		// y position
-
-	float vx = 0;	// x velocity
-	float vy = 0;	// y velocity
-
-	const int r;	// red
-	const int g;	// green
-	const int b;	// blue
-
-};
-*/
-
 struct colorGroup {
-	ofColor color;
-	std::vector<ofFloatColor> colorvec;
 	std::vector<ofVec2f> pos;
 	std::vector<float> vx;
 	std::vector<float> vy;
+	ofColor color;
 };
 
 class ofApp final : public ofBaseApp
@@ -51,8 +27,6 @@ public:
 	void interaction(colorGroup& Group1, const colorGroup& Group2, const float G, const float radius, bool boundsToggle) const;
 
 
-	//static void setColor(int r, int g, int b)	{ ofSetColor(r, g, b, 100); }
-	//static void draw(float x, float y)			{ ofDrawCircle(x, y, 2.0F); }
 	static float RandomFloat(const float a, const float b) { return a + (ofRandomuf() * (b - a)); }
 
 	void Draw(colorGroup group)

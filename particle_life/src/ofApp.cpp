@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <random>
-
 #include "oneapi/tbb.h"
 
 
@@ -24,22 +23,6 @@ colorGroup white;
 colorGroup blue;
 
 
-/**
- * @brief Draw all point from a given group of vector<point>*
- *
- * @param points a group of point
- */
-
-
-/**
- * @brief Generate a number of single colored points randomly distributed on canvas
- *
- * @param num number of point to generate
- * @param r red
- * @param g green
- * @param b blue
- * @return a group of random point
- */
 colorGroup CreatePoints(const int num, ofColor color)
 {
 	colorGroup points;
@@ -59,16 +42,12 @@ colorGroup CreatePoints(const int num, ofColor color)
 	return points;
 }
 
-/**
- * @brief Interaction between 2 particle groups
- * @param Group1 the group that will be modified by the interaction
- * @param Group2 the interacting group (its value won't be modified)
- * @param G gravity coefficient
- * @param radius radius of interaction
- */
 void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2, 
 		const float G, const float radius, bool boundsToggle) const
 {
+	
+	assert(Group1.pos.size() % 64 == 0);
+	assert(Group2.pos.size() % 64 == 0);
 	
 	const float g = G / -100;	// attraction coefficient
 
@@ -76,21 +55,15 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 //			oneapi::tbb::blocked_range<size_t>(0, group1size), 
 //			[&Group1, &Group2, group1size, group2size, radius, g, this]
 //			(const oneapi::tbb::blocked_range<size_t>& r) {
-	for (int i = 0; i < Group1.pos.size(); i++)
 
+	for (size_t i = 0; i < Group1.pos.size(); i++)
 	{
 		float fx = 0;	// force on x
 		float fy = 0;	// force on y
 		
-		//for (const point p2 : Group2) 
-		for (int j = 0; j < Group2.pos.size(); j++)
+		for (size_t j = 0; j < Group2.pos.size(); j++)
 		{
-			//const float dx = Group1.pos[i].x - Group2.pos[j].x;							// vertical distance between particles
-			//const float dy = Group1.pos[i].y - Group2.pos[j].y;							// horizontal distance between particles
-			//const float distance = std::sqrtf(dx * dx + dy * dy);	// distance between particles
 			const float distance = Group1.pos[i].distance(Group2.pos[j]);
-
-			//Calculate the force within radius (attraction/repulsion do not apply outside the radius)
 			if ((distance < radius)) {
 				const float force = 1 / std::max(std::numeric_limits<float>::epsilon(), distance);	// avoid dividing by zero
 				fx += ((Group1.pos[i].x - Group2.pos[j].x) * force);
@@ -98,48 +71,34 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 			}
 		}
 
-		//Calculate new velocity
-		Group1.vx[i] = (Group1.vx[i] + (fx * g)) * (1.0 - viscosity);
-		Group1.vy[i] = (Group1.vy[i] + (fy * g)) * (1.0 - viscosity) + worldGravity;
-
 		// Wall Repel
 		if (wallRepel > 0.0F)
 		{
 			if (Group1.pos[i].x < wallRepel) Group1.vx[i] += (wallRepel - Group1.pos[i].x) * 0.1;
-			if (Group1.pos[i].y < wallRepel) Group1.vy[i] += (wallRepel - Group1.pos[i].y) * 0.1;
 			if (Group1.pos[i].x > boundWidth - wallRepel) Group1.vx[i] += (boundWidth - wallRepel - Group1.pos[i].x) * 0.1;
+			if (Group1.pos[i].y < wallRepel) Group1.vy[i] += (wallRepel - Group1.pos[i].y) * 0.1;
 			if (Group1.pos[i].y > boundHeight - wallRepel) Group1.vy[i] += (boundHeight - wallRepel - Group1.pos[i].y) * 0.1;
 		}
 
-		//Update position based on velocity
+		// Viscosity & gravity
+		Group1.vx[i] = (Group1.vx[i] + (fx * g)) * (1.0 - viscosity);
+		Group1.vy[i] = (Group1.vy[i] + (fy * g)) * (1.0 - viscosity) + worldGravity;
+//		Group1.vx[i] = std::fmaf(Group1.vx[i], (1.0F - viscosity), std::fmaf(fx, g, 0.0F));
+//		Group1.vy[i] = std::fmaf(Group1.vy[i], (1.0F - viscosity), std::fmaf(fy, g, worldGravity));
+
+		//Update position
 		Group1.pos[i].x += Group1.vx[i];
 		Group1.pos[i].y += Group1.vy[i];
+	}
 
-		//Checking for canvas bounds
-		if (boundsToggle)
+	if (boundsToggle) {
+		for (auto& p : Group1.pos)
 		{
-			if (Group1.pos[i].x < 0)
-			{
-				Group1.vx[i] *= -1;
-				Group1.pos[i].y = 0;
-			}
-			else if (Group1.pos[i].x > boundWidth)
-			{
-				Group1.vx[i] *= -1;
-				Group1.pos[i].y = boundWidth;
-			}
-			if (Group1.pos[i].y < 0)
-			{
-				Group1.vy[i] *= -1;
-				Group1.pos[i].y = 0;
-			}
-			else if (Group1.pos[i].y > boundHeight)
-			{
-				Group1.vy[i] *= -1;
-				Group1.pos[i].y = boundHeight;
-			}
+			p.x = std::min(std::max(p.x, 0.0F), static_cast<float>(boundWidth));
+			p.y = std::min(std::max(p.y, 0.0F), static_cast<float>(boundHeight));
 		}
 	}
+	
 }
 	
 
@@ -150,10 +109,19 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
  */
 void ofApp::restart()
 {
-	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, ofColor(100, 250, 10, 100)); }
-	if (numberSliderR > 0) { red = CreatePoints(numberSliderR, ofColor(250, 10, 100, 100)); }
-	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, ofColor(250, 250, 250, 100)); }
-	if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, ofColor(100, 100, 250, 100)); }
+	numberSliderG = numberSliderG - (numberSliderG % 64);
+	numberSliderR = numberSliderR - (numberSliderR % 64);
+	numberSliderW = numberSliderW - (numberSliderW % 64);
+	numberSliderB = numberSliderB - (numberSliderB % 64);
+	assert(numberSliderG % 64 == 0);
+	assert(numberSliderR % 64 == 0);
+	assert(numberSliderW % 64 == 0);
+	assert(numberSliderB % 64 == 0);
+	
+	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, ofColor(100, 250, 10, 255)); }
+	if (numberSliderR > 0) { red = CreatePoints(numberSliderR, ofColor(250, 10, 100, 255)); }
+	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, ofColor(250, 250, 250, 255)); }
+	if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, ofColor(100, 100, 250, 255)); }
 }
 
 
@@ -452,7 +420,7 @@ void ofApp::setup()
 	gui.add(&expGroup);
 
 	ofSetBackgroundAuto(false);
-	ofDisableAlphaBlending();
+	//ofDisableAlphaBlending();
 
 	random();
 	restart();
