@@ -57,6 +57,7 @@
     <UseILP64Interfaces1A>false</UseILP64Interfaces1A>
     <EnableMKLOpenMPOffloadToGPU>false</EnableMKLOpenMPOffloadToGPU>
     <InterproceduralOptimization>true</InterproceduralOptimization>
+    <ProfileGuidedOptimization>PGOOptimize</ProfileGuidedOptimization>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
@@ -177,12 +178,12 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\..\of_v0.11.2_vs2017_release\addons\ofxGui\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <OpenMPSupport>true</OpenMPSupport>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <UseProcessorExtensions>AVX2</UseProcessorExtensions>
+      <UseProcessorExtensions>CORE512</UseProcessorExtensions>
       <OpenMP>None</OpenMP>
       <OpenMPOffloading>None</OpenMPOffloading>
       <CCppSupport>Cpp14Support</CCppSupport>
