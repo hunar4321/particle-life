@@ -56,7 +56,7 @@ public:
 	void random();
 	void saveSettings();
 	void loadSettings();
-	void interaction(std::vector<point>& Group1, const std::vector<point>& Group2, float G, float radius);
+	void interaction(std::vector<point>& Group1, const std::vector<point>& Group2, float G, float radius, bool boundsToggle) const;
 
 	ofxPanel gui;
 
@@ -158,10 +158,10 @@ public:
 #pragma endregion slider
 
 #pragma region slider values
-	int pnumberSliderR = 1000;
-	int pnumberSliderG = 1000;
-	int pnumberSliderW = 1000;
-	int pnumberSliderB = 1000;
+	int pnumberSliderR = 10000;
+	int pnumberSliderG = 10000;
+	int pnumberSliderW = 10000;
+	int pnumberSliderB = 10000;
 
 	float ppowerSliderRR = 0;
 	float ppowerSliderRG = 0;
