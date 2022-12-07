@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include <sdlt/sdlt.h>
 
 #define GRID_DIV 4
 
@@ -14,37 +15,18 @@ struct point
 {
 	point(float _x, float _y, const int _r, const int _g, const int _b) : x(_x), y(_y), r(_r), g(_g), b(_b) {}
 
-	//Position
-	float x;
-	float y;
+	float x;		// x position
+	float y;		// y position
 
-	//Velocity
-	float vx = 0;
-	float vy = 0;
+	float vx = 0;	// x velocity
+	float vy = 0;	// y velocity
 
-	//Color
-	const int r;
-	const int g;
-	const int b;
+	const int r;	// red
+	const int g;	// green
+	const int b;	// blue
 
-	inline void setColor() const 
-	{
-		ofSetColor(r, g, b, 100); //set particle color + some alpha
-	}
-
-	inline void draw() const
-	{
-		ofDrawCircle(x, y, 2.0F); //draw a point at x,y coordinates, the size of a 2 pixels
-		//ofDrawTriangle(x, y, x + 2, y + 2, x + 2, y - 2);
-	}
 };
 
-struct grid
-{
-	const int gridSize = GRID_DIV * GRID_DIV; // must be a power of 2
-};
-
-//---------------------------------------------CONFIGURE GUI---------------------------------------------//
 class ofApp final : public ofBaseApp
 {
 public:
@@ -58,17 +40,20 @@ public:
 	void loadSettings();
 	void interaction(std::vector<point>& Group1, const std::vector<point>& Group2, float G, float radius, bool boundsToggle) const;
 
+
+	static void setColor(int r, int g, int b)	{ ofSetColor(r, g, b, 100); }
+	static void draw(float x, float y)			{ ofDrawCircle(x, y, 2.0F); }
+	static float RandomFloat(const float a, const float b) { return a + (ofRandomuf() * (b - a)); }
+	
 	ofxPanel gui;
 
 #pragma region guigroup
-
 	ofxGuiGroup globalGroup;
 	ofxGuiGroup qtyGroup;
 	ofxGuiGroup redGroup;
 	ofxGuiGroup greenGroup;
 	ofxGuiGroup blueGroup;
 	ofxGuiGroup whiteGroup;
-
 #pragma endregion guigroup
 
 	ofxButton resetButton;
@@ -81,7 +66,6 @@ public:
 	ofxToggle modelToggle;
 
 #pragma region some experimental features
-
 	ofxGuiGroup expGroup;
 	ofxToggle evoToggle;
 	ofxFloatSlider evoProbSlider;
@@ -93,7 +77,6 @@ public:
 	ofxIntSlider probabilitySlider;
 	unsigned int probability = 100;
 	ofxToggle motionBlurToggle;
-
 #pragma endregion some experimental features
 
 
