@@ -39,22 +39,6 @@ std::vector<point> red;
 std::vector<point> white;
 std::vector<point> blue;
 
-//Subdivison grid
-grid subdiv;
-
-/**
- * @brief Return a random float in range [a,b[
- *
- * @param a lower bound
- * @param b higher bound
- * @return random float
- */
-inline float RandomFloat(const float a, const float b)
-{
-	const float diff = b - a;
-	const float r = ofRandomuf() * diff;
-	return a + r;
-}
 
 /**
  * @brief Draw all point from a given group of vector<point>*
@@ -63,9 +47,8 @@ inline float RandomFloat(const float a, const float b)
  */
 void Draw(const std::vector<point>& points)
 {
-	points.front().setColor();	// all points within a vector are of the same const color. no need to call it for every point.
-								// this save a lot of GL API calls
-	for (auto& point : points) point.draw();
+	ofApp::setColor(points.front().r, points.front().g, points.front().b );
+	for (auto& p : points) ofApp::draw(p.x, p.y);
 }
 
 /**
@@ -97,24 +80,26 @@ std::vector<point> CreatePoints(const int num, const int r, const int g, const i
  * @param G gravity coefficient
  * @param radius radius of interaction
  */
-void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, const float G, const float radius, bool boundsToggle) const
+void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, 
+		const float G, const float radius, bool boundsToggle) const
 {
+	
 	const float g = G / -100;	// attraction coefficient
 
-	//		oneapi::tbb::parallel_for(
-	//			oneapi::tbb::blocked_range<size_t>(0, group1size), 
-	//			[&Group1, &Group2, group1size, group2size, radius, g, this]
-	//			(const oneapi::tbb::blocked_range<size_t>& r) {
+//		oneapi::tbb::parallel_for(
+//			oneapi::tbb::blocked_range<size_t>(0, group1size), 
+//			[&Group1, &Group2, group1size, group2size, radius, g, this]
+//			(const oneapi::tbb::blocked_range<size_t>& r) {
 	for(point& p1 : Group1) 
 	{
-		float fx = 0;
-		float fy = 0;
+		float fx = 0;	// force on x
+		float fy = 0;	// force on y
 
-		for (const point& p2 : Group2) 
+		for (const point p2 : Group2) 
 		{
-			const float dx = p1.x - p2.x;
-			const float dy = p1.y - p2.y;
-			const float distance = std::sqrt(dx * dx + dy * dy);
+			const float dx = p1.x - p2.x;							// vertical distance between particles
+			const float dy = p1.y - p2.y;							// horizontal distance between particles
+			const float distance = std::sqrtf(dx * dx + dy * dy);	// distance between particles
 
 			//Calculate the force within radius (attraction/repulsion do not apply outside the radius)
 			if ((distance < radius)) {
@@ -371,6 +356,8 @@ void ofApp::loadSettings()
 //------------------------------GUI initialization------------------------------
 void ofApp::setup()
 {
+	std::cout << sizeof(point) << ' ' << sizeof(point::x) << ' ' << sizeof(point::r) << '\n';
+	
 	lastTime = clock();
 	ofSetWindowTitle("Particle Life - www.brainxyz.com");
 	ofSetVerticalSync(false);
@@ -568,10 +555,10 @@ void ofApp::draw()
 		random();
 		restart();
 	}
-	//if (numberSliderW > 0) { Draw(white); }
-	//if (numberSliderR > 0) { Draw(red); }
-	//if (numberSliderG > 0) { Draw(green); }
-	//if (numberSliderB > 0) { Draw(blue); }
+	if (numberSliderW > 0) { Draw(white); }
+	if (numberSliderR > 0) { Draw(red); }
+	if (numberSliderG > 0) { Draw(green); }
+	if (numberSliderB > 0) { Draw(blue); }
 
 	gui.draw();
 }
