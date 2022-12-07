@@ -8,22 +8,6 @@
 #include "oneapi/tbb.h"
 
 
-// parameters for GUI
-/*
-constexpr float xshift = 400;
-constexpr float yshift = 80;
-constexpr float anchor = 0;
-constexpr float length = 70;
-constexpr float p1x = anchor + xshift;
-constexpr float p1y = anchor + yshift;
-constexpr float p2x = anchor + length + xshift;
-constexpr float p2y = anchor + yshift;
-constexpr float p3x = anchor + length + xshift;
-constexpr float p3y = anchor + length + yshift;
-constexpr float p4x = anchor + xshift;
-constexpr float p4y = anchor + length + yshift;
-constexpr float rr = 8;
-*/
 //int countThresh = 0;
 std::string fps_text;
 std::string physic_text;
@@ -34,10 +18,10 @@ clock_t now, lastTime, delta;
 clock_t physic_begin, physic_delta;
 
 //Particle groups by color
-std::vector<point> green;
-std::vector<point> red;
-std::vector<point> white;
-std::vector<point> blue;
+colorGroup green;
+colorGroup red;
+colorGroup white;
+colorGroup blue;
 
 
 /**
@@ -45,11 +29,7 @@ std::vector<point> blue;
  *
  * @param points a group of point
  */
-void Draw(const std::vector<point>& points)
-{
-	ofApp::setColor(points.front().r, points.front().g, points.front().b );
-	for (auto& p : points) ofApp::draw(p.x, p.y);
-}
+
 
 /**
  * @brief Generate a number of single colored points randomly distributed on canvas
@@ -60,15 +40,21 @@ void Draw(const std::vector<point>& points)
  * @param b blue
  * @return a group of random point
  */
-std::vector<point> CreatePoints(const int num, const int r, const int g, const int b)
+colorGroup CreatePoints(const int num, ofColor color)
 {
-	std::vector<point> points;
-	points.reserve(num);
+	colorGroup points;
+	points.pos.reserve(num);
+	points.vx.reserve(num);
+	points.vy.reserve(num);
+	points.color = color;
+
 	for (auto i = 0; i < num; i++)
 	{
 		int x = static_cast<int>(ofRandomWidth());
 		int y = static_cast<int>(ofRandomHeight());
-		points.emplace_back(x, y, r, g, b);
+		points.pos.emplace_back(x,y);
+		points.vx.emplace_back(0.0F);
+		points.vy.emplace_back(0.0F);
 	}
 	return points;
 }
@@ -80,7 +66,7 @@ std::vector<point> CreatePoints(const int num, const int r, const int g, const i
  * @param G gravity coefficient
  * @param radius radius of interaction
  */
-void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, 
+void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2, 
 		const float G, const float radius, bool boundsToggle) const
 {
 	
@@ -90,64 +76,67 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
 //			oneapi::tbb::blocked_range<size_t>(0, group1size), 
 //			[&Group1, &Group2, group1size, group2size, radius, g, this]
 //			(const oneapi::tbb::blocked_range<size_t>& r) {
-	for(point& p1 : Group1) 
+	for (int i = 0; i < Group1.pos.size(); i++)
+
 	{
 		float fx = 0;	// force on x
 		float fy = 0;	// force on y
-
-		for (const point p2 : Group2) 
+		
+		//for (const point p2 : Group2) 
+		for (int j = 0; j < Group2.pos.size(); j++)
 		{
-			const float dx = p1.x - p2.x;							// vertical distance between particles
-			const float dy = p1.y - p2.y;							// horizontal distance between particles
-			const float distance = std::sqrtf(dx * dx + dy * dy);	// distance between particles
+			//const float dx = Group1.pos[i].x - Group2.pos[j].x;							// vertical distance between particles
+			//const float dy = Group1.pos[i].y - Group2.pos[j].y;							// horizontal distance between particles
+			//const float distance = std::sqrtf(dx * dx + dy * dy);	// distance between particles
+			const float distance = Group1.pos[i].distance(Group2.pos[j]);
 
 			//Calculate the force within radius (attraction/repulsion do not apply outside the radius)
 			if ((distance < radius)) {
 				const float force = 1 / std::max(std::numeric_limits<float>::epsilon(), distance);	// avoid dividing by zero
-				fx += (dx * force);
-				fy += (dy * force);
+				fx += ((Group1.pos[i].x - Group2.pos[j].x) * force);
+				fy += ((Group1.pos[i].y - Group2.pos[j].y) * force);
 			}
 		}
 
 		//Calculate new velocity
-		p1.vx = (p1.vx + (fx * g)) * (1.0 - viscosity);
-		p1.vy = (p1.vy + (fy * g)) * (1.0 - viscosity) + worldGravity;
+		Group1.vx[i] = (Group1.vx[i] + (fx * g)) * (1.0 - viscosity);
+		Group1.vy[i] = (Group1.vy[i] + (fy * g)) * (1.0 - viscosity) + worldGravity;
 
 		// Wall Repel
 		if (wallRepel > 0.0F)
 		{
-			if (p1.x < wallRepel) p1.vx += (wallRepel - p1.x) * 0.1;
-			if (p1.y < wallRepel) p1.vy += (wallRepel - p1.y) * 0.1;
-			if (p1.x > boundWidth - wallRepel) p1.vx += (boundWidth - wallRepel - p1.x) * 0.1;
-			if (p1.y > boundHeight - wallRepel) p1.vy += (boundHeight - wallRepel - p1.y) * 0.1;
+			if (Group1.pos[i].x < wallRepel) Group1.vx[i] += (wallRepel - Group1.pos[i].x) * 0.1;
+			if (Group1.pos[i].y < wallRepel) Group1.vy[i] += (wallRepel - Group1.pos[i].y) * 0.1;
+			if (Group1.pos[i].x > boundWidth - wallRepel) Group1.vx[i] += (boundWidth - wallRepel - Group1.pos[i].x) * 0.1;
+			if (Group1.pos[i].y > boundHeight - wallRepel) Group1.vy[i] += (boundHeight - wallRepel - Group1.pos[i].y) * 0.1;
 		}
 
 		//Update position based on velocity
-		p1.x += p1.vx;
-		p1.y += p1.vy;
+		Group1.pos[i].x += Group1.vx[i];
+		Group1.pos[i].y += Group1.vy[i];
 
 		//Checking for canvas bounds
 		if (boundsToggle)
 		{
-			if (p1.x < 0)
+			if (Group1.pos[i].x < 0)
 			{
-				p1.vx *= -1;
-				p1.x = 0;
+				Group1.vx[i] *= -1;
+				Group1.pos[i].y = 0;
 			}
-			else if (p1.x > boundWidth)
+			else if (Group1.pos[i].x > boundWidth)
 			{
-				p1.vx *= -1;
-				p1.x = boundWidth;
+				Group1.vx[i] *= -1;
+				Group1.pos[i].y = boundWidth;
 			}
-			if (p1.y < 0)
+			if (Group1.pos[i].y < 0)
 			{
-				p1.vy *= -1;
-				p1.y = 0;
+				Group1.vy[i] *= -1;
+				Group1.pos[i].y = 0;
 			}
-			else if (p1.y > boundHeight)
+			else if (Group1.pos[i].y > boundHeight)
 			{
-				p1.vy *= -1;
-				p1.y = boundHeight;
+				Group1.vy[i] *= -1;
+				Group1.pos[i].y = boundHeight;
 			}
 		}
 	}
@@ -161,10 +150,10 @@ void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Gr
  */
 void ofApp::restart()
 {
-	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, 100, 250, 10); }
-	if (numberSliderR > 0) { red = CreatePoints(numberSliderR, 250, 10, 100); }
-	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, 250, 250, 250); }
-	if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, 100, 100, 250); }
+	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, ofColor(100, 250, 10, 100)); }
+	if (numberSliderR > 0) { red = CreatePoints(numberSliderR, ofColor(250, 10, 100, 100)); }
+	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, ofColor(250, 250, 250, 100)); }
+	if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, ofColor(100, 100, 250, 100)); }
 }
 
 
@@ -356,7 +345,6 @@ void ofApp::loadSettings()
 //------------------------------GUI initialization------------------------------
 void ofApp::setup()
 {
-	std::cout << sizeof(point) << ' ' << sizeof(point::x) << ' ' << sizeof(point::r) << '\n';
 	
 	lastTime = clock();
 	ofSetWindowTitle("Particle Life - www.brainxyz.com");
@@ -464,7 +452,7 @@ void ofApp::setup()
 	gui.add(&expGroup);
 
 	ofSetBackgroundAuto(false);
-	ofEnableAlphaBlending();
+	ofDisableAlphaBlending();
 
 	random();
 	restart();
