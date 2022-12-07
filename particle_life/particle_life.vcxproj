@@ -177,21 +177,22 @@
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\..\of_v0.11.2_vs2017_release\addons\ofxGui\src</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <OpenMPSupport>true</OpenMPSupport>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <UseProcessorExtensions>None</UseProcessorExtensions>
+      <UseProcessorExtensions>AVX2</UseProcessorExtensions>
       <OpenMP>None</OpenMP>
       <OpenMPOffloading>None</OpenMPOffloading>
       <CCppSupport>Cpp14Support</CCppSupport>
-      <OptimizationDiagnosticLevel>Level1</OptimizationDiagnosticLevel>
+      <OptimizationDiagnosticLevel>Level2</OptimizationDiagnosticLevel>
       <LanguageStandard>stdcpp14</LanguageStandard>
       <OptimizeForWindowsApplication>false</OptimizeForWindowsApplication>
       <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
       <EnableSyclOffload>false</EnableSyclOffload>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SpecifySyclTargets>Default</SpecifySyclTargets>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>

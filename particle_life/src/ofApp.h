@@ -11,6 +11,7 @@
  * if (distance(x center, x line) < radius) then intersect 
  */
 
+/*
 struct point
 {
 	point(float _x, float _y, const int _r, const int _g, const int _b) : x(_x), y(_y), r(_r), g(_g), b(_b) {}
@@ -26,6 +27,15 @@ struct point
 	const int b;	// blue
 
 };
+*/
+
+struct colorGroup {
+	ofColor color;
+	std::vector<ofFloatColor> colorvec;
+	std::vector<ofVec2f> pos;
+	std::vector<float> vx;
+	std::vector<float> vy;
+};
 
 class ofApp final : public ofBaseApp
 {
@@ -38,14 +48,24 @@ public:
 	void random();
 	void saveSettings();
 	void loadSettings();
-	void interaction(std::vector<point>& Group1, const std::vector<point>& Group2, float G, float radius, bool boundsToggle) const;
+	void interaction(colorGroup& Group1, const colorGroup& Group2, const float G, const float radius, bool boundsToggle) const;
 
 
-	static void setColor(int r, int g, int b)	{ ofSetColor(r, g, b, 100); }
-	static void draw(float x, float y)			{ ofDrawCircle(x, y, 2.0F); }
+	//static void setColor(int r, int g, int b)	{ ofSetColor(r, g, b, 100); }
+	//static void draw(float x, float y)			{ ofDrawCircle(x, y, 2.0F); }
 	static float RandomFloat(const float a, const float b) { return a + (ofRandomuf() * (b - a)); }
+
+	void Draw(colorGroup group)
+	{
+		ofSetColor(group.color);
+		vbo.setVertexData(group.pos.data(), group.pos.size(), GL_DYNAMIC_DRAW);
+		vbo.draw(GL_POINTS, 0, group.pos.size());
+
+	}
 	
 	ofxPanel gui;
+	ofVbo vbo;
+
 
 #pragma region guigroup
 	ofxGuiGroup globalGroup;
@@ -141,10 +161,10 @@ public:
 #pragma endregion slider
 
 #pragma region slider values
-	int pnumberSliderR = 10000;
-	int pnumberSliderG = 10000;
-	int pnumberSliderW = 10000;
-	int pnumberSliderB = 10000;
+	int pnumberSliderR = 1000;
+	int pnumberSliderG = 1000;
+	int pnumberSliderW = 1000;
+	int pnumberSliderB = 1000;
 
 	float ppowerSliderRR = 0;
 	float ppowerSliderRG = 0;
