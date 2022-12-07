@@ -9,6 +9,7 @@
 
 
 // parameters for GUI
+/*
 constexpr float xshift = 400;
 constexpr float yshift = 80;
 constexpr float anchor = 0;
@@ -22,7 +23,7 @@ constexpr float p3y = anchor + length + yshift;
 constexpr float p4x = anchor + xshift;
 constexpr float p4y = anchor + length + yshift;
 constexpr float rr = 8;
-
+*/
 //int countThresh = 0;
 std::string fps_text;
 std::string physic_text;
@@ -96,11 +97,9 @@ std::vector<point> CreatePoints(const int num, const int r, const int g, const i
  * @param G gravity coefficient
  * @param radius radius of interaction
  */
-void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, const float G, const float radius)
+void ofApp::interaction(std::vector<point>& Group1, const std::vector<point>& Group2, const float G, const float radius, bool boundsToggle) const
 {
 	const float g = G / -100;	// attraction coefficient
-	boundHeight = ofGetHeight();
-	boundWidth = ofGetWidth();
 
 	//		oneapi::tbb::parallel_for(
 	//			oneapi::tbb::blocked_range<size_t>(0, group1size), 
@@ -469,8 +468,8 @@ void ofApp::setup()
 	expGroup.add(evoToggle.setup("Evolve parameters", false));
 	expGroup.add(evoProbSlider.setup("evo chance%", evoChance, 0, 100));
 	expGroup.add(evoAmountSlider.setup("evo amount%%", evoAmount, 0, 100));
-	expGroup.add(radiusToogle.setup("infinite radius", false));
-	expGroup.add(probabilitySlider.setup("interaction prob%", probability, 1, 100));
+	//expGroup.add(radiusToogle.setup("infinite radius", false));
+	//expGroup.add(probabilitySlider.setup("interaction prob%", probability, 1, 100));
 	expGroup.add(motionBlurToggle.setup("Motion Blur", false));
 	expGroup.add(physicLabel.setup("physic (ms)", "0"));
 
@@ -494,6 +493,9 @@ void ofApp::update()
 	wallRepel = wallRepelSlider;
 	evoChance = evoProbSlider;
 	evoAmount = evoAmountSlider;
+	boundHeight = ofGetHeight();
+	boundWidth = ofGetWidth();
+
 
 	if (evoToggle && ofRandom(1.0F) < (evoChance / 100.0F))
 	{
@@ -508,22 +510,22 @@ void ofApp::update()
 		}
 	}
 	oneapi::tbb::parallel_invoke(
-		[&] { interaction(red,   red,   powerSliderRR, vSliderRR); },
-		[&] { interaction(red,   green, powerSliderRR, vSliderRG); },
-		[&] { interaction(red,   blue,  powerSliderRR, vSliderRB); },
-		[&] { interaction(red,   white, powerSliderRR, vSliderRW); },
-		[&] { interaction(green, red,   powerSliderGR, vSliderGR); },
-		[&] { interaction(green, green, powerSliderGG, vSliderGG); },
-		[&] { interaction(green, blue,  powerSliderGB, vSliderGB); },
-		[&] { interaction(green, white, powerSliderGW, vSliderGW); },
-		[&] { interaction(blue,  red,   powerSliderBR, vSliderBR); },
-		[&] { interaction(blue,  green, powerSliderBG, vSliderBG); },
-		[&] { interaction(blue,  blue,  powerSliderBB, vSliderBB); },
-		[&] { interaction(blue,  white, powerSliderBW, vSliderBW); },
-		[&] { interaction(white, red,   powerSliderWR, vSliderWR); },
-		[&] { interaction(white, green, powerSliderWG, vSliderWG); },
-		[&] { interaction(white, blue,  powerSliderWB, vSliderWB); },
-		[&] { interaction(white, white, powerSliderWW, vSliderWW); }
+		[&] { interaction(red,   red,   powerSliderRR, vSliderRR, boundsToggle); },
+		[&] { interaction(red,   green, powerSliderRR, vSliderRG, boundsToggle); },
+		[&] { interaction(red,   blue,  powerSliderRR, vSliderRB, boundsToggle); },
+		[&] { interaction(red,   white, powerSliderRR, vSliderRW, boundsToggle); },
+		[&] { interaction(green, red,   powerSliderGR, vSliderGR, boundsToggle); },
+		[&] { interaction(green, green, powerSliderGG, vSliderGG, boundsToggle); },
+		[&] { interaction(green, blue,  powerSliderGB, vSliderGB, boundsToggle); },
+		[&] { interaction(green, white, powerSliderGW, vSliderGW, boundsToggle); },
+		[&] { interaction(blue,  red,   powerSliderBR, vSliderBR, boundsToggle); },
+		[&] { interaction(blue,  green, powerSliderBG, vSliderBG, boundsToggle); },
+		[&] { interaction(blue,  blue,  powerSliderBB, vSliderBB, boundsToggle); },
+		[&] { interaction(blue,  white, powerSliderBW, vSliderBW, boundsToggle); },
+		[&] { interaction(white, red,   powerSliderWR, vSliderWR, boundsToggle); },
+		[&] { interaction(white, green, powerSliderWG, vSliderWG, boundsToggle); },
+		[&] { interaction(white, blue,  powerSliderWB, vSliderWB, boundsToggle); },
+		[&] { interaction(white, white, powerSliderWW, vSliderWW, boundsToggle); }
 	);
 
 	if (save) { saveSettings(); }
@@ -566,67 +568,11 @@ void ofApp::draw()
 		random();
 		restart();
 	}
-	if (numberSliderW > 0) { Draw(white); }
-	if (numberSliderR > 0) { Draw(red); }
-	if (numberSliderG > 0) { Draw(green); }
-	if (numberSliderB > 0) { Draw(blue); }
+	//if (numberSliderW > 0) { Draw(white); }
+	//if (numberSliderR > 0) { Draw(red); }
+	//if (numberSliderG > 0) { Draw(green); }
+	//if (numberSliderB > 0) { Draw(blue); }
 
-	//Draw GUI
-	if (modelToggle == true)
-	{
-		ofSetColor(0, 0, 0);
-		ofDrawCircle(xshift, yshift, 150);
-
-		ofSetLineWidth(5);
-		ofSetColor(150.0F - powerSliderGR, 150.0F + powerSliderGR, 150);
-		ofDrawLine(p1x, p1y - 10, p2x, p2y - 10);
-		ofSetColor(150.0F - powerSliderRG, 150.0F + powerSliderRG, 150);
-		ofDrawLine(p1x, p1y + 10, p2x, p2y + 10);
-		ofSetColor(150.0F - powerSliderGW, 150.0F + powerSliderGW, 150);
-		ofDrawLine(p3x, p3y - 10, p1x, p1y - 10);
-		ofSetColor(150.0F - powerSliderWG, 150.0F + powerSliderWG, 150);
-		ofDrawLine(p3x, p3y + 10, p1x, p1y + 10);
-
-		ofSetColor(150.0F - powerSliderGB, 150.0F + powerSliderGB, 150);
-		ofDrawLine(p4x - 10, p4y, p1x - 10, p1y);
-		ofSetColor(150.0F - powerSliderBG, 150.0F + powerSliderBG, 150);
-		ofDrawLine(p4x + 10, p4y, p1x + 10, p1y);
-
-		ofSetColor(150.0F - powerSliderRW, 150.0F + powerSliderRW, 150);
-		ofDrawLine(p2x - 10, p2y, p3x - 10, p3y);
-		ofSetColor(150.0F - powerSliderWR, 150.0F + powerSliderWR, 150);
-		ofDrawLine(p2x + 10, p2y, p3x + 10, p3y);
-
-		ofSetColor(150.0F - powerSliderRB, 150.0F + powerSliderRB, 150);
-		ofDrawLine(p2x, p2y - 10, p4x, p4y - 10);
-		ofSetColor(150.0F - powerSliderBR, 150.0F + powerSliderBR, 150);
-		ofDrawLine(p2x, p2y + 10, p4x, p4y + 10);
-
-		ofSetColor(150.0F - powerSliderWB, 150.0F + powerSliderWB, 150);
-		ofDrawLine(p3x, p3y - 10, p4x, p4y - 10);
-		ofSetColor(150.0F - powerSliderBW, 150.0F + powerSliderBW, 150);
-		ofDrawLine(p3x, p3y + 10, p4x, p4y + 10);
-
-		ofNoFill();
-		ofSetColor(150.0F - powerSliderGG, 150.0F + powerSliderGG, 150);
-		ofDrawCircle(p1x - 20, p1y - 20, rr + 20);
-		ofSetColor(150.0F - powerSliderRR, 150.0F + powerSliderRR, 150);
-		ofDrawCircle(p2x + 20, p2y - 20, rr + 20);
-		ofSetColor(150.0F - powerSliderWW, 150.0F + powerSliderWW, 150);
-		ofDrawCircle(p3x + 20, p3y + 20, rr + 20);
-		ofSetColor(150.0F - powerSliderBB, 150.0F + powerSliderBB, 150);
-		ofDrawCircle(p4x - 20, p4y + 20, rr + 20);
-
-		ofFill();
-		ofSetColor(100, 250, 10);
-		ofDrawCircle(p1x, p1y, rr);
-		ofSetColor(250, 10, 100);
-		ofDrawCircle(p2x, p2y, rr);
-		ofSetColor(250, 250, 250);
-		ofDrawCircle(p3x, p3y, rr);
-		ofSetColor(100, 100, 250);
-		ofDrawCircle(p4x, p4y, rr);
-	}
 	gui.draw();
 }
 
