@@ -7,13 +7,11 @@
 #include "oneapi/tbb.h"
 
 
-//int countThresh = 0;
-std::string fps_text;
-std::string physic_text;
 
 //Simulation parameters
 int cntFps = 0;
 clock_t now, lastTime, delta;
+clock_t lastTime_draw, delta_draw;
 clock_t physic_begin, physic_delta;
 
 //Particle groups by color
@@ -22,28 +20,27 @@ colorGroup red;
 colorGroup white;
 colorGroup blue;
 
-
+// Create a group of particles with the same color and return it in a vector
 colorGroup CreatePoints(const int num, ofColor color)
 {
 	colorGroup points;
 	points.pos.reserve(num);
-	points.vx.reserve(num);
-	points.vy.reserve(num);
+	points.vel.reserve(num);
 	points.color = color;
 
 	for (auto i = 0; i < num; i++)
 	{
 		int x = static_cast<int>(ofRandomWidth());
-		int y = static_cast<int>(ofRandomHeight());
+		int y = static_cast<int>(ofRandomHeight());	
 		points.pos.emplace_back(x,y);
-		points.vx.emplace_back(0.0F);
-		points.vy.emplace_back(0.0F);
+		points.vel.emplace_back(0.0F, 0.0F);
 	}
 	return points;
 }
 
+// compute and apply the interaction between two groups of particles
 void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2, 
-		const float G, const float radius, bool boundsToggle) const
+		const float G, const float radius, bool boundsToggle) const noexcept
 {
 	
 	assert(Group1.pos.size() % 64 == 0);
@@ -51,19 +48,16 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 	
 	const float g = G / -100;	// attraction coefficient
 
-//		oneapi::tbb::parallel_for(
-//			oneapi::tbb::blocked_range<size_t>(0, group1size), 
-//			[&Group1, &Group2, group1size, group2size, radius, g, this]
-//			(const oneapi::tbb::blocked_range<size_t>& r) {
-
+#pragma omp parallel for
 	for (size_t i = 0; i < Group1.pos.size(); i++)
 	{
-		float fx = 0;	// force on x
-		float fy = 0;	// force on y
+		float fx = 0.0F;	// force on x
+		float fy = 0.0F;	// force on y
 		
 		for (size_t j = 0; j < Group2.pos.size(); j++)
 		{
 			const float distance = Group1.pos[i].distance(Group2.pos[j]);
+			
 			if ((distance < radius)) {
 				const float force = 1 / std::max(std::numeric_limits<float>::epsilon(), distance);	// avoid dividing by zero
 				fx += ((Group1.pos[i].x - Group2.pos[j].x) * force);
@@ -74,23 +68,22 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 		// Wall Repel
 		if (wallRepel > 0.0F)
 		{
-			if (Group1.pos[i].x < wallRepel) Group1.vx[i] += (wallRepel - Group1.pos[i].x) * 0.1;
-			if (Group1.pos[i].x > boundWidth - wallRepel) Group1.vx[i] += (boundWidth - wallRepel - Group1.pos[i].x) * 0.1;
-			if (Group1.pos[i].y < wallRepel) Group1.vy[i] += (wallRepel - Group1.pos[i].y) * 0.1;
-			if (Group1.pos[i].y > boundHeight - wallRepel) Group1.vy[i] += (boundHeight - wallRepel - Group1.pos[i].y) * 0.1;
+			if (Group1.pos[i].x < wallRepel) Group1.vel[i].x += (wallRepel - Group1.pos[i].x) * 0.1;
+			if (Group1.pos[i].x > boundWidth - wallRepel) Group1.vel[i].x += (boundWidth - wallRepel - Group1.pos[i].x) * 0.1;
+			if (Group1.pos[i].y < wallRepel) Group1.vel[i].y += (wallRepel - Group1.pos[i].y) * 0.1;
+			if (Group1.pos[i].y > boundHeight - wallRepel) Group1.vel[i].y += (boundHeight - wallRepel - Group1.pos[i].y) * 0.1;
 		}
 
 		// Viscosity & gravity
-		Group1.vx[i] = (Group1.vx[i] + (fx * g)) * (1.0 - viscosity);
-		Group1.vy[i] = (Group1.vy[i] + (fy * g)) * (1.0 - viscosity) + worldGravity;
-//		Group1.vx[i] = std::fmaf(Group1.vx[i], (1.0F - viscosity), std::fmaf(fx, g, 0.0F));
-//		Group1.vy[i] = std::fmaf(Group1.vy[i], (1.0F - viscosity), std::fmaf(fy, g, worldGravity));
+		Group1.vel[i].x = (Group1.vel[i].x + (fx * g)) * (1.0 - viscosity);
+		Group1.vel[i].y = (Group1.vel[i].y + (fy * g)) * (1.0 - viscosity) + worldGravity;
 
 		//Update position
-		Group1.pos[i].x += Group1.vx[i];
-		Group1.pos[i].y += Group1.vy[i];
+		Group1.pos[i].x += Group1.vel[i].x;
+		Group1.pos[i].y += Group1.vel[i].y;
 	}
 
+	// if "bounded" is checked then keep particles inside the window
 	if (boundsToggle) {
 		for (auto& p : Group1.pos)
 		{
@@ -102,26 +95,27 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 }
 	
 
-/* omp end parallel */
-
 /**
  * @brief Generate new sets of points
  */
 void ofApp::restart()
 {
+	// Ensure that the number of particles is a multiple of 64 in order to use the vectorized version of the interaction function
 	numberSliderG = numberSliderG - (numberSliderG % 64);
 	numberSliderR = numberSliderR - (numberSliderR % 64);
 	numberSliderW = numberSliderW - (numberSliderW % 64);
 	numberSliderB = numberSliderB - (numberSliderB % 64);
+	
 	assert(numberSliderG % 64 == 0);
 	assert(numberSliderR % 64 == 0);
 	assert(numberSliderW % 64 == 0);
 	assert(numberSliderB % 64 == 0);
-	
-	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, ofColor(100, 250, 10, 255)); }
-	if (numberSliderR > 0) { red = CreatePoints(numberSliderR, ofColor(250, 10, 100, 255)); }
-	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, ofColor(250, 250, 250, 255)); }
-	if (numberSliderB > 0) { blue = CreatePoints(numberSliderB, ofColor(100, 100, 250, 255)); }
+
+	// Create the groups of particles
+	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, ofColor::green); }
+	if (numberSliderR > 0) { red = CreatePoints(numberSliderR,   ofColor::red);   }
+	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, ofColor::white); }
+	if (numberSliderB > 0) { blue = CreatePoints(numberSliderB,  ofColor::blue);  }
 }
 
 
@@ -315,6 +309,7 @@ void ofApp::setup()
 {
 	
 	lastTime = clock();
+	lastTime_draw = lastTime;
 	ofSetWindowTitle("Particle Life - www.brainxyz.com");
 	ofSetVerticalSync(false);
 
@@ -429,15 +424,16 @@ void ofApp::setup()
 //------------------------------Update simulation with sliders values------------------------------
 void ofApp::update()
 {
-	physic_begin = clock();
-	probability = probabilitySlider;
-	viscosity = viscoSlider;
+	probability  = probabilitySlider;
+	viscosity    = viscoSlider;
 	worldGravity = gravitySlider;
-	wallRepel = wallRepelSlider;
-	evoChance = evoProbSlider;
-	evoAmount = evoAmountSlider;
-	boundHeight = ofGetHeight();
-	boundWidth = ofGetWidth();
+	wallRepel    = wallRepelSlider;
+	evoChance    = evoProbSlider;
+	evoAmount    = evoAmountSlider;
+	
+	physic_begin = clock();
+	boundHeight  = ofGetHeight();
+	boundWidth   = ofGetWidth();
 
 
 	if (evoToggle && ofRandom(1.0F) < (evoChance / 100.0F))
@@ -452,7 +448,8 @@ void ofApp::update()
 			if (*slider > 200.0F) *slider = 200.0F;
 		}
 	}
-	oneapi::tbb::parallel_invoke(
+
+/*	oneapi::tbb::parallel_invoke(
 		[&] { interaction(red,   red,   powerSliderRR, vSliderRR, boundsToggle); },
 		[&] { interaction(red,   green, powerSliderRR, vSliderRG, boundsToggle); },
 		[&] { interaction(red,   blue,  powerSliderRR, vSliderRB, boundsToggle); },
@@ -470,7 +467,26 @@ void ofApp::update()
 		[&] { interaction(white, blue,  powerSliderWB, vSliderWB, boundsToggle); },
 		[&] { interaction(white, white, powerSliderWW, vSliderWW, boundsToggle); }
 	);
+*/
 
+		interaction(red,   red,   powerSliderRR, vSliderRR, boundsToggle); 
+		interaction(red,   green, powerSliderRR, vSliderRG, boundsToggle);
+		interaction(red,   blue,  powerSliderRR, vSliderRB, boundsToggle); 
+		interaction(red,   white, powerSliderRR, vSliderRW, boundsToggle);
+		interaction(green, red,   powerSliderGR, vSliderGR, boundsToggle);
+		interaction(green, green, powerSliderGG, vSliderGG, boundsToggle);
+		interaction(green, blue,  powerSliderGB, vSliderGB, boundsToggle);
+		interaction(green, white, powerSliderGW, vSliderGW, boundsToggle);
+		interaction(blue,  red,   powerSliderBR, vSliderBR, boundsToggle);
+		interaction(blue,  green, powerSliderBG, vSliderBG, boundsToggle);
+		interaction(blue,  blue,  powerSliderBB, vSliderBB, boundsToggle);
+		interaction(blue,  white, powerSliderBW, vSliderBW, boundsToggle);
+		interaction(white, red,   powerSliderWR, vSliderWR, boundsToggle);
+		interaction(white, green, powerSliderWG, vSliderWG, boundsToggle);
+		interaction(white, blue,  powerSliderWB, vSliderWB, boundsToggle);
+		interaction(white, white, powerSliderWW, vSliderWW, boundsToggle);
+
+	
 	if (save) { saveSettings(); }
 	if (load) { loadSettings(); }
 	physic_delta = clock() - physic_begin;
@@ -479,44 +495,47 @@ void ofApp::update()
 //--------------------------------------------------------------
 void ofApp::draw()
 {
-	if (motionBlurToggle)
-	{
-		ofSetColor(0, 0, 0, 64);
-		ofDrawRectangle(0, 0, boundWidth, boundHeight);
-	}
-	else
-	{
-		ofClear(0);
-	}
-
 	//fps counter
 	cntFps++;
 	now = clock();
 	delta = now - lastTime;
+	delta_draw = now - lastTime_draw;
 
-	//Time step
-	if (delta >= 1000)
-	{
-		lastTime = now;
-		fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<float>(delta)) * cntFps)));
-		physicLabel.setup("physics (ms)", to_string(physic_delta) );
+		if (motionBlurToggle)
+		{
+			ofSetColor(0, 0, 0, 64);
+			ofDrawRectangle(0, 0, boundWidth, boundHeight);
+		}
+		else
+		{
+			ofClear(0);
+		}
 
-		cntFps = 0;
-	}
+		//Time step
+		if (delta >= 1000)
+		{
+			lastTime = now;
+			fps.setup("FPS", to_string(static_cast<int>((1000 / static_cast<float>(delta)) * cntFps)));
+			physicLabel.setup("physics (ms)", to_string(physic_delta));
 
-	//Check for GUI interaction
-	if (resetButton) { restart(); }
-	if (randomChoice)
-	{
-		random();
-		restart();
-	}
-	if (numberSliderW > 0) { Draw(white); }
-	if (numberSliderR > 0) { Draw(red); }
-	if (numberSliderG > 0) { Draw(green); }
-	if (numberSliderB > 0) { Draw(blue); }
+			cntFps = 0;
+		}
 
-	gui.draw();
+		//Check for GUI interaction
+		if (resetButton) { restart(); }
+		if (randomChoice)
+		{
+			random();
+			restart();
+		}
+			
+			if (numberSliderW > 0) { Draw(white); }
+			if (numberSliderR > 0) { Draw(red); }
+			if (numberSliderG > 0) { Draw(green); }
+			if (numberSliderB > 0) { Draw(blue); }
+			lastTime_draw = now;
+
+			gui.draw();
 }
 
 void ofApp::keyPressed(int key)

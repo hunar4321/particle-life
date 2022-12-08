@@ -4,13 +4,9 @@
 
 //========================================================================
 int main( ){
-	//ofSetupOpenGL(1600,900,OF_WINDOW);
 	ofGLWindowSettings s;
-	//s.setGLVersion(4, 3);
+	s.setGLVersion(4, 6);	// OpenGL 4.6 ( GTX 600 and up )
 	s.setSize(1600, 900);
-	//s.setPosition(glm::vec2(0, 0));
 	ofCreateWindow(s);
-
 	ofRunApp(new ofApp());
-
 }
