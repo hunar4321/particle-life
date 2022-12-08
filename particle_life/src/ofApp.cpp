@@ -18,7 +18,7 @@ clock_t physic_begin, physic_delta;
 colorGroup green;
 colorGroup red;
 colorGroup white;
-colorGroup blue;
+colorGroup yellow;
 
 // Create a group of particles with the same color and return it in a vector
 colorGroup CreatePoints(const int num, ofColor color)
@@ -48,12 +48,12 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 	
 	const float g = G / -100;	// attraction coefficient
 
-#pragma omp parallel for
+	#pragma omp parallel for simd
 	for (size_t i = 0; i < Group1.pos.size(); i++)
 	{
 		float fx = 0.0F;	// force on x
 		float fy = 0.0F;	// force on y
-		
+		#pragma omp simd
 		for (size_t j = 0; j < Group2.pos.size(); j++)
 		{
 			const float distance = Group1.pos[i].distance(Group2.pos[j]);
@@ -104,18 +104,18 @@ void ofApp::restart()
 	numberSliderG = numberSliderG - (numberSliderG % 64);
 	numberSliderR = numberSliderR - (numberSliderR % 64);
 	numberSliderW = numberSliderW - (numberSliderW % 64);
-	numberSliderB = numberSliderB - (numberSliderB % 64);
+	numberSliderY = numberSliderY - (numberSliderY % 64);
 	
 	assert(numberSliderG % 64 == 0);
 	assert(numberSliderR % 64 == 0);
 	assert(numberSliderW % 64 == 0);
-	assert(numberSliderB % 64 == 0);
+	assert(numberSliderY % 64 == 0);
 
 	// Create the groups of particles
 	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, ofColor::green); }
 	if (numberSliderR > 0) { red = CreatePoints(numberSliderR,   ofColor::red);   }
 	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, ofColor::white); }
-	if (numberSliderB > 0) { blue = CreatePoints(numberSliderB,  ofColor::blue);  }
+	if (numberSliderY > 0) { yellow = CreatePoints(numberSliderY,  ofColor::yellow);  }
 }
 
 
@@ -129,48 +129,48 @@ void ofApp::random()
 	powerSliderGG = RandomFloat(-100, 100) * forceVariance;
 	powerSliderGR = RandomFloat(-100, 100) * forceVariance;
 	powerSliderGW = RandomFloat(-100, 100) * forceVariance;
-	powerSliderGB = RandomFloat(-100, 100) * forceVariance;
+	powerSliderGY = RandomFloat(-100, 100) * forceVariance;
 
 	vSliderGG = RandomFloat(10, 200) * radiusVariance;
 	vSliderGR = RandomFloat(10, 200) * radiusVariance;
 	vSliderGW = RandomFloat(10, 200) * radiusVariance;
-	vSliderGB = RandomFloat(10, 200) * radiusVariance;
+	vSliderGY = RandomFloat(10, 200) * radiusVariance;
 
 	// RED
 	//numberSliderR = RandomFloat(0, 3000);
 	powerSliderRR = RandomFloat(-100, 100) * forceVariance;
 	powerSliderRG = RandomFloat(-100, 100) * forceVariance;
 	powerSliderRW = RandomFloat(-100, 100) * forceVariance;
-	powerSliderRB = RandomFloat(-100, 100) * forceVariance;
+	powerSliderRY = RandomFloat(-100, 100) * forceVariance;
 
 	vSliderRG = RandomFloat(10, 200) * radiusVariance;
 	vSliderRR = RandomFloat(10, 200) * radiusVariance;
 	vSliderRW = RandomFloat(10, 200) * radiusVariance;
-	vSliderRB = RandomFloat(10, 200) * radiusVariance;
+	vSliderRY = RandomFloat(10, 200) * radiusVariance;
 
 	// WHITE
 	// numberSliderW = RandomFloat(0, 3000);
 	powerSliderWW = RandomFloat(-100, 100) * forceVariance;
 	powerSliderWR = RandomFloat(-100, 100) * forceVariance;
 	powerSliderWG = RandomFloat(-100, 100) * forceVariance;
-	powerSliderWB = RandomFloat(-100, 100) * forceVariance;
+	powerSliderWY = RandomFloat(-100, 100) * forceVariance;
 
 	vSliderWG = RandomFloat(10, 200) * radiusVariance;
 	vSliderWR = RandomFloat(10, 200) * radiusVariance;
 	vSliderWW = RandomFloat(10, 200) * radiusVariance;
-	vSliderWB = RandomFloat(10, 200) * radiusVariance;
+	vSliderWY = RandomFloat(10, 200) * radiusVariance;
 
-	// BLUE
-	//numberSliderB = RandomFloat(0, 3000);
-	powerSliderBB = RandomFloat(-100, 100) * forceVariance;
-	powerSliderBW = RandomFloat(-100, 100) * forceVariance;
-	powerSliderBR = RandomFloat(-100, 100) * forceVariance;
-	powerSliderBG = RandomFloat(-100, 100) * forceVariance;
+	// yellow
+	//numberSliderY = RandomFloat(0, 3000);
+	powerSliderYY = RandomFloat(-100, 100) * forceVariance;
+	powerSliderYW = RandomFloat(-100, 100) * forceVariance;
+	powerSliderYR = RandomFloat(-100, 100) * forceVariance;
+	powerSliderYG = RandomFloat(-100, 100) * forceVariance;
 
-	vSliderBG = RandomFloat(10, 200) * radiusVariance;
-	vSliderBR = RandomFloat(10, 200) * radiusVariance;
-	vSliderBW = RandomFloat(10, 200) * radiusVariance;
-	vSliderBB = RandomFloat(10, 200) * radiusVariance;
+	vSliderYG = RandomFloat(10, 200) * radiusVariance;
+	vSliderYR = RandomFloat(10, 200) * radiusVariance;
+	vSliderYW = RandomFloat(10, 200) * radiusVariance;
+	vSliderYY = RandomFloat(10, 200) * radiusVariance;
 }
 
 /// this is a cheap and quick way to save and load parameters (openFramework have betters ways but requires some additional library setups) 
@@ -178,18 +178,18 @@ void ofApp::random()
 void ofApp::saveSettings()
 {
 	const std::vector<float> settings = {
-		powerSliderGG, powerSliderGR, powerSliderGW, powerSliderGB,
-		vSliderGG, vSliderGR, vSliderGW, vSliderGB,
-		powerSliderRG, powerSliderRR, powerSliderRW, powerSliderRB,
-		vSliderRG, vSliderRR, vSliderRW, vSliderRB,
-		powerSliderWG, powerSliderWR, powerSliderWW, powerSliderWB,
-		vSliderWG, vSliderWR, vSliderWW, vSliderWB,
-		powerSliderBG, powerSliderBR, powerSliderBW, powerSliderBB,
-		vSliderBG, vSliderBR, vSliderBW, vSliderBB,
+		powerSliderGG, powerSliderGR, powerSliderGW, powerSliderGY,
+		vSliderGG, vSliderGR, vSliderGW, vSliderGY,
+		powerSliderRG, powerSliderRR, powerSliderRW, powerSliderRY,
+		vSliderRG, vSliderRR, vSliderRW, vSliderRY,
+		powerSliderWG, powerSliderWR, powerSliderWW, powerSliderWY,
+		vSliderWG, vSliderWR, vSliderWW, vSliderWY,
+		powerSliderYG, powerSliderYR, powerSliderYW, powerSliderYY,
+		vSliderYG, vSliderYR, vSliderYW, vSliderYY,
 		static_cast<float>(numberSliderG),
 		static_cast<float>(numberSliderR),
 		static_cast<float>(numberSliderW),
-		static_cast<float>(numberSliderB),
+		static_cast<float>(numberSliderY),
 		viscoSlider
 	};
 
@@ -264,39 +264,39 @@ void ofApp::loadSettings()
 		powerSliderGG = p[0];
 		powerSliderGR = p[1];
 		powerSliderGW = p[2];
-		powerSliderGB = p[3];
+		powerSliderGY = p[3];
 		vSliderGG = p[4];
 		vSliderGR = p[5];
 		vSliderGW = p[6];
-		vSliderGB = p[7];
+		vSliderGY = p[7];
 		powerSliderRG = p[8];
 		powerSliderRR = p[9];
 		powerSliderRW = p[10];
-		powerSliderRB = p[11];
+		powerSliderRY = p[11];
 		vSliderRG = p[12];
 		vSliderRR = p[13];
 		vSliderRW = p[14];
-		vSliderRB = p[15];
+		vSliderRY = p[15];
 		powerSliderWG = p[16];
 		powerSliderWR = p[17];
 		powerSliderWW = p[18];
-		powerSliderWB = p[19];
+		powerSliderWY = p[19];
 		vSliderWG = p[20];
 		vSliderWR = p[21];
 		vSliderWW = p[22];
-		vSliderWB = p[23];
-		powerSliderBG = p[24];
-		powerSliderBR = p[25];
-		powerSliderBW = p[26];
-		powerSliderBB = p[27];
-		vSliderBG = p[28];
-		vSliderBR = p[29];
-		vSliderBW = p[30];
-		vSliderBB = p[31];
+		vSliderWY = p[23];
+		powerSliderYG = p[24];
+		powerSliderYR = p[25];
+		powerSliderYW = p[26];
+		powerSliderYY = p[27];
+		vSliderYG = p[28];
+		vSliderYR = p[29];
+		vSliderYW = p[30];
+		vSliderYY = p[31];
 		numberSliderG = static_cast<int>(p[32]);
 		numberSliderR = static_cast<int>(p[33]);
 		numberSliderW = static_cast<int>(p[34]);
-		numberSliderB = static_cast<int>(p[35]);
+		numberSliderY = static_cast<int>(p[35]);
 		viscoSlider = p[36];
 	}
 	probabilitySlider = 100;
@@ -339,7 +339,7 @@ void ofApp::setup()
 	qtyGroup.add(numberSliderG.setup("Green", pnumberSliderG, 0, 10000));
 	qtyGroup.add(numberSliderR.setup("Red", pnumberSliderR, 0, 10000));
 	qtyGroup.add(numberSliderW.setup("White", pnumberSliderW, 0, 10000));
-	qtyGroup.add(numberSliderB.setup("Blue", pnumberSliderB, 0, 10000));
+	qtyGroup.add(numberSliderY.setup("yellow", pnumberSliderY, 0, 10000));
 	gui.add(&qtyGroup);
 
 	// GREEN
@@ -347,12 +347,12 @@ void ofApp::setup()
 	greenGroup.add(powerSliderGG.setup("green x green:", ppowerSliderGG, -100, 100));
 	greenGroup.add(powerSliderGR.setup("green x red:", ppowerSliderGR, -100, 100));
 	greenGroup.add(powerSliderGW.setup("green x white:", ppowerSliderGW, -100, 100));
-	greenGroup.add(powerSliderGB.setup("green x blue:", ppowerSliderGB, -100, 100));
+	greenGroup.add(powerSliderGY.setup("green x yellow:", ppowerSliderGY, -100, 100));
 
 	greenGroup.add(vSliderGG.setup("radius g x g:", pvSliderGG, 10, 500));
 	greenGroup.add(vSliderGR.setup("radius g x r:", pvSliderGR, 10, 500));
 	greenGroup.add(vSliderGW.setup("radius g x w:", pvSliderGW, 10, 500));
-	greenGroup.add(vSliderGB.setup("radius g x b:", pvSliderGB, 10, 500));
+	greenGroup.add(vSliderGY.setup("radius g x b:", pvSliderGY, 10, 500));
 
 	greenGroup.minimize();
 	gui.add(&greenGroup);
@@ -362,12 +362,12 @@ void ofApp::setup()
 	redGroup.add(powerSliderRR.setup("red x red:", ppowerSliderRR, -100, 100));
 	redGroup.add(powerSliderRG.setup("red x green:", ppowerSliderRG, -100, 100));
 	redGroup.add(powerSliderRW.setup("red x white:", ppowerSliderRW, -100, 100));
-	redGroup.add(powerSliderRB.setup("red x blue:", ppowerSliderRB, -100, 100));
+	redGroup.add(powerSliderRY.setup("red x yellow:", ppowerSliderRY, -100, 100));
 
 	redGroup.add(vSliderRG.setup("radius r x g:", pvSliderRG, 10, 500));
 	redGroup.add(vSliderRR.setup("radius r x r:", pvSliderRR, 10, 500));
 	redGroup.add(vSliderRW.setup("radius r x w:", pvSliderRW, 10, 500));
-	redGroup.add(vSliderRB.setup("radius r x b:", pvSliderRB, 10, 500));
+	redGroup.add(vSliderRY.setup("radius r x b:", pvSliderRY, 10, 500));
 
 	redGroup.minimize();
 	gui.add(&redGroup);
@@ -377,30 +377,30 @@ void ofApp::setup()
 	whiteGroup.add(powerSliderWW.setup("white x white:", ppowerSliderWW, -100, 100));
 	whiteGroup.add(powerSliderWR.setup("white x red:", ppowerSliderWR, -100, 100));
 	whiteGroup.add(powerSliderWG.setup("white x green:", ppowerSliderWG, -100, 100));
-	whiteGroup.add(powerSliderWB.setup("white x blue:", ppowerSliderWB, -100, 100));
+	whiteGroup.add(powerSliderWY.setup("white x yellow:", ppowerSliderWY, -100, 100));
 
 	whiteGroup.add(vSliderWG.setup("radius w x g:", pvSliderWG, 10, 500));
 	whiteGroup.add(vSliderWR.setup("radius w x r:", pvSliderWR, 10, 500));
 	whiteGroup.add(vSliderWW.setup("radius w x w:", pvSliderWW, 10, 500));
-	whiteGroup.add(vSliderWB.setup("radius w x b:", pvSliderWB, 10, 500));
+	whiteGroup.add(vSliderWY.setup("radius w x b:", pvSliderWY, 10, 500));
 
 	whiteGroup.minimize();
 	gui.add(&whiteGroup);
 
-	// BLUE
-	blueGroup.setup("Blue");
-	blueGroup.add(powerSliderBB.setup("blue x blue:", ppowerSliderBB, -100, 100));
-	blueGroup.add(powerSliderBW.setup("blue x white:", ppowerSliderBW, -100, 100));
-	blueGroup.add(powerSliderBR.setup("blue x red:", ppowerSliderBR, -100, 100));
-	blueGroup.add(powerSliderBG.setup("blue x green:", ppowerSliderBG, -100, 100));
+	// yellow
+	yellowGroup.setup("yellow");
+	yellowGroup.add(powerSliderYY.setup("yellow x yellow:", ppowerSliderYY, -100, 100));
+	yellowGroup.add(powerSliderYW.setup("yellow x white:", ppowerSliderYW, -100, 100));
+	yellowGroup.add(powerSliderYR.setup("yellow x red:", ppowerSliderYR, -100, 100));
+	yellowGroup.add(powerSliderYG.setup("yellow x green:", ppowerSliderYG, -100, 100));
 
-	blueGroup.add(vSliderBG.setup("radius b x g:", pvSliderBG, 10, 500));
-	blueGroup.add(vSliderBR.setup("radius b x r:", pvSliderBR, 10, 500));
-	blueGroup.add(vSliderBW.setup("radius b x w:", pvSliderBW, 10, 500));
-	blueGroup.add(vSliderBB.setup("radius b x b:", pvSliderBB, 10, 500));
+	yellowGroup.add(vSliderYG.setup("radius b x g:", pvSliderYG, 10, 500));
+	yellowGroup.add(vSliderYR.setup("radius b x r:", pvSliderYR, 10, 500));
+	yellowGroup.add(vSliderYW.setup("radius b x w:", pvSliderYW, 10, 500));
+	yellowGroup.add(vSliderYY.setup("radius b x b:", pvSliderYY, 10, 500));
 
-	blueGroup.minimize();
-	gui.add(&blueGroup);
+	yellowGroup.minimize();
+	gui.add(&yellowGroup);
 
 	expGroup.setup("Experimental");
 	expGroup.add(evoToggle.setup("Evolve parameters", false));
@@ -452,38 +452,38 @@ void ofApp::update()
 /*	oneapi::tbb::parallel_invoke(
 		[&] { interaction(red,   red,   powerSliderRR, vSliderRR, boundsToggle); },
 		[&] { interaction(red,   green, powerSliderRR, vSliderRG, boundsToggle); },
-		[&] { interaction(red,   blue,  powerSliderRR, vSliderRB, boundsToggle); },
+		[&] { interaction(red,   yellow,  powerSliderRR, vSliderRY, boundsToggle); },
 		[&] { interaction(red,   white, powerSliderRR, vSliderRW, boundsToggle); },
 		[&] { interaction(green, red,   powerSliderGR, vSliderGR, boundsToggle); },
 		[&] { interaction(green, green, powerSliderGG, vSliderGG, boundsToggle); },
-		[&] { interaction(green, blue,  powerSliderGB, vSliderGB, boundsToggle); },
+		[&] { interaction(green, yellow,  powerSliderGY, vSliderGY, boundsToggle); },
 		[&] { interaction(green, white, powerSliderGW, vSliderGW, boundsToggle); },
-		[&] { interaction(blue,  red,   powerSliderBR, vSliderBR, boundsToggle); },
-		[&] { interaction(blue,  green, powerSliderBG, vSliderBG, boundsToggle); },
-		[&] { interaction(blue,  blue,  powerSliderBB, vSliderBB, boundsToggle); },
-		[&] { interaction(blue,  white, powerSliderBW, vSliderBW, boundsToggle); },
+		[&] { interaction(yellow,  red,   powerSliderYR, vSliderYR, boundsToggle); },
+		[&] { interaction(yellow,  green, powerSliderYG, vSliderYG, boundsToggle); },
+		[&] { interaction(yellow,  yellow,  powerSliderYY, vSliderYY, boundsToggle); },
+		[&] { interaction(yellow,  white, powerSliderYW, vSliderYW, boundsToggle); },
 		[&] { interaction(white, red,   powerSliderWR, vSliderWR, boundsToggle); },
 		[&] { interaction(white, green, powerSliderWG, vSliderWG, boundsToggle); },
-		[&] { interaction(white, blue,  powerSliderWB, vSliderWB, boundsToggle); },
+		[&] { interaction(white, yellow,  powerSliderWY, vSliderWY, boundsToggle); },
 		[&] { interaction(white, white, powerSliderWW, vSliderWW, boundsToggle); }
 	);
 */
 
 		interaction(red,   red,   powerSliderRR, vSliderRR, boundsToggle); 
 		interaction(red,   green, powerSliderRR, vSliderRG, boundsToggle);
-		interaction(red,   blue,  powerSliderRR, vSliderRB, boundsToggle); 
+		interaction(red,   yellow,  powerSliderRR, vSliderRY, boundsToggle); 
 		interaction(red,   white, powerSliderRR, vSliderRW, boundsToggle);
 		interaction(green, red,   powerSliderGR, vSliderGR, boundsToggle);
 		interaction(green, green, powerSliderGG, vSliderGG, boundsToggle);
-		interaction(green, blue,  powerSliderGB, vSliderGB, boundsToggle);
+		interaction(green, yellow,  powerSliderGY, vSliderGY, boundsToggle);
 		interaction(green, white, powerSliderGW, vSliderGW, boundsToggle);
-		interaction(blue,  red,   powerSliderBR, vSliderBR, boundsToggle);
-		interaction(blue,  green, powerSliderBG, vSliderBG, boundsToggle);
-		interaction(blue,  blue,  powerSliderBB, vSliderBB, boundsToggle);
-		interaction(blue,  white, powerSliderBW, vSliderBW, boundsToggle);
+		interaction(yellow,  red,   powerSliderYR, vSliderYR, boundsToggle);
+		interaction(yellow,  green, powerSliderYG, vSliderYG, boundsToggle);
+		interaction(yellow,  yellow,  powerSliderYY, vSliderYY, boundsToggle);
+		interaction(yellow,  white, powerSliderYW, vSliderYW, boundsToggle);
 		interaction(white, red,   powerSliderWR, vSliderWR, boundsToggle);
 		interaction(white, green, powerSliderWG, vSliderWG, boundsToggle);
-		interaction(white, blue,  powerSliderWB, vSliderWB, boundsToggle);
+		interaction(white, yellow,  powerSliderWY, vSliderWY, boundsToggle);
 		interaction(white, white, powerSliderWW, vSliderWW, boundsToggle);
 
 	
@@ -532,7 +532,7 @@ void ofApp::draw()
 			if (numberSliderW > 0) { Draw(white); }
 			if (numberSliderR > 0) { Draw(red); }
 			if (numberSliderG > 0) { Draw(green); }
-			if (numberSliderB > 0) { Draw(blue); }
+			if (numberSliderY > 0) { Draw(yellow); }
 			lastTime_draw = now;
 
 			gui.draw();
