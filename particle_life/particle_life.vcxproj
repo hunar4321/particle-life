@@ -57,7 +57,8 @@
     <UseILP64Interfaces1A>false</UseILP64Interfaces1A>
     <EnableMKLOpenMPOffloadToGPU>false</EnableMKLOpenMPOffloadToGPU>
     <InterproceduralOptimization>true</InterproceduralOptimization>
-    <ProfileGuidedOptimization>PGOOptimize</ProfileGuidedOptimization>
+    <ProfileGuidedOptimization>Disabled</ProfileGuidedOptimization>
+    <OpenMPOffloading>true</OpenMPOffloading>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
@@ -184,16 +185,17 @@
       <OpenMPSupport>true</OpenMPSupport>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <UseProcessorExtensions>CORE512</UseProcessorExtensions>
-      <OpenMP>None</OpenMP>
+      <OpenMP>GenerateParallelCode</OpenMP>
       <OpenMPOffloading>None</OpenMPOffloading>
       <CCppSupport>Cpp14Support</CCppSupport>
       <OptimizationDiagnosticLevel>Level2</OptimizationDiagnosticLevel>
       <LanguageStandard>stdcpp14</LanguageStandard>
-      <OptimizeForWindowsApplication>false</OptimizeForWindowsApplication>
+      <OptimizeForWindowsApplication>true</OptimizeForWindowsApplication>
       <ForceConformanceInForLoopScope>false</ForceConformanceInForLoopScope>
       <EnableSyclOffload>false</EnableSyclOffload>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SpecifySyclTargets>Default</SpecifySyclTargets>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
