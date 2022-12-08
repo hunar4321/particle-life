@@ -4,12 +4,11 @@
 #include "ofxGui.h"
 #include <sdlt/sdlt.h>
 
-#define GRID_DIV 4
 
+// use a SOA that represents a group of particles with the same color
 struct colorGroup {
 	std::vector<ofVec2f> pos;
-	std::vector<float> vx;
-	std::vector<float> vy;
+	std::vector<ofVec2f> vel;
 	ofColor color;
 };
 
@@ -26,13 +25,12 @@ public:
 	void loadSettings();
 	void interaction(colorGroup& Group1, const colorGroup& Group2, const float G, const float radius, bool boundsToggle) const;
 
-
 	static float RandomFloat(const float a, const float b) { return a + (ofRandomuf() * (b - a)); }
 
 	void Draw(colorGroup group)
 	{
 		ofSetColor(group.color);
-		vbo.setVertexData(group.pos.data(), group.pos.size(), GL_DYNAMIC_DRAW);
+		vbo.setVertexData(group.pos.data(), group.pos.size(), GL_STATIC_DRAW);
 		vbo.draw(GL_POINTS, 0, group.pos.size());
 
 	}
@@ -182,6 +180,10 @@ public:
 	ofxLabel aboutL2;
 	ofxLabel aboutL3;
 	ofxLabel fps;
+
+	std::string fps_text;
+	std::string physic_text;
+
 
 	// simulation bounds
 	int boundWidth = 1600;
