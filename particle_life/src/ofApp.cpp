@@ -7,21 +7,10 @@
 #include "oneapi/tbb.h"
 
 
-
 //Simulation parameters
-int cntFps = 0;
-clock_t now, lastTime, delta;
-clock_t lastTime_draw, delta_draw;
-clock_t physic_begin, physic_delta;
-
-//Particle groups by color
-colorGroup green;
-colorGroup red;
-colorGroup white;
-colorGroup yellow;
 
 // Create a group of particles with the same color and return it in a vector
-colorGroup CreatePoints(const int num, ofColor color)
+colorGroup CreatePoints(const int num, ofColor color) noexcept
 {
 	colorGroup points;
 	points.pos.reserve(num);
@@ -35,6 +24,7 @@ colorGroup CreatePoints(const int num, ofColor color)
 		points.pos.emplace_back(x,y);
 		points.vel.emplace_back(0.0F, 0.0F);
 	}
+		
 	return points;
 }
 
@@ -48,18 +38,25 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 	
 	const float g = G / -100;	// attraction coefficient
 
-	#pragma omp parallel for simd
+	//#pragma omp parallel
 	for (size_t i = 0; i < Group1.pos.size(); i++)
 	{
 		float fx = 0.0F;	// force on x
 		float fy = 0.0F;	// force on y
-		#pragma omp simd
+		
+		
 		for (size_t j = 0; j < Group2.pos.size(); j++)
 		{
-			const float distance = Group1.pos[i].distance(Group2.pos[j]);
-			
-			if ((distance < radius)) {
-				const float force = 1 / std::max(std::numeric_limits<float>::epsilon(), distance);	// avoid dividing by zero
+			if (Group1.pos[i] != Group2.pos[j])
+			{
+				const float distance_squared = ((Group1.pos[i].x - Group2.pos[j].x) * (Group1.pos[i].x - Group2.pos[j].x))
+					+ ((Group1.pos[i].y - Group2.pos[j].y) * (Group1.pos[i].y - Group2.pos[j].y));
+
+				// if distance < radius, apply the force, otherwise, force = 0
+	//			const float force = distance_squared < radius*radius ? 1 / (std::max(std::numeric_limits<float>::epsilon(), std::sqrtf(distance_squared))) : 0.0F;
+	//			fx += ((Group1.pos[i].x - Group2.pos[j].x) * force);
+	//			fy += ((Group1.pos[i].y - Group2.pos[j].y) * force);
+				const float force = distance_squared < radius* radius ? 1.0F / std::sqrtf(distance_squared) : 0.0F;
 				fx += ((Group1.pos[i].x - Group2.pos[j].x) * force);
 				fy += ((Group1.pos[i].y - Group2.pos[j].y) * force);
 			}
@@ -68,10 +65,10 @@ void ofApp::interaction(colorGroup& Group1, const colorGroup& Group2,
 		// Wall Repel
 		if (wallRepel > 0.0F)
 		{
-			if (Group1.pos[i].x < wallRepel) Group1.vel[i].x += (wallRepel - Group1.pos[i].x) * 0.1;
-			if (Group1.pos[i].x > boundWidth - wallRepel) Group1.vel[i].x += (boundWidth - wallRepel - Group1.pos[i].x) * 0.1;
-			if (Group1.pos[i].y < wallRepel) Group1.vel[i].y += (wallRepel - Group1.pos[i].y) * 0.1;
-			if (Group1.pos[i].y > boundHeight - wallRepel) Group1.vel[i].y += (boundHeight - wallRepel - Group1.pos[i].y) * 0.1;
+			Group1.vel[i].x += Group1.pos[i].x < wallRepel ? (wallRepel - Group1.pos[i].x) * 0.1 : 0.0F;	// x
+			Group1.vel[i].y += Group1.pos[i].y < wallRepel ? (wallRepel - Group1.pos[i].y) * 0.1 : 0.0F;	// x
+			Group1.vel[i].x += Group1.pos[i].x > boundWidth - wallRepel  ? (boundWidth - wallRepel - Group1.pos[i].x) * 0.1  : 0.0F; // y 
+			Group1.vel[i].y += Group1.pos[i].y > boundHeight - wallRepel ? (boundHeight - wallRepel - Group1.pos[i].y) * 0.1 : 0.0F; // y			
 		}
 
 		// Viscosity & gravity
@@ -110,12 +107,17 @@ void ofApp::restart()
 	assert(numberSliderR % 64 == 0);
 	assert(numberSliderW % 64 == 0);
 	assert(numberSliderY % 64 == 0);
-
+	
 	// Create the groups of particles
-	if (numberSliderG > 0) { green = CreatePoints(numberSliderG, ofColor::green); }
-	if (numberSliderR > 0) { red = CreatePoints(numberSliderR,   ofColor::red);   }
-	if (numberSliderW > 0) { white = CreatePoints(numberSliderW, ofColor::white); }
-	if (numberSliderY > 0) { yellow = CreatePoints(numberSliderY,  ofColor::yellow);  }
+	if (numberSliderG > 0) { green  = CreatePoints(numberSliderG, ofColor::green); }
+	if (numberSliderR > 0) { red    = CreatePoints(numberSliderR,   ofColor::red);   }
+	if (numberSliderW > 0) { white  = CreatePoints(numberSliderW, ofColor::white); }
+	if (numberSliderY > 0) { yellow = CreatePoints(numberSliderY,  ofColor::yellow); }
+
+	vbo.setVertexData(green.pos.data(),  green.pos.size(),  GL_STREAM_DRAW);
+	vbo.setVertexData(red.pos.data(),    red.pos.size(),    GL_STREAM_DRAW);
+	vbo.setVertexData(white.pos.data(),  white.pos.size(),  GL_STREAM_DRAW);
+	vbo.setVertexData(yellow.pos.data(), yellow.pos.size(), GL_STREAM_DRAW);
 }
 
 
@@ -339,7 +341,7 @@ void ofApp::setup()
 	qtyGroup.add(numberSliderG.setup("Green", pnumberSliderG, 0, 10000));
 	qtyGroup.add(numberSliderR.setup("Red", pnumberSliderR, 0, 10000));
 	qtyGroup.add(numberSliderW.setup("White", pnumberSliderW, 0, 10000));
-	qtyGroup.add(numberSliderY.setup("yellow", pnumberSliderY, 0, 10000));
+	qtyGroup.add(numberSliderY.setup("Yellow", pnumberSliderY, 0, 10000));
 	gui.add(&qtyGroup);
 
 	// GREEN
@@ -352,7 +354,7 @@ void ofApp::setup()
 	greenGroup.add(vSliderGG.setup("radius g x g:", pvSliderGG, 10, 500));
 	greenGroup.add(vSliderGR.setup("radius g x r:", pvSliderGR, 10, 500));
 	greenGroup.add(vSliderGW.setup("radius g x w:", pvSliderGW, 10, 500));
-	greenGroup.add(vSliderGY.setup("radius g x b:", pvSliderGY, 10, 500));
+	greenGroup.add(vSliderGY.setup("radius g x y:", pvSliderGY, 10, 500));
 
 	greenGroup.minimize();
 	gui.add(&greenGroup);
@@ -367,7 +369,7 @@ void ofApp::setup()
 	redGroup.add(vSliderRG.setup("radius r x g:", pvSliderRG, 10, 500));
 	redGroup.add(vSliderRR.setup("radius r x r:", pvSliderRR, 10, 500));
 	redGroup.add(vSliderRW.setup("radius r x w:", pvSliderRW, 10, 500));
-	redGroup.add(vSliderRY.setup("radius r x b:", pvSliderRY, 10, 500));
+	redGroup.add(vSliderRY.setup("radius r x y:", pvSliderRY, 10, 500));
 
 	redGroup.minimize();
 	gui.add(&redGroup);
@@ -382,22 +384,22 @@ void ofApp::setup()
 	whiteGroup.add(vSliderWG.setup("radius w x g:", pvSliderWG, 10, 500));
 	whiteGroup.add(vSliderWR.setup("radius w x r:", pvSliderWR, 10, 500));
 	whiteGroup.add(vSliderWW.setup("radius w x w:", pvSliderWW, 10, 500));
-	whiteGroup.add(vSliderWY.setup("radius w x b:", pvSliderWY, 10, 500));
+	whiteGroup.add(vSliderWY.setup("radius w x y:", pvSliderWY, 10, 500));
 
 	whiteGroup.minimize();
 	gui.add(&whiteGroup);
 
 	// yellow
-	yellowGroup.setup("yellow");
+	yellowGroup.setup("Yellow");
 	yellowGroup.add(powerSliderYY.setup("yellow x yellow:", ppowerSliderYY, -100, 100));
 	yellowGroup.add(powerSliderYW.setup("yellow x white:", ppowerSliderYW, -100, 100));
 	yellowGroup.add(powerSliderYR.setup("yellow x red:", ppowerSliderYR, -100, 100));
 	yellowGroup.add(powerSliderYG.setup("yellow x green:", ppowerSliderYG, -100, 100));
 
-	yellowGroup.add(vSliderYG.setup("radius b x g:", pvSliderYG, 10, 500));
-	yellowGroup.add(vSliderYR.setup("radius b x r:", pvSliderYR, 10, 500));
-	yellowGroup.add(vSliderYW.setup("radius b x w:", pvSliderYW, 10, 500));
-	yellowGroup.add(vSliderYY.setup("radius b x b:", pvSliderYY, 10, 500));
+	yellowGroup.add(vSliderYG.setup("radius y x g:", pvSliderYG, 10, 500));
+	yellowGroup.add(vSliderYR.setup("radius y x r:", pvSliderYR, 10, 500));
+	yellowGroup.add(vSliderYW.setup("radius y x w:", pvSliderYW, 10, 500));
+	yellowGroup.add(vSliderYY.setup("radius y x y:", pvSliderYY, 10, 500));
 
 	yellowGroup.minimize();
 	gui.add(&yellowGroup);
@@ -449,7 +451,8 @@ void ofApp::update()
 		}
 	}
 
-/*	oneapi::tbb::parallel_invoke(
+	/*
+	oneapi::tbb::parallel_invoke(
 		[&] { interaction(red,   red,   powerSliderRR, vSliderRR, boundsToggle); },
 		[&] { interaction(red,   green, powerSliderRR, vSliderRG, boundsToggle); },
 		[&] { interaction(red,   yellow,  powerSliderRR, vSliderRY, boundsToggle); },
@@ -467,7 +470,7 @@ void ofApp::update()
 		[&] { interaction(white, yellow,  powerSliderWY, vSliderWY, boundsToggle); },
 		[&] { interaction(white, white, powerSliderWW, vSliderWW, boundsToggle); }
 	);
-*/
+	*/
 
 		interaction(red,   red,   powerSliderRR, vSliderRR, boundsToggle); 
 		interaction(red,   green, powerSliderRR, vSliderRG, boundsToggle);
@@ -485,7 +488,7 @@ void ofApp::update()
 		interaction(white, green, powerSliderWG, vSliderWG, boundsToggle);
 		interaction(white, yellow,  powerSliderWY, vSliderWY, boundsToggle);
 		interaction(white, white, powerSliderWW, vSliderWW, boundsToggle);
-
+		
 	
 	if (save) { saveSettings(); }
 	if (load) { loadSettings(); }
