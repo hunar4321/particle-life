@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<CommonSettings xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <PGO>
+    <ViewModel>
+      <AppCollection>
+        <AppDataViewModel>
+          <Application>$(TargetPath)</Application>
+          <Arguments />
+          <Directory>$(ProjectDir)/bin</Directory>
+          <Environment />
+          <MergeEnvironment>true</MergeEnvironment>
+        </AppDataViewModel>
+      </AppCollection>
+      <RunPhase1>true</RunPhase1>
+      <RunPhase2>true</RunPhase2>
+      <RunPhase3>true</RunPhase3>
+    </ViewModel>
+    <InstrumentThreadSafe>false</InstrumentThreadSafe>
+    <InstrumentFuncOrder>false</InstrumentFuncOrder>
+    <InstrumentDataLayout>false</InstrumentDataLayout>
+  </PGO>
+</CommonSettings>
