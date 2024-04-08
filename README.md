@@ -58,6 +58,7 @@ Other Ports:
 - [C# Winforms](https://github.com/BlinkSun/ParticleLifeSimulation)
 - [FreeBasic](https://www.freebasic.net/forum/viewtopic.php?p=294331#p294331)
 - [Julia](https://github.com/RomeoV/ParticleLife.jl)
+- [Flutter](https://github.com/JillyTaboga/particles)
 
 The JavaScript code is as simple as this: 
 -------------------------------------
