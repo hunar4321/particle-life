@@ -118,9 +118,7 @@ Also, look at the particle_life.html file for a more optimized version - thanks 
   update();
 </script>
 ```
-
 </br>
-
 Other Ports:
 -------------
 - [Godot](https://github.com/NiclasEriksen/game-of-leif)
@@ -138,6 +136,7 @@ Other Ports:
 
 
 Related topics:
+--------------------
 Particle Life Simulation,
 Primordial Soup - Evolution,
 Conway's game of life,
