@@ -1,0 +1,9 @@
+[project]
+name = "particle-life"
+version = "1.0.0"
+description = "Basic python implementation of particle life simulation."
+readme = ""
+requires-python = ">=3.13"
+dependencies = [
+    "pygame-ce>=2.5.6",
+]
